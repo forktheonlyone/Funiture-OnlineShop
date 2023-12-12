@@ -55,5 +55,14 @@ public class Product {
         this.category = category;
     }
 
+    public void update(ProductResponse.FindByIdDTO findByIdDTO) {
+        this.productName = findByIdDTO.getProductName();
+        this.description = findByIdDTO.getDescription();
+        this.image = findByIdDTO.getImage();
+        this.price = findByIdDTO.getPrice();
+        this.onSale = findByIdDTO.getOnSale();
+        this.point = findByIdDTO.getPoint();
+        this.deliveryFee = findByIdDTO.getDeliveryFee();
+    }
 
 }

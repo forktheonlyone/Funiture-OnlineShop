@@ -1,4 +1,4 @@
-package com.example.FunitureOnlineShop.core.security;
+package com.example.funitureOnlineShop.core.security;
 
 import com.example.FunitureOnlineShop.user.User;
 import lombok.Getter;

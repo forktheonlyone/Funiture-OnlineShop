@@ -1,4 +1,4 @@
-package com.example.FunitureOnlineShop.core.security;
+package com.example.funitureOnlineShop.core.security;
 
 import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;

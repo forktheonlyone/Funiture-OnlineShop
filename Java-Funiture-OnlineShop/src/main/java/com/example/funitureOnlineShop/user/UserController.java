@@ -1,6 +1,6 @@
-package com.example.FunitureOnlineShop.user;
+package com.example.funitureOnlineShop.user;
 
-import com.example.FunitureOnlineShop.core.utils.ApiUtils;
+import com.example.funitureOnlineShop.core.utils.ApiUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

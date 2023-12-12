@@ -1,7 +1,6 @@
 package com.example.funitureOnlineShop.option;
 
-import com.example.core.error.exception.Exception404;
-import com.example.core.utils.ApiUtils;
+import com.example.funitureOnlineShop.core.utils.ApiUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

@@ -1,7 +1,7 @@
-package com.example.FunitureOnlineShop.user;
+package com.example.funitureOnlineShop.user;
 
-import com.example.FunitureOnlineShop.core.error.exception.Exception400;
-import com.example.FunitureOnlineShop.core.error.exception.Exception500;
+import com.example.funitureOnlineShop.core.error.exception.Exception400;
+import com.example.funitureOnlineShop.core.error.exception.Exception500;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

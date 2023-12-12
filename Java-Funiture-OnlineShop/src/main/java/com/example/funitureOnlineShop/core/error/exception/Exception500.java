@@ -1,4 +1,4 @@
-package com.example.FunitureOnlineShop.core.error.exception;
+package com.example.funitureOnlineShop.core.error.exception;
 
 
 import com.example.FunitureOnlineShop.core.utils.ApiUtils;

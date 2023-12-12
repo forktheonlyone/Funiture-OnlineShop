@@ -1,8 +1,7 @@
 package com.example.funitureOnlineShop.cart;
 
-
-import com.example.core.security.CustomUserDetails;
-import com.example.core.utils.ApiUtils;
+import com.example.funitureOnlineShop.core.security.CustomUserDetails;
+import com.example.funitureOnlineShop.core.utils.ApiUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
