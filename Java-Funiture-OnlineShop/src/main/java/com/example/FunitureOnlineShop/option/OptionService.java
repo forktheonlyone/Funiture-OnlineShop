@@ -20,12 +20,12 @@ public class OptionService {
 
     // ** 상품ID를 기반으로 옵션을 저장, 없을 시 예외처리
     @Transactional
-    public Option save(OptionResponse.FindByProductIdDTO optionDTO) {
-        Optional<Product> option = productRepository.findById(optionDTO.getProductId());
+    public Option save(OptionResponse.FindByProductIdDTO requestDTO) {
+        Optional<Product> option = productRepository.findById(requestDTO.getProductId());
         Product product = option.orElseThrow(() ->
-                new Exception500("상품을 찾을 수 없습니다. 상품 ID: " + optionDTO.getProductId()));
+                new Exception500("상품을 찾을 수 없습니다. 상품 ID: " + requestDTO.getProductId()));
 
-        Option optionEntity = optionDTO.toEntity();
+        Option optionEntity = requestDTO.toEntity();
         optionEntity.toUpdate(product);
 
         return optionRepository.save(optionEntity);
@@ -43,7 +43,7 @@ public class OptionService {
         return dtos;
     }
     // ** 전체 옵션 검색, 없을 시 예외처리
-    public List<OptionResponse.FindAllDTO> findAll(Long id){
+    public List<OptionResponse.FindAllDTO> findAll(){
         List<Option> optionList = optionRepository.findAll();
         if (optionList.isEmpty()) {
             throw new Exception500("옵션이 없습니다.");
@@ -52,5 +52,28 @@ public class OptionService {
                 optionList.stream().map(OptionResponse.FindAllDTO::new)
                         .collect(Collectors.toList());
         return dtos;
+    }
+    // ** 옵션 변경
+    @Transactional
+    public void update(OptionResponse.FindAllDTO requestDTO){
+        try {
+            Optional<Option> optionalOption = optionRepository.findById(requestDTO.getId());
+
+            if (optionalOption.isPresent()) {
+                Option option = optionalOption.get();
+                option.updateFromDTO(requestDTO);
+
+                optionRepository.save(option);
+            } else {
+                throw new Exception500("옵션을 찾을 수 없습니다. 옵션 ID: " + requestDTO.getId());
+            }
+        } catch (Exception e) {
+            throw new Exception500("옵션 업데이트 중에 오류가 발생했습니다.");
+        }
+    }
+    // ** 옵션 삭제
+    @Transactional
+    public void delete(Long id){
+        optionRepository.deleteById(id);
     }
 }

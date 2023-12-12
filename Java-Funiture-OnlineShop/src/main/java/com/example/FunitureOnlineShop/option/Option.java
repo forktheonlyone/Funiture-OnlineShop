@@ -41,4 +41,11 @@ public class Option {
         this.product = product;
         return option;
     }
+
+    public void updateFromDTO(OptionResponse.FindAllDTO optionDTO){
+
+        this.optionName = optionDTO.getOptionName();
+        this.price = optionDTO.getPrice();
+        this.quantity = optionDTO.getQuantity();
+    }
 }
