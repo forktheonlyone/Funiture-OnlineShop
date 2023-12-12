@@ -1,13 +1,12 @@
-package com.example.funitureOnlineShop.core.security;
-
+package com.example.FunitureOnlineShop.core.security;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.example.demo.user.StringArrayConverter;
-import com.example.demo.user.User;
+import com.example.FunitureOnlineShop.user.StringArrayConverter;
+import com.example.FunitureOnlineShop.user.User;
 
 import java.util.Date;
 
