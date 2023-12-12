@@ -1,7 +1,7 @@
 package com.example.funitureOnlineShop.core.utils;
 
-import com.example.FunitureOnlineShop.core.error.exception.Exception401;
-import com.example.FunitureOnlineShop.core.error.exception.Exception403;
+import com.example.funitureOnlineShop.core.error.exception.Exception401;
+import com.example.funitureOnlineShop.core.error.exception.Exception403;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.servlet.http.HttpServletResponse;
