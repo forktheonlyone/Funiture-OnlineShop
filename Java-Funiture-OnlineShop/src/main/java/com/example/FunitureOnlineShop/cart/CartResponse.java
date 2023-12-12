@@ -1,5 +1,7 @@
-package com.example.cart;
+package com.example.FunitureOnlineShop.cart;
 
+import com.example.FunitureOnlineShop.option.Option;
+import com.example.FunitureOnlineShop.product.Product;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -34,7 +36,7 @@ public class CartResponse {
         private String productName;
         List<CartDTO> cartDTOS;
 
-        public ProductDTO(List<Cart> cartList,Product product) {
+        public ProductDTO(List<Cart> cartList, Product product) {
             this.id = product.getId();
             this.productName = product.getProductName();
             this.cartDTOS = cartList.stream()
