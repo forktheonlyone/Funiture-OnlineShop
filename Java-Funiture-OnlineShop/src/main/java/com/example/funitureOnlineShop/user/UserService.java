@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -97,5 +98,35 @@ public class UserService {
         cookie.setMaxAge(3600);
         cookie.setPath("/");
         res.addCookie(cookie);
+    }
+
+    // 쿠키 삭제
+    public void deleteCookie(HttpServletResponse res, String name){
+        Cookie cookie = new Cookie(name, null);
+        cookie.setMaxAge(3600);
+        cookie.setPath("/");
+        res.addCookie(cookie);
+    }
+
+    // 로그아웃
+    @Transactional
+    public String logout(Long id, HttpServletResponse res) {
+        try {
+            User user = userRepository.findById(id).orElseThrow();
+            killToken(user);
+            deleteCookie(res, "token");
+
+            // 메인 화면으로
+            return "/";
+        } catch (Exception e){
+            throw new Exception500(e.getMessage());
+        }
+    }
+
+    public void killToken(User user){
+        user.setRefreshToken(null);
+        userRepository.save(user);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        JwtTokenProvider.invalidateToken(authentication);
     }
 }

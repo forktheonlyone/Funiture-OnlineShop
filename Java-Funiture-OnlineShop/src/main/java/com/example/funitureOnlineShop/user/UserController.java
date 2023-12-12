@@ -1,9 +1,11 @@
 package com.example.FunitureOnlineShop.user;
 
+import com.example.FunitureOnlineShop.core.security.CustomUserDetails;
 import com.example.FunitureOnlineShop.core.security.JwtTokenProvider;
 import com.example.FunitureOnlineShop.core.utils.ApiUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,5 +35,11 @@ public class UserController {
         String jwt = userService.login(joinDto, res);
         return ResponseEntity.ok().header(JwtTokenProvider.HEADER, jwt)
                 .body(ApiUtils.success(null));
+    }
+
+    // 로그아웃
+    @PostMapping("/logout")
+    public String logout(@AuthenticationPrincipal CustomUserDetails customUserDetails, HttpServletResponse res, Error error){
+        return userService.logout(customUserDetails.getUser().getId(), res);
     }
 }
