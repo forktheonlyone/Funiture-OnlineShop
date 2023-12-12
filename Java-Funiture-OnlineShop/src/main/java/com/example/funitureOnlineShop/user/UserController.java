@@ -23,7 +23,7 @@ public class UserController {
 
     // 회원가입
     @PostMapping("/join")
-    public ResponseEntity<Object> join(@RequestBody @Valid UserRequestt.JoinDto joinDto, Error error){
+    public ResponseEntity<Object> join(@RequestBody @Valid UserRequest.JoinDto joinDto, Error error){
         userService.join(joinDto);
 
         return ResponseEntity.ok(ApiUtils.success(null));
@@ -31,7 +31,7 @@ public class UserController {
 
     // 로그인
     @PostMapping("/login")
-    public ResponseEntity<Object> login(@RequestBody @Valid UserRequestt.JoinDto joinDto, HttpServletResponse res, Error error){
+    public ResponseEntity<Object> login(@RequestBody @Valid UserRequest.JoinDto joinDto, HttpServletResponse res, Error error){
         String jwt = userService.login(joinDto, res);
         return ResponseEntity.ok().header(JwtTokenProvider.HEADER, jwt)
                 .body(ApiUtils.success(null));
