@@ -1,7 +1,7 @@
-package com.example.funitureOnlineShop.core.error.exception;
+package com.example.FunitureOnlineShop.core.error.exception;
 
 
-import com.example.funitureOnlineShop.core.utils.ApiUtils;
+import com.example.FunitureOnlineShop.core.utils.ApiUtils;
 import org.springframework.http.HttpStatus;
 
 public class Exception500 extends RuntimeException {

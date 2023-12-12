@@ -1,8 +1,8 @@
-package com.example.funitureOnlineShop.user;
+package com.example.FunitureOnlineShop.user;
 
-import com.example.funitureOnlineShop.core.security.CustomUserDetails;
-import com.example.funitureOnlineShop.core.security.JwtTokenProvider;
-import com.example.funitureOnlineShop.core.utils.ApiUtils;
+import com.example.FunitureOnlineShop.core.security.CustomUserDetails;
+import com.example.FunitureOnlineShop.core.security.JwtTokenProvider;
+import com.example.FunitureOnlineShop.core.utils.ApiUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
