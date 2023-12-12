@@ -1,5 +1,6 @@
 package com.example.FunitureOnlineShop.option;
 
+import com.example.FunitureOnlineShop.product.Product;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,14 +24,21 @@ public class Option {
     // ** 옵션 수량
     private Long quantity;
 
-    //@ManyToOne(fetch = FetchType.LAZY)
-    //private Product product;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Product product;
 
     @Builder
-    public Option(Long id, String optionName, Long price, Long quantity) {
+    public Option(Long id, String optionName, Long price, Long quantity, Product product) {
         this.id = id;
         this.optionName = optionName;
         this.price = price;
         this.quantity = quantity;
+        this.product = product;
+    }
+
+    public Option toUpdate(Product product) {
+        Option option = new Option();
+        this.product = product;
+        return option;
     }
 }
