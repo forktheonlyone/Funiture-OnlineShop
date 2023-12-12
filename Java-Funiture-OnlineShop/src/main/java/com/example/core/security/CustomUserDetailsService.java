@@ -1,8 +1,8 @@
 package com.example.core.security;
 
-import com.example.demo.core.error.exception.Exception401;
-import com.example.demo.user.User;
-import com.example.demo.user.UserRepository;
+import com.example.core.error.exception.Exception401;
+import com.example.FunitureOnlineShop.user.User;
+import com.example.FunitureOnlineShop.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
