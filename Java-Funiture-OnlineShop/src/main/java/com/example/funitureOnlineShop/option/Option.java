@@ -48,4 +48,7 @@ public class Option {
         this.price = optionDTO.getPrice();
         this.quantity = optionDTO.getQuantity();
     }
+    public void updateStockQuantity(Long newStockQuantity) {
+        this.quantity = newStockQuantity;
+    }
 }
