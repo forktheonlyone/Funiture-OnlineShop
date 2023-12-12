@@ -1,4 +1,4 @@
-package com.example.FunitureOnlineShop.cart;
+package com.example.funitureOnlineShop.cart;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

@@ -1,7 +1,7 @@
 package com.example.funitureOnlineShop.option;
 
-import com.example.FunitureOnlineShop.product.Product;
-import com.example.FunitureOnlineShop.product.ProductRepository;
+import com.example.funitureOnlineShop.product.Product;
+import com.example.funitureOnlineShop.product.ProductRepository;
 import com.example.core.error.exception.Exception500;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

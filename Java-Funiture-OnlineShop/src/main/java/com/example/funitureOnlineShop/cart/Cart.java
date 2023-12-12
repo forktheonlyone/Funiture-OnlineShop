@@ -1,6 +1,6 @@
-package com.example.FunitureOnlineShop.cart;
+package com.example.funitureOnlineShop.cart;
 
-import com.example.FunitureOnlineShop.option.Option;
+import com.example.funitureOnlineShop.option.Option;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
