@@ -34,16 +34,16 @@ public class Product {
     private Long point;
 
     @Column(nullable = false)
-    private String deliveryFee;
+    private Long deliveryFee;
 
-    //@ManyToOne(fetch = FetchType.LAZY)
-    //private Category category;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Category category;
 
-    /*
+
     @Builder
     public Product(
             Long id, String productName, String description, String image,
-            Long price, Long onSale, Long point, String deliveryFee, Category category) {
+            Long price, Long onSale, Long point, Long deliveryFee, Category category) {
         this.id = id;
         this.productName = productName;
         this.description = description;
@@ -55,5 +55,5 @@ public class Product {
         this.category = category;
     }
 
-     */
+
 }
