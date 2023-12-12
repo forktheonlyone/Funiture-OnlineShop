@@ -51,5 +51,13 @@ public class OptionController {
         return ResponseEntity.ok(apiResult);
     }
 
+    // ** 옵션 수량 업데이트
+    @PostMapping("/updateStock/{id}")
+    public ResponseEntity<?> updateStock(@PathVariable Long id, @RequestParam Long newStockQuantity) {
+        optionService.updateStock(id, newStockQuantity);
+        ApiUtils.ApiResult<?> apiResult = ApiUtils.success("옵션 수량이 업데이트되었습니다.");
+        return ResponseEntity.ok(apiResult);
+    }
+
 
 }
