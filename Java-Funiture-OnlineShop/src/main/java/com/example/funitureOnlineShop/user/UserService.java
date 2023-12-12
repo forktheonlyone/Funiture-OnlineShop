@@ -1,12 +1,20 @@
 package com.example.FunitureOnlineShop.user;
 
 import com.example.FunitureOnlineShop.core.error.exception.Exception400;
+import com.example.FunitureOnlineShop.core.error.exception.Exception401;
 import com.example.FunitureOnlineShop.core.error.exception.Exception500;
+import com.example.FunitureOnlineShop.core.security.CustomUserDetails;
+import com.example.FunitureOnlineShop.core.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 
 @Transactional(readOnly = true)
@@ -22,6 +30,7 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
@@ -50,5 +59,43 @@ public class UserService {
         if (users.isPresent()){
             throw new Exception400("이미 존재하는 이메일입니다. : " + email);
         }
+    }
+
+    // id, 비밀번호 인증 후 access_token 생성
+    @Transactional
+    public String login(UserRequest.JoinDto joinDto, HttpServletResponse res) {
+        // 인증 작업
+        try{
+            UsernamePasswordAuthenticationToken token
+                    = new UsernamePasswordAuthenticationToken(
+                    joinDto.getEmail(), joinDto.getPassword());
+
+            // anonymousUser = 비인증
+            Authentication authentication
+                    = authenticationManager.authenticate(token);
+            // 인증 완료 값을 받아온다.
+            // 인증키
+            CustomUserDetails customUserDetails = (CustomUserDetails)authentication.getPrincipal();
+
+            // 토큰 생성 및 저장
+            User user = customUserDetails.getUser();
+            String prefixJwt = JwtTokenProvider.create(user);
+            String accessToken = prefixJwt.replace(JwtTokenProvider.TOKEN_PREFIX,"");
+            String refreshToken = JwtTokenProvider.createRefresh(user);
+            user.setRefreshToken(refreshToken);
+            setCookie(res, "token", accessToken);
+
+            return prefixJwt;
+        }catch (Exception e){
+            throw new Exception401("인증되지 않음.");
+        }
+    }
+
+    // 쿠키 설정
+    public void setCookie(HttpServletResponse res, String name, String value){
+        Cookie cookie = new Cookie(name, value);
+        cookie.setMaxAge(3600);
+        cookie.setPath("/");
+        res.addCookie(cookie);
     }
 }
