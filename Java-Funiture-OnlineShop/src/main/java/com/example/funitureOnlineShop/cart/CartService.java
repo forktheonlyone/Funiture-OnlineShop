@@ -1,8 +1,7 @@
-package com.example.FunitureOnlineShop.cart;
+package com.example.funitureOnlineShop.cart;
         ;
-import com.example.FunitureOnlineShop.cart.CartRequest;
-        import com.example.FunitureOnlineShop.option.Option;
-        import com.example.FunitureOnlineShop.option.OptionRepository;
+        import com.example.funitureOnlineShop.option.Option;
+        import com.example.funitureOnlineShop.option.OptionRepository;
         import com.example.core.error.exception.Exception400;
         import com.example.core.error.exception.Exception404;
         import com.example.core.error.exception.Exception500;
