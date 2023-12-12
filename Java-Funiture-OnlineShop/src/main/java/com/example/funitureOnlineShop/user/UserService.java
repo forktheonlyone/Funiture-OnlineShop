@@ -2,9 +2,7 @@ package com.example.funitureOnlineShop.user;
 
 import com.example.funitureOnlineShop.core.error.exception.Exception400;
 import com.example.funitureOnlineShop.core.error.exception.Exception500;
-import com.example.funitureOnlineShop.core.error.exception.Exception400;
 import com.example.funitureOnlineShop.core.error.exception.Exception401;
-import com.example.funitureOnlineShop.core.error.exception.Exception500;
 import com.example.funitureOnlineShop.core.security.CustomUserDetails;
 import com.example.funitureOnlineShop.core.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +35,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public void join(UserRequest.JoinDto joinDto) {
+    public void join(UserRequestt.JoinDto joinDto) {
         // 이미 있는 이메일인지 확인
         checkEmail(joinDto.getEmail());
 
@@ -66,7 +64,7 @@ public class UserService {
 
     // id, 비밀번호 인증 후 access_token 생성
     @Transactional
-    public String login(UserRequest.JoinDto joinDto, HttpServletResponse res) {
+    public String login(UserRequestt.JoinDto joinDto, HttpServletResponse res) {
         // 인증 작업
         try{
             UsernamePasswordAuthenticationToken token
