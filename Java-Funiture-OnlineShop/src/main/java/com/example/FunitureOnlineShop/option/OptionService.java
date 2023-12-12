@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -30,10 +31,26 @@ public class OptionService {
         return optionRepository.save(optionEntity);
     }
 
-
+    // ** 개별 옵션 검색, 없을 시 예외처리
     public List<OptionResponse.FindByProductIdDTO> findByProductId(Long id) {
         List<Option> optionList = optionRepository.findByProductId(id);
+        if (optionList.isEmpty()) {
+            throw new Exception500("상품에 해당하는 옵션이 없습니다. 상품 ID: " + id);
+        }
         List<OptionResponse.FindByProductIdDTO> dtos =
-
+                optionList.stream().map(OptionResponse.FindByProductIdDTO::new)
+                        .collect(Collectors.toList());
+        return dtos;
+    }
+    // ** 전체 옵션 검색, 없을 시 예외처리
+    public List<OptionResponse.FindAllDTO> findAll(Long id){
+        List<Option> optionList = optionRepository.findAll();
+        if (optionList.isEmpty()) {
+            throw new Exception500("옵션이 없습니다.");
+        }
+        List<OptionResponse.FindAllDTO> dtos =
+                optionList.stream().map(OptionResponse.FindAllDTO::new)
+                        .collect(Collectors.toList());
+        return dtos;
     }
 }
