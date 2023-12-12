@@ -15,6 +15,9 @@ public class JwtTokenProvider {
     // ** JWT 토큰의 만료 시간을 1시간으로 설정.
     private static final Long EXP = 1000L * 60 * 60;
 
+    // ** JWT 갱신 토큰의 만료 시간을 60일로 설정.
+    private static final Long REFRESH_EXP = 1000L * 60 * 60 * 24 * 60;
+
     // ** 인증 헤더에 사용될 토큰의 접두어 ("Bearer ")
     public static final String TOKEN_PREFIX = "Bearer ";
     
@@ -45,6 +48,13 @@ public class JwtTokenProvider {
         return TOKEN_PREFIX + jwt;
     }
 
+    public static String createRefresh(User user){
+        String jwt = JWT.create()
+                .withSubject(user.getEmail())// ** 토큰의 대상정보 셋팅
+                .withExpiresAt(new Date(System.currentTimeMillis() + REFRESH_EXP))
+                .sign(Algorithm.HMAC512(SECRET));// ** JWT 생성 알고리즘 설정
+        return jwt;
+    }
 
     // **  JWT 토큰 문자열을 검증하고, 유효하다면 디코딩된 DecodedJWT 객체를 반환.
     public static DecodedJWT verify(String jwt) throws SignatureVerificationException, TokenExpiredException {
