@@ -1,7 +1,7 @@
-package com.example.FunitureOnlineShop.core.error;
+package com.example.funitureOnlineShop.core.error;
 
-import com.example.FunitureOnlineShop.core.error.exception.*;
-import com.example.FunitureOnlineShop.core.utils.ApiUtils;
+import com.example.funitureOnlineShop.core.error.exception.*;
+import com.example.funitureOnlineShop.core.utils.ApiUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;

@@ -1,4 +1,4 @@
-package com.example.FunitureOnlineShop.core.utils;
+package com.example.funitureOnlineShop.core.utils;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

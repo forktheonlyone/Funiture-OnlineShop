@@ -1,4 +1,4 @@
-package com.example.FunitureOnlineShop.core.utils;
+package com.example.funitureOnlineShop.core.utils;
 
 import com.example.FunitureOnlineShop.core.error.exception.Exception401;
 import com.example.FunitureOnlineShop.core.error.exception.Exception403;
