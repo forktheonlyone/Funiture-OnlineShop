@@ -1,4 +1,4 @@
-package com.example.FunitureOnlineShop.cart;
+package com.example.funitureOnlineShop.cart;
 
 
 import com.example.core.security.CustomUserDetails;
