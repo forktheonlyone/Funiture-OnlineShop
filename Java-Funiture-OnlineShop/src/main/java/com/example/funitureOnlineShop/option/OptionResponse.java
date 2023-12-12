@@ -1,5 +1,6 @@
 package com.example.funitureOnlineShop.option;
 
+import com.example.FunitureOnlineShop.product.Product;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,7 +10,7 @@ public class OptionResponse {
 
     private Long productId;
 
-    // private Product product;
+    private Product product;
 
     private String optionName;
 
@@ -33,7 +34,7 @@ public class OptionResponse {
 
         public FindByProductIdDTO(Option option) {
             this.id = option.getId();
-            // this.productId = option.getProduct().getId();
+            this.productId = option.getProduct().getId();
             this.optionName = option.getOptionName();
             this.Price = option.getPrice();
             this.quantity = option.getQuantity();
@@ -63,7 +64,7 @@ public class OptionResponse {
 
         public FindAllDTO(Option option){
             this.id = option.getId();
-            //this.productId = option.getProduct().getId();
+            this.productId = option.getProduct().getId();
             this.optionName = option.getOptionName();
             this.Price = option.getPrice();
             this.quantity = option.getQuantity();
