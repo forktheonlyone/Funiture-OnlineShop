@@ -37,4 +37,11 @@ public class ProductController {
         ApiUtils.ApiResult<?> apiResult = ApiUtils.success(updatedProduct);
         return ResponseEntity.ok(apiResult);
     }
+
+    @PostMapping("/product/{id}/delete")
+    public ResponseEntity<?> delete(@PathVariable Long id){
+        productService.delete(id);
+        ApiUtils.ApiResult<?> apiResult = ApiUtils.success(id);
+        return ResponseEntity.ok(apiResult);
+    }
 }
