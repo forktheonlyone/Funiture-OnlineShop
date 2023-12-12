@@ -1,8 +1,13 @@
-package com.example.funitureOnlineShop.user;
+package com.example.FunitureOnlineShop.user;
 
+import com.example.FunitureOnlineShop.core.error.exception.Exception400;
+import com.example.FunitureOnlineShop.core.error.exception.Exception500;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Transactional(readOnly = true)
 // 메서드나 클래스에 적용가능.
@@ -17,5 +22,33 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
+    @Transactional
+    public void join(UserRequest.JoinDto joinDto) {
+        // 이미 있는 이메일인지 확인
+        checkEmail(joinDto.getEmail());
+
+        // 입력한 비밀번호를 인코딩하여 넣음
+        String encodedPassword = passwordEncoder.encode(joinDto.getPassword());
+        joinDto.setPassword(encodedPassword);
+
+        try {
+            // 회원 가입
+            userRepository.save(joinDto.toEntity());
+
+            // 자기 전화번호로 회원가입 메세지가 오도록 함 (돈 내야 해서 지금은 안 씀)
+            // SignUpMessageSender.sendMessage("01074517172", joinDto.getPhoneNumber(),"환영합니다. 회원가입이 완료되었습니다.");
+        } catch (Exception e) {
+            throw new Exception500(e.getMessage());
+        }
+    }
+
+    // 이미 존재하는 이메일인지 확인
+    public void checkEmail(String email){
+        Optional<User> users = userRepository.findByEmail(email);
+        if (users.isPresent()){
+            throw new Exception400("이미 존재하는 이메일입니다. : " + email);
+        }
+    }
 }

@@ -1,4 +1,4 @@
-package com.example.funitureOnlineShop.user;
+package com.example.FunitureOnlineShop.user;
 
 import lombok.AccessLevel;
 import lombok.Builder;

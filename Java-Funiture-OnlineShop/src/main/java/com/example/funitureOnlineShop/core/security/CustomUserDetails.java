@@ -1,6 +1,6 @@
-package com.example.funitureOnlineShop.core.security;
+package com.example.FunitureOnlineShop.core.security;
 
-import com.example.demo.user.User;
+import com.example.FunitureOnlineShop.user.User;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
