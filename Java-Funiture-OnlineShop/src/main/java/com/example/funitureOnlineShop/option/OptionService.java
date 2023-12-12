@@ -76,4 +76,14 @@ public class OptionService {
     public void delete(Long id){
         optionRepository.deleteById(id);
     }
+
+    // ** 옵션 수량 업데이트
+    @Transactional
+    public void updateStock(Long optionId, Long newStockQuantity) {
+        Option option = optionRepository.findById(optionId)
+                .orElseThrow(() -> new Exception500("옵션이 존재하지 않습니다. 옵션 ID: " + optionId));
+        option.updateStockQuantity(newStockQuantity);
+
+        optionRepository.save(option);
+    }
 }
