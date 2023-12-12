@@ -1,10 +1,10 @@
-package com.example.FunitureOnlineShop.user;
+package com.example.funitureOnlineShop.user;
 
-import com.example.FunitureOnlineShop.core.error.exception.Exception400;
-import com.example.FunitureOnlineShop.core.error.exception.Exception401;
-import com.example.FunitureOnlineShop.core.error.exception.Exception500;
-import com.example.FunitureOnlineShop.core.security.CustomUserDetails;
-import com.example.FunitureOnlineShop.core.security.JwtTokenProvider;
+import com.example.funitureOnlineShop.core.error.exception.Exception400;
+import com.example.funitureOnlineShop.core.error.exception.Exception401;
+import com.example.funitureOnlineShop.core.error.exception.Exception500;
+import com.example.funitureOnlineShop.core.security.CustomUserDetails;
+import com.example.funitureOnlineShop.core.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
