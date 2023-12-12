@@ -1,4 +1,4 @@
-package com.example.FunitureOnlineShop.user;
+package com.example.funitureOnlineShop.user;
 
 import lombok.Getter;
 import lombok.Setter;

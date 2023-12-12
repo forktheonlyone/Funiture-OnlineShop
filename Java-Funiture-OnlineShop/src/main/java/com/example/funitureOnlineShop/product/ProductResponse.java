@@ -1,5 +1,6 @@
 package com.example.funitureOnlineShop.product;
 
+import com.example.funitureOnlineShop.option.Option;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -8,6 +9,22 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ProductResponse {
+
+    @Setter
+    @Getter
+    public static class OptionDTO {
+        private Long id;
+        private String optionName;
+        private Long price;
+        private Long quantity;
+
+        public OptionDTO(Option option) {
+            this.id = option.getId();
+            this.optionName = option.getOptionName();
+            this.price = option.getPrice();
+            this.quantity = option.getQuantity();
+        }
+    }
 
     @NoArgsConstructor
     @Setter
@@ -59,6 +76,7 @@ public class ProductResponse {
                     .build();
         }
     }
+
     @NoArgsConstructor
     @Setter
     @Getter
@@ -82,6 +100,8 @@ public class ProductResponse {
 
         private Long categoryId;
 
+        List<OptionDTO> optionList;
+
 
         public FindByIdDTO(Product product, List<Option> optionList) {
             this.id = product.getId();
@@ -96,41 +116,5 @@ public class ProductResponse {
             this.optionList = optionList.stream().map(OptionDTO::new)
                     .collect(Collectors.toList());
         }
-/*
-    public static class FindByIdDTO {
-        private Long id;
-
-        private String productName;
-
-        private String description;
-
-        private String image;
-
-        private Long price;
-
-        private Long onSale;
-
-        private Long point;
-
-        private Long deliveryFee;
-
-        private Long categoryId;
-
-        private List<Category> categoryList;
-
-        public FindByIdDTO(Product product, List<Category> categoryList) {
-            this.id = product.getId();
-            this.productName = product.getProductName();
-            this.description = product.getDescription();
-            this.image = product.getImage();
-            this.price = product.getPrice();
-            this.onSale = product.getOnSale();
-            this.point = product.getPoint();
-            this.deliveryFee = product.getDeliveryFee();
-            this.categoryId = product.;
-            this.categoryList = categoryList;
-        }
     }
-
- */
 }
