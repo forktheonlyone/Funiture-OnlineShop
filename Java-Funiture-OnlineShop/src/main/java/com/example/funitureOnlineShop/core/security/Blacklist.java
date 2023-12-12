@@ -1,4 +1,4 @@
-package com.example.FunitureOnlineShop.core.security;
+package com.example.funitureOnlineShop.core.security;
 
 import java.util.HashSet;
 import java.util.Set;
