@@ -1,8 +1,8 @@
 package com.example.funitureOnlineShop.option;
 
-import com.example.FunitureOnlineShop.product.Product;
-import com.example.FunitureOnlineShop.product.ProductRepository;
-import com.example.core.error.exception.Exception500;
+import com.example.funitureOnlineShop.core.error.exception.Exception500;
+import com.example.funitureOnlineShop.product.Product;
+import com.example.funitureOnlineShop.product.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -76,4 +76,18 @@ public class OptionService {
     public void delete(Long id){
         optionRepository.deleteById(id);
     }
+
+    // ** 옵션 수량 업데이트
+    @Transactional
+    public void updateStock(Long optionId, Long newStockQuantity) {
+        Option option = optionRepository.findById(optionId)
+                .orElseThrow(() -> new Exception500("옵션이 존재하지 않습니다. 옵션 ID: " + optionId));
+
+        option.updateStockQuantity(newStockQuantity);
+
+        optionRepository.save(option);
+    }
+
+
+
 }

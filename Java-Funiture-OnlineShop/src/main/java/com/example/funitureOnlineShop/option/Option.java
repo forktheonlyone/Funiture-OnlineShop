@@ -1,6 +1,6 @@
 package com.example.funitureOnlineShop.option;
 
-import com.example.FunitureOnlineShop.product.Product;
+import com.example.funitureOnlineShop.product.Product;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -47,5 +47,9 @@ public class Option {
         this.optionName = optionDTO.getOptionName();
         this.price = optionDTO.getPrice();
         this.quantity = optionDTO.getQuantity();
+    }
+
+    public void updateStockQuantity(Long newStockQuantity) {
+        this.quantity = newStockQuantity;
     }
 }

@@ -1,7 +1,6 @@
 package com.example.funitureOnlineShop.option;
 
-import com.example.core.error.exception.Exception404;
-import com.example.core.utils.ApiUtils;
+import com.example.funitureOnlineShop.core.utils.ApiUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -49,6 +48,14 @@ public class OptionController {
     public ResponseEntity<?> delete(@PathVariable Long id) {
         optionService.delete(id);
         ApiUtils.ApiResult<?> apiResult = ApiUtils.success(id);
+        return ResponseEntity.ok(apiResult);
+    }
+
+    // ** 옵션 수량 업데이트
+    @PostMapping("/updateStock/{id}")
+    public ResponseEntity<?> updateStock(@PathVariable Long id, @RequestParam Long newStockQuantity) {
+        optionService.updateStock(id, newStockQuantity);
+        ApiUtils.ApiResult<?> apiResult = ApiUtils.success("옵션 수량이 업데이트되었습니다.");
         return ResponseEntity.ok(apiResult);
     }
 
