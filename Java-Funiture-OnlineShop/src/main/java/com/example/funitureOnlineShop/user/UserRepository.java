@@ -1,4 +1,4 @@
-package com.example.FunitureOnlineShop.user;
+package com.example.funitureOnlineShop.user;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

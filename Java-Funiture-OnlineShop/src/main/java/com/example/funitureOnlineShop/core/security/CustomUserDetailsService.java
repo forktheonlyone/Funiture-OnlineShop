@@ -1,8 +1,8 @@
-package com.example.FunitureOnlineShop.core.security;
+package com.example.funitureOnlineShop.core.security;
 
-import com.example.FunitureOnlineShop.core.error.exception.Exception401;
-import com.example.FunitureOnlineShop.user.User;
-import com.example.FunitureOnlineShop.user.UserRepository;
+import com.example.funitureOnlineShop.core.error.exception.Exception401;
+import com.example.funitureOnlineShop.user.User;
+import com.example.funitureOnlineShop.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

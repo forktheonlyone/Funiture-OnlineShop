@@ -1,6 +1,6 @@
-package com.example.FunitureOnlineShop.core.error;
+package com.example.funitureOnlineShop.core.error;
 
-import com.example.FunitureOnlineShop.core.error.exception.Exception400;
+import com.example.funitureOnlineShop.core.error.exception.Exception400;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;

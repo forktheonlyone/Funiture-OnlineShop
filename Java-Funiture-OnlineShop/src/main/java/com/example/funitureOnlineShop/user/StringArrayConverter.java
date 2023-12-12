@@ -1,4 +1,4 @@
-package com.example.FunitureOnlineShop.user;
+package com.example.funitureOnlineShop.user;
 
 import javax.persistence.AttributeConverter;
 import java.util.Arrays;

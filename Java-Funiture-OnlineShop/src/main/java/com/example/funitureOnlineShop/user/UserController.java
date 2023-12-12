@@ -1,9 +1,10 @@
-package com.example.FunitureOnlineShop.user;
+package com.example.funitureOnlineShop.user;
 
-import com.example.FunitureOnlineShop.core.security.CustomUserDetails;
-import com.example.FunitureOnlineShop.core.security.JwtTokenProvider;
-import com.example.FunitureOnlineShop.core.utils.ApiUtils;
+import com.example.funitureOnlineShop.core.security.CustomUserDetails;
+import com.example.funitureOnlineShop.core.security.JwtTokenProvider;
+import com.example.funitureOnlineShop.core.utils.ApiUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -41,5 +42,17 @@ public class UserController {
     @PostMapping("/logout")
     public String logout(@AuthenticationPrincipal CustomUserDetails customUserDetails, HttpServletResponse res, Error error){
         return userService.logout(customUserDetails.getUser().getId(), res);
+    }
+
+    // 토큰 갱신
+    @PostMapping("/refresh")
+    public ResponseEntity<Object> tokenRefresh(@AuthenticationPrincipal CustomUserDetails customUserDetails, HttpServletResponse res) {
+        if (customUserDetails.getUser() == null)
+            return ResponseEntity.ok(ApiUtils.error("현재 로그인된 user가 없습니다.", HttpStatus.UNAUTHORIZED));
+        
+        String jwt = userService.refresh(customUserDetails.getUser().getId(), res);
+
+        return ResponseEntity.ok().header(JwtTokenProvider.HEADER, jwt)
+                .body(ApiUtils.success(null));
     }
 }

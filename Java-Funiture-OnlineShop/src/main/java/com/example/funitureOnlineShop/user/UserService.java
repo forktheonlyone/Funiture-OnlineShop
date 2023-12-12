@@ -1,10 +1,11 @@
-package com.example.FunitureOnlineShop.user;
+package com.example.funitureOnlineShop.user;
 
-import com.example.FunitureOnlineShop.core.error.exception.Exception400;
-import com.example.FunitureOnlineShop.core.error.exception.Exception401;
-import com.example.FunitureOnlineShop.core.error.exception.Exception500;
-import com.example.FunitureOnlineShop.core.security.CustomUserDetails;
-import com.example.FunitureOnlineShop.core.security.JwtTokenProvider;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import com.example.funitureOnlineShop.core.error.exception.Exception400;
+import com.example.funitureOnlineShop.core.error.exception.Exception401;
+import com.example.funitureOnlineShop.core.error.exception.Exception500;
+import com.example.funitureOnlineShop.core.security.CustomUserDetails;
+import com.example.funitureOnlineShop.core.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -128,5 +129,34 @@ public class UserService {
         userRepository.save(user);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         JwtTokenProvider.invalidateToken(authentication);
+    }
+
+    // 회원의 access_token 과 refresh_token 갱신
+    @Transactional
+    public String refresh(Long id, HttpServletResponse res) {
+        try {
+            User user = userRepository.findById(id).orElseThrow();
+            String refreshToken = user.getRefreshToken();
+            DecodedJWT decodedJWT = JwtTokenProvider.verify(refreshToken);
+
+            // access_token 재발급
+            String username = decodedJWT.getSubject();
+            User refreshUser = userRepository.findByEmail(username).orElseThrow();
+            if (!refreshUser.getRefreshToken().equals(refreshToken))
+                throw new Exception401("유효하지 않은 갱신 토큰을 가지고 있습니다.");
+            String newAccessToken = JwtTokenProvider.create(refreshUser);
+
+            // 현재시간과 refreshToken 만료날짜를 통해 남은 만료기간 계산
+            // refreshToken 만료기간을 계산해 5일 미만일 시 refresh_token도 발급
+            long endTime = decodedJWT.getClaim("exp").asLong() * 1000;
+            long diffDay = (endTime - System.currentTimeMillis()) / 1000 / 60 / 60 / 24;
+            if (diffDay < 5) {
+                refreshUser.setRefreshToken(JwtTokenProvider.createRefresh(user));
+            }
+            setCookie(res, "token", newAccessToken);
+            return newAccessToken;
+        } catch (Exception e){
+            throw new Exception401("유효하지 않은 토큰을 가지고 있습니다.");
+        }
     }
 }
