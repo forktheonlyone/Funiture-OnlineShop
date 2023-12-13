@@ -1,8 +1,11 @@
 package com.example.funitureOnlineShop.coupon;
 
+import com.example.funitureOnlineShop.core.utils.ApiUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,5 +23,12 @@ public class CouponController {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @PostMapping("/own/{id}")
+    public ResponseEntity<?> own(@PathVariable Long id, @RequestBody @Valid String couponName) {
+        couponService.own(id, couponName);
+
+        return ResponseEntity.ok(ApiUtils.success(null));
     }
 }
