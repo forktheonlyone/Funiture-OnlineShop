@@ -75,4 +75,8 @@ public class CouponService {
             unownedCoupon.updateFromUser(user);
         }
     }
+
+    public void delete(Long id) {
+        couponRepository.deleteById(id);
+    }
 }

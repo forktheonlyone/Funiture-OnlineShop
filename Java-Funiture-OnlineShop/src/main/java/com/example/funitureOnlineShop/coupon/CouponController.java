@@ -32,4 +32,11 @@ public class CouponController {
 
         return ResponseEntity.ok(ApiUtils.success(null));
     }
+
+    @PostMapping("/delete/{id}")
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+        couponService.delete(id);
+
+        return ResponseEntity.ok(ApiUtils.success(null));
+    }
 }
