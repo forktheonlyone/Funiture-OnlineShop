@@ -32,4 +32,13 @@ public class CategoryService {
         Category category = categoryResponse.toEntity(largeCategory, detailCategory);
         categoryRepository.save(category);
     }
+
+    public List<Category> findAll() {
+        return categoryRepository.findAll();
+    }
+
+    public Category findById(Long id) {
+        return categoryRepository.findById(id)
+                .orElseThrow( () -> new Exception404("해당 카테고리를 찾지 못했습니다. : " + id));
+    }
 }
