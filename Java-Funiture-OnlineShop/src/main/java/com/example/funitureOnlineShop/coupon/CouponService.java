@@ -79,4 +79,8 @@ public class CouponService {
     public void delete(Long id) {
         couponRepository.deleteById(id);
     }
+
+    public void deleteAll(String couponName) {
+        couponRepository.deleteAllByCouponName(couponName);
+    }
 }
