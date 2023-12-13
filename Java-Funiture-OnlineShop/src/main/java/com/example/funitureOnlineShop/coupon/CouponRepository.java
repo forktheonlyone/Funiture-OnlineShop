@@ -8,4 +8,5 @@ public interface CouponRepository extends JpaRepository<Coupon, Long> {
 
     List<Coupon> findAllByCouponName(String couponName);
 
+    void deleteAllByCouponName(String couponName);
 }

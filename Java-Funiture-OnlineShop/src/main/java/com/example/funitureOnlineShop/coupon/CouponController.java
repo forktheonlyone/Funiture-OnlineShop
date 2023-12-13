@@ -39,4 +39,11 @@ public class CouponController {
 
         return ResponseEntity.ok(ApiUtils.success(null));
     }
+
+    @PostMapping("/delete_all")
+    public ResponseEntity<?> deleteAll(@RequestBody @Valid String couponName) {
+        couponService.deleteAll(couponName);
+
+        return ResponseEntity.ok(ApiUtils.success(null));
+    }
 }
