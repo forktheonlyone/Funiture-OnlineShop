@@ -11,8 +11,8 @@ import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Transactional(readOnly = true)
@@ -24,11 +24,12 @@ public class CouponService {
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
 
+    @Transactional
     public Coupon save(CouponRequest.SaveDto couponDto) {
         Optional<Product> optionalProduct = productRepository.findById(couponDto.getProductId());
         if (optionalProduct.isPresent()){
             Product product = optionalProduct.get();
-            //Hibernate.initialize(product);
+            Hibernate.initialize(product);
 
             Coupon coupon = Coupon.builder()
                     .couponName(couponDto.getCouponName())
@@ -36,13 +37,16 @@ public class CouponService {
                     .expirationDate(couponDto.getExpirationDate())
                     .product(product)
                     .build();
-            couponRepository.save(coupon);
+            for (long i = 0L; i < couponDto.getQuantity(); i++) {
+                couponRepository.save(coupon);
+            }
             return coupon;
         } else {
             return null;
         }
     }
 
+    @Transactional
     public void own(Long id, String couponName) {
         Optional<User> optionalUser = userRepository.findById(id);
         if (optionalUser.isPresent()){
@@ -51,9 +55,13 @@ public class CouponService {
 
             List<Coupon> coupons = couponRepository.findAllByCouponName(couponName);
             Coupon unownedCoupon = null;
+
+            Date currentDate = new Date();
+            if (coupons.get(0).getExpirationDate().after(currentDate))
+                throw new Exception422("만료일이 지난 쿠폰입니다.");
+
             for (Coupon coupon : coupons){
-                User owner = coupon.getUser();
-                if (owner != null && user.getId().equals(owner.getId()))
+                if (coupon.getUser() != null && user.getId().equals(coupon.getUser().getId()))
                     throw new Exception422("이미 소유하고 있는 쿠폰입니다.");
 
                 if (coupon.getUser() == null)
