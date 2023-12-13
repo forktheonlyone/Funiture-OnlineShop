@@ -39,6 +39,6 @@ public class Item {
         this.option = option;
         this.order = order;
         this.quantity = quantity;
-        this.price = price;
+        this.price = option.getPrice()* option.getQuantity();
     }
 }

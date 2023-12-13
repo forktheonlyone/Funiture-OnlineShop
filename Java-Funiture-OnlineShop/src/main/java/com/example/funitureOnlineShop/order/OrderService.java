@@ -4,6 +4,9 @@ import com.example.funitureOnlineShop.cart.Cart;
 import com.example.funitureOnlineShop.cart.CartRepository;
 import com.example.funitureOnlineShop.core.error.exception.Exception404;
 import com.example.funitureOnlineShop.core.error.exception.Exception500;
+import com.example.funitureOnlineShop.order.orderstatus.OrderStatus;
+import com.example.funitureOnlineShop.order.orderstatus.OrderStatusRepository;
+import com.example.funitureOnlineShop.order.orderstatus.OrderStatusResponse;
 import com.example.funitureOnlineShop.user.User;
 import com.example.funitureOnlineShop.order.item.Item;
 import com.example.funitureOnlineShop.order.item.ItemRepository;
@@ -21,23 +24,27 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final CartRepository cartRepository;
     private final ItemRepository itemRepository;
-
+    private final OrderStatusRepository orderStatusRepository;
     // 결제 시도시 작동
     @Transactional
     public OrderResponse.FindByIdDTO save(User user) {
         //장바구니 조회
         List<Cart> cartList = cartRepository.findAllByMemberId(user.getId());
 
-        if(cartList.size() == 0){
-           throw new Exception404("장바구니에 상품 내역이 존재하지 않습니다.");
+        if(cartList.isEmpty()){
+            throw new Exception404("장바구니에 상품 내역이 존재하지 않습니다.");
         }
 
         // 주문 생성
-        Order order = orderRepository.save
-                (Order.builder().user(user).build());
+        Order order = Order.builder().user(user).build();
+        order = orderRepository.save(order);
+
+        // OrderStatus 생성 및 주문 연결
+
+
         // 아이템 저장
         List<Item> itemList = new ArrayList<>();
-        for(Cart cart:cartList){
+        for(Cart cart : cartList){
             Item item = Item.builder()
                     .option(cart.getOption())
                     .order(order)
@@ -45,14 +52,21 @@ public class OrderService {
                     .price(cart.getOption().getPrice() * cart.getQuantity())
                     .build();
 
-            itemList.add(item);}
+            itemList.add(item);
+        }
+        OrderStatus orderStatus = new OrderStatusResponse.savedto(order, false); // 주문 상태 초기값: false
+        orderStatusRepository.save(orderStatus);
 
         try{
             itemRepository.saveAll(itemList);
-        }catch (Exception e){
+
+            // 주문 완료 시 OrderStatus 값을 변경하여 주문 상태를 완료로 설정
+            orderStatus.setOrdered(true);
+            orderStatusRepository.save(orderStatus);
+        } catch (Exception e){
             throw new Exception500("주문 생성중 오류가 발생하였습니다.");
         }
-        return new OrderResponse.FindByIdDTO(order,itemList);
+        return new OrderResponse.FindByIdDTO(order, itemList);
     }
 
 
@@ -65,11 +79,17 @@ public class OrderService {
     }
 
     @Transactional
-    public void delete() {
-        try{
-            itemRepository.deleteAll();
-        }catch (Exception e){
-            throw new Exception500("아이템 삭제 오류"+ e.getMessage());
+    public void delete(Long orderId) {
+        Order order = orderRepository.findByOrderId(orderId)
+                .orElseThrow(() -> new Exception404("주문을 찾을 수 없습니다."));
+
+        List<Item> itemsToDelete = itemRepository.findAllByOrderId(orderId);
+
+        try {
+            itemRepository.deleteAll(itemsToDelete);
+            orderRepository.delete(order);
+        } catch (Exception e) {
+            throw new Exception500("주문 및 주문 항목 삭제 중 오류가 발생했습니다: " + e.getMessage());
         }
     }
 }
