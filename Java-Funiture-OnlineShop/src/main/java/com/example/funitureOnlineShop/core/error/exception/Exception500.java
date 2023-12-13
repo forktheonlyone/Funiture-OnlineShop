@@ -17,10 +17,3 @@ public class Exception500 extends RuntimeException {
         return HttpStatus.INTERNAL_SERVER_ERROR;
     }
 }
-
-
-
-
-
-
-
