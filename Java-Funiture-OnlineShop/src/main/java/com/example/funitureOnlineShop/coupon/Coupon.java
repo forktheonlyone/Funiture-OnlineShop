@@ -34,7 +34,7 @@ public class Coupon {
     @ManyToOne(fetch = FetchType.LAZY)
     private Product product;
 
-
+    @Builder
     public Coupon(Long id, String couponName, int onSale, Date expirationDate, User user, Product product) {
         this.id = id;
         this.couponName = couponName;

@@ -14,6 +14,7 @@ public class CouponRequest {
         private String couponName;
         private int onSale;
         private Date expirationDate;
+        private Long quantity;
 
         public Coupon toEntity(){
             return Coupon.builder()
