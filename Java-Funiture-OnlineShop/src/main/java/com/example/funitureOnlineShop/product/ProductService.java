@@ -1,5 +1,7 @@
 package com.example.funitureOnlineShop.product;
 
+import com.example.funitureOnlineShop.category.Category;
+import com.example.funitureOnlineShop.category.CategoryRepository;
 import com.example.funitureOnlineShop.core.error.exception.Exception400;
 import com.example.funitureOnlineShop.core.error.exception.Exception404;
 import com.example.funitureOnlineShop.fileProduct.FileProduct;
