@@ -46,4 +46,9 @@ public class CouponController {
 
         return ResponseEntity.ok(ApiUtils.success(null));
     }
+
+    @GetMapping("/users/{id}")
+    public ResponseEntity<?> findByUser(@PathVariable Long id) {
+        
+    }
 }
