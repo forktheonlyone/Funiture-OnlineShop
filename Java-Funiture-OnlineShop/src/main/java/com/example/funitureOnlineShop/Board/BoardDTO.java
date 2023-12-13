@@ -28,4 +28,12 @@ public class BoardDTO {
                 .updateTime(updateTime)
                 .build();
     }
+    public static BoardDTO toBoardDTO(Board board){
+        return new BoardDTO(
+                board.getId(),
+                board.getTitle(),
+                board.getContents(),
+                board.getCreateTime(),
+                board.getUpdateTime());
+    }
 }
