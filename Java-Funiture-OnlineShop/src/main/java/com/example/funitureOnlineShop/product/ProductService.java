@@ -50,4 +50,9 @@ public class ProductService {
         // 수정된 제품 정보를 FindByIdDTO 객체로 변환하여 반환
         return new ProductResponse.FindByIdDTO(product, optionList);
     }
+
+    @Transactional
+    public void delete(Long id) {
+        productRepository.deleteById(id);
+    }
 }
