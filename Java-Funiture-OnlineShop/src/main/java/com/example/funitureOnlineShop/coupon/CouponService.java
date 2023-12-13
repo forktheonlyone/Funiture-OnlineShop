@@ -21,6 +21,7 @@ import java.util.Optional;
 public class CouponService {
 
     private final CouponRepository couponRepository;
+
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
 
