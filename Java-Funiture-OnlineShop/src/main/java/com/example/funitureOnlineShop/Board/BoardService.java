@@ -16,6 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -25,8 +26,6 @@ public class BoardService {
     private final BoardRepository boardRepository;
     private final BoardFileRepository boardFileRepository;
     private final String filePath = "";
-
-
 
     public Page<BoardDTO> paging(Pageable pageable){
 
@@ -99,7 +98,53 @@ public class BoardService {
         List<BoardFile> boardFiles = boardFileRepository.findByBoardId(boardId);
         return boardFiles;
     }
+    @Transactional
+    public void update(Long boardId, BoardDTO boardDTO, MultipartFile[] files) throws IOException {
+        Optional<Board> boardOptional = boardRepository.findById(boardId);
 
+        if (boardOptional.isPresent()) {
+            Board board = boardOptional.get();
 
+            board.updateFromDTO(boardDTO);
+
+            List<BoardFile> existingFiles = boardFileRepository.findByBoard(board);
+            for (BoardFile file : existingFiles) {
+                boardFileRepository.deleteById(file.getId());
+            }
+
+            for (MultipartFile file : files) {
+                if (file != null && !file.isEmpty()) {
+                    Path uploadPath = Paths.get(filePath);
+
+                    if (!Files.exists(uploadPath)) {
+                        Files.createDirectories(uploadPath);
+                    }
+
+                    String originalFileName = file.getOriginalFilename();
+                    String formatType = originalFileName.substring(originalFileName.lastIndexOf("."));
+                    String uuid = UUID.randomUUID().toString();
+                    String path = filePath + uuid + originalFileName;
+                    file.transferTo(new File(path));
+
+                    BoardFile boardFile = BoardFile.builder()
+                            .filePath(filePath)
+                            .fileName(originalFileName)
+                            .uuid(uuid)
+                            .fileType(formatType)
+                            .fileSize(file.getSize())
+                            .board(board)
+                            .build();
+
+                    boardFileRepository.save(boardFile);
+                }
+            }
+
+            boardRepository.save(board);
+        }
+    }
+    @Transactional
+    public void deleteByBoardFile(Long id) {
+        boardFileRepository.deleteById(id);
+    }
 
 }

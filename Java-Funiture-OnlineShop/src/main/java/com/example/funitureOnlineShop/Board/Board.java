@@ -40,4 +40,9 @@ public class Board {
         this.createTime = createTime;
         this.updateTime = updateTime;
     }
+
+    public void updateFromDTO(BoardDTO boardDTO) {
+        this.title = boardDTO.getTitle();
+        this.contents = boardDTO.getContents();
+    }
 }
