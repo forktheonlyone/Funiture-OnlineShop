@@ -117,4 +117,42 @@ public class ProductResponse {
                     .collect(Collectors.toList());
         }
     }
+
+    @NoArgsConstructor
+    @Setter
+    @Getter
+    public static class SaveByIdDTO {
+
+        private Long id;
+
+        private String productName;
+
+        private String description;
+
+        private String image;
+
+        private Long price;
+
+        private Long onSale;
+
+        private Long point;
+
+        private Long deliveryFee;
+
+        private Long categoryId;
+
+        List<OptionDTO> optionList;
+
+        public Product toEntity() {
+            return Product.builder()
+                    .productName(productName)
+                    .description(description)
+                    .image(image)
+                    .price(price)
+                    .onSale(onSale)
+                    .point(point)
+                    .deliveryFee(deliveryFee)
+                    .build();
+        }
+    }
 }

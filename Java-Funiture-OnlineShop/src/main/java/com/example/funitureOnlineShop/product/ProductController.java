@@ -5,7 +5,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RequiredArgsConstructor
 @RestController
@@ -14,11 +18,11 @@ public class ProductController {
     private final ProductService productService;
 
     // 상품 생성
-    @PostMapping("/product/{id}/save")
-    public ResponseEntity<?> save(@PathVariable Long id, ProductResponse.FindByCategoryIdDTO productResponseFind) {
-        Category category = productResponseFind.setCategoryId(id);
-        productService.save(productResponseFind);
-        ApiUtils.ApiResult<?> apiResult = ApiUtils.success(category);
+    @PostMapping("/product/save")
+    public ResponseEntity<?> save(ProductResponse.SaveByIdDTO productResponseFind,
+                                  @RequestParam MultipartFile[] files) throws IOException {
+        productService.save(productResponseFind, files);
+        ApiUtils.ApiResult<?> apiResult = ApiUtils.success(productResponseFind);
         return ResponseEntity.ok(apiResult);
     }
 

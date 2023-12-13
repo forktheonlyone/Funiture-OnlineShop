@@ -19,6 +19,9 @@ public class Coupon {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
+    private String couponName;
+
     @Column(length = 3, nullable = false)
     private int onSale;
 
@@ -31,12 +34,18 @@ public class Coupon {
     @ManyToOne(fetch = FetchType.LAZY)
     private Product product;
 
-    @Builder
-    public Coupon(Long id, int onSale, Date expirationDate, User user, Product product) {
+
+    public Coupon(Long id, String couponName, int onSale, Date expirationDate, User user, Product product) {
         this.id = id;
+        this.couponName = couponName;
+
         this.onSale = onSale;
         this.expirationDate = expirationDate;
         this.user = user;
         this.product = product;
+    }
+
+    public void updateFromUser(User user) {
+        this.user = user;
     }
 }
