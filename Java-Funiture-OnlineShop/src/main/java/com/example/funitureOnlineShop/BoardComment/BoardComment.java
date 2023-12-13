@@ -40,4 +40,8 @@ public class BoardComment {
         this.board = board;
         return boardComment;
     }
+
+    public void updateDTO(BoardCommentDTO boardCommentDTO) {
+        this.contents = boardCommentDTO.getContents();
+    }
 }

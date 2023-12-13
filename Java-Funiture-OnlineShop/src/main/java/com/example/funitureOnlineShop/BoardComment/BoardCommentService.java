@@ -41,4 +41,23 @@ public class BoardCommentService {
         return DTOlist;
     }
 
+    public Optional<BoardComment> findById(Long id){
+        return boardCommentRepository.findById(id);
+    }
+
+    @Transactional
+    public void update(BoardCommentDTO boardCommentDTO){
+        Optional<BoardComment> boardComment = boardCommentRepository.findById(boardCommentDTO.getId());
+
+        BoardComment comment = boardComment.get();
+
+        comment.updateDTO(boardCommentDTO);
+        boardCommentRepository.save(comment);
+    }
+
+    @Transactional
+    public void delete(Long id){
+        boardCommentRepository.deleteById(id);
+    }
+
 }
