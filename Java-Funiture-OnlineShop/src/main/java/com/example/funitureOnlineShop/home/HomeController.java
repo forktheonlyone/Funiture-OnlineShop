@@ -4,6 +4,7 @@ import com.example.funitureOnlineShop.Board.BoardDTO;
 import com.example.funitureOnlineShop.Board.BoardService;
 import com.example.funitureOnlineShop.cart.CartResponse;
 import com.example.funitureOnlineShop.cart.CartService;
+import com.example.funitureOnlineShop.core.error.exception.Exception400;
 import com.example.funitureOnlineShop.core.error.exception.Exception401;
 import com.example.funitureOnlineShop.core.error.exception.Exception404;
 import com.example.funitureOnlineShop.core.error.exception.Exception500;
@@ -96,15 +97,21 @@ public class HomeController {
     // 자주 묻는 질문 페이지
     @GetMapping("/qna")
     public String showQna(Model model, @PageableDefault(page = 1)Pageable pageable) {
-        Page<BoardDTO> page = boardService.paging(pageable);
-        int blockLimit = 3;
-        int startPage = (int) (Math.ceil((double) pageable.getPageNumber() / blockLimit) - 1) * blockLimit + 1;
-        int endPage = ((startPage + blockLimit - 1) < page.getTotalPages()) ? (startPage + blockLimit - 1) : page.getTotalPages();
+        if (pageable.getPageNumber() < 1) {
+            throw new Exception400("유효하지 않은 페이지 번호입니다.");
+        }
+        try {
+            Page<BoardDTO> page = boardService.paging(pageable);
+            int blockLimit = 3;
+            int startPage = (int) (Math.ceil((double) pageable.getPageNumber() / blockLimit) - 1) * blockLimit + 1;
+            int endPage = ((startPage + blockLimit - 1) < page.getTotalPages()) ? (startPage + blockLimit - 1) : page.getTotalPages();
 
-        model.addAttribute("boardList", page.getContent());
-        model.addAttribute("startPage", startPage);
-        model.addAttribute("endPage", endPage);
-
+            model.addAttribute("boardList", page.getContent());
+            model.addAttribute("startPage", startPage);
+            model.addAttribute("endPage", endPage);
+        } catch (Exception e){
+            throw new Exception500("서버 에러입니다." + e.getMessage());
+        }
         return "qnaPage";
     }
 
@@ -112,6 +119,10 @@ public class HomeController {
     // 공지사항 페이지
     @GetMapping("/notice")
     public String showNotice(Model model, @PageableDefault(page = 1)Pageable pageable) {
+        if (pageable.getPageNumber() < 1) {
+            throw new Exception400("유효하지 않은 페이지 번호입니다.");
+        }
+        try {
         Page<BoardDTO> page = boardService.paging(pageable);
         int blockLimit = 3;
         int startPage = (int) (Math.ceil((double) pageable.getPageNumber() / blockLimit) - 1) * blockLimit + 1;
@@ -120,7 +131,9 @@ public class HomeController {
         model.addAttribute("boardList", page.getContent());
         model.addAttribute("startPage", startPage);
         model.addAttribute("endPage", endPage);
-
+        } catch (Exception e){
+            throw new Exception500("서버 에러입니다." + e.getMessage());
+        }
         return "noticePage";
     }
 
