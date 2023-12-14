@@ -141,12 +141,19 @@ public class HomeController {
     // 각 유저의 마이페이지
     @GetMapping("/myPage")
     public String showUserInfo(Model model, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        User user = customUserDetails.getUser();
-        UserRequest.UserInfoDto userInfoDto = new UserRequest.UserInfoDto();
-        userInfoDto.setEmail(user.getEmail());
-        userInfoDto.setUsername(user.getUsername());
-        UserResponse.UserDTO userDTO = userService.getUserInfo(userInfoDto);
-        model.addAttribute("userInfo", userDTO);
+        if (customUserDetails == null) {
+            throw new Exception401("로그인이 필요한 서비스입니다.");
+        }
+        try {
+            User user = customUserDetails.getUser();
+            UserRequest.UserInfoDto userInfoDto = new UserRequest.UserInfoDto();
+            userInfoDto.setEmail(user.getEmail());
+            userInfoDto.setUsername(user.getUsername());
+            UserResponse.UserDTO userDTO = userService.getUserInfo(userInfoDto);
+            model.addAttribute("userInfo", userDTO);
+        } catch (Exception e) {
+            throw new Exception500("서버 에러입니다." + e.getMessage());
+        }
         return "myPage";
     }
 }
