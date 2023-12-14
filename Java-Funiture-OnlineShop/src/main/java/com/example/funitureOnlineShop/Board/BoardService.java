@@ -39,6 +39,7 @@ public class BoardService {
                 PageRequest.of(page, size));
         return boards.map(board -> new BoardDTO(
                 board.getId(),
+                board.getUser().getId(),
                 board.getTitle(),
                 board.getContents(),
                 board.getCreateTime(),
