@@ -10,9 +10,11 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class BoardDTO {
     private Long id;
-    // ** 제목
+
+    private Long userId;
+
     private String title;
-    // ** 내용
+
     private String contents;
 
     private LocalDateTime createTime;
@@ -24,13 +26,14 @@ public class BoardDTO {
                 .id(id)
                 .title(title)
                 .contents(contents)
-                .updateTime(createTime)
+                .createTime(createTime)
                 .updateTime(updateTime)
                 .build();
     }
     public static BoardDTO toBoardDTO(Board board){
         return new BoardDTO(
                 board.getId(),
+                board.getUser().getId(),
                 board.getTitle(),
                 board.getContents(),
                 board.getCreateTime(),
