@@ -9,6 +9,10 @@ import com.example.funitureOnlineShop.core.error.exception.Exception404;
 import com.example.funitureOnlineShop.core.security.CustomUserDetails;
 import com.example.funitureOnlineShop.product.Product;
 import com.example.funitureOnlineShop.product.ProductService;
+import com.example.funitureOnlineShop.user.User;
+import com.example.funitureOnlineShop.user.UserRequest;
+import com.example.funitureOnlineShop.user.UserResponse;
+import com.example.funitureOnlineShop.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,6 +32,7 @@ public class HomeController {
     private final ProductService productService;
     private final CartService cartService;
     private final BoardService boardService;
+    private final UserService userService;
 
     // 메인 홈페이지
     @GetMapping(value = {"/", ""})
@@ -108,5 +113,18 @@ public class HomeController {
         model.addAttribute("endPage", endPage);
 
         return "noticePage";
+    }
+
+    // !!----------< 유저 관련 페이지 > -----------
+    // 각 유저의 마이페이지
+    @GetMapping("/myPage")
+    public String showUserInfo(Model model, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        User user = customUserDetails.getUser();
+        UserRequest.UserInfoDto userInfoDto = new UserRequest.UserInfoDto();
+        userInfoDto.setEmail(user.getEmail());
+        userInfoDto.setUsername(user.getUsername());
+        UserResponse.UserDTO userDTO = userService.getUserInfo(userInfoDto);
+        model.addAttribute("userInfo", userDTO);
+        return "myPage";
     }
 }
