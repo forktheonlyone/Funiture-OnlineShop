@@ -1,5 +1,6 @@
 package com.example.funitureOnlineShop.home;
 
+import com.example.funitureOnlineShop.core.error.exception.Exception404;
 import com.example.funitureOnlineShop.product.Product;
 import com.example.funitureOnlineShop.product.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +25,7 @@ public class HomeController {
 
     // 전체 상품 확인
     @GetMapping("/product")
-    public String findAllProduct(Model model) {
+    public String showAllProduct(Model model) {
         List<Product> products = productService.findAll();
         model.addAttribute("products", products);
         return "allProductPage";
@@ -32,11 +33,9 @@ public class HomeController {
 
     // 카테고리 클릭시 특정 카테고리 상품 확인
     @GetMapping("/category/{id}")
-    public String findProductByCategory(@PathVariable Long id, Model model) {
+    public String showProductByCategory(@PathVariable Long id, Model model) {
         List<Product> products = productService.findByCategory(id);
         model.addAttribute("products", products);
         return "productCategoryPage";
     }
-
-
 }
