@@ -58,5 +58,4 @@ public class UserController {
         userService.deleteUserById(id);
         return ResponseEntity.ok("탈퇴가 성공적으로 이루어졌습니다.. ㅠ");
     }
-
 }
