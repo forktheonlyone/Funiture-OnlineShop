@@ -123,9 +123,11 @@ public class UserService {
         }
     }
 
+    // 토큰 삭제
     public void killToken(User user){
+        // DB에서 갱신 토큰 삭제
         user.setRefreshToken(null);
-        userRepository.save(user);
+        // 사용한 토큰의 재사용 막기 (블랙리스트로 이동)
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         JwtTokenProvider.invalidateToken(authentication);
     }
