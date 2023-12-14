@@ -17,20 +17,25 @@ public class Category {
     // 카테고리 ID
     private Long id;
 
+    @Column(nullable = false)
     private String categoryName;
 
-    @ManyToOne
-    @JoinColumn(name = "largecategory_id")
-    private Category largeCategory;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "superCategory_id")
+    private Category superCategory;
 
-    @OneToMany(mappedBy = "largecategory_id")
-    private List<Category> detailCategory;
+    @OneToMany(mappedBy = "superCategory", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Category> subCategories;
 
     @Builder
-    public Category(Long id, String categoryName, Category largeCategory, List<Category> detailCategory) {
+    public Category(Long id, String categoryName, Category superCategory, List<Category> subCategories) {
         this.id = id;
         this.categoryName = categoryName;
-        this.largeCategory = largeCategory;
-        this.detailCategory = detailCategory;
+        this.superCategory = superCategory;
+        this.subCategories = subCategories;
+    }
+
+    public void updateSuperCategory(Category superCategory) {
+        this.superCategory = superCategory;
     }
 }
