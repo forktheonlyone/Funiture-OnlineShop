@@ -6,7 +6,7 @@ import com.example.funitureOnlineShop.core.error.exception.Exception404;
 import com.example.funitureOnlineShop.core.error.exception.Exception500;
 import com.example.funitureOnlineShop.order.orderstatus.OrderStatus;
 import com.example.funitureOnlineShop.order.orderstatus.OrderStatusRepository;
-import com.example.funitureOnlineShop.order.orderstatus.OrderStatusResponse;
+import com.example.funitureOnlineShop.order.orderstatus.OrderStatusRequest;
 import com.example.funitureOnlineShop.user.User;
 import com.example.funitureOnlineShop.order.item.Item;
 import com.example.funitureOnlineShop.order.item.ItemRepository;
@@ -29,7 +29,7 @@ public class OrderService {
     @Transactional
     public OrderResponse.FindByIdDTO save(User user) {
         //장바구니 조회
-        List<Cart> cartList = cartRepository.findAllByMemberId(user.getId());
+        List<Cart> cartList = cartRepository.findAllByUserId(user.getId());
 
         if(cartList.isEmpty()){
             throw new Exception404("장바구니에 상품 내역이 존재하지 않습니다.");
@@ -54,14 +54,13 @@ public class OrderService {
 
             itemList.add(item);
         }
-        OrderStatus orderStatus = new OrderStatusResponse.savedto(order, false); // 주문 상태 초기값: false
+        OrderStatus orderStatus = new OrderStatusRequest.savedto(order, false); // 주문 상태 초기값: false
         orderStatusRepository.save(orderStatus);
 
         try{
             itemRepository.saveAll(itemList);
-
+            OrderStatusRequest.OrderStatusUpdateRequest UpdateRequest = new OrderStatusRequest.OrderStatusUpdateRequest(order.getId(), true);
             // 주문 완료 시 OrderStatus 값을 변경하여 주문 상태를 완료로 설정
-            orderStatus.setOrdered(true);
             orderStatusRepository.save(orderStatus);
         } catch (Exception e){
             throw new Exception500("주문 생성중 오류가 발생하였습니다.");

@@ -50,7 +50,7 @@ public class CartService {
 
     @Transactional
     public CartResponse.UpdateDTO update(List<CartRequest.updateDTO> requestDTOS, User user) {
-        List<Cart> cartList = cartRepository.findAllByMemberId(user.getId());
+        List<Cart> cartList = cartRepository.findAllByUserId(user.getId());
 
         List<Long> cartIds = cartList.stream().map(cart -> cart.getId()).collect(Collectors.toList());
         List<Long> requestIds = requestDTOS.stream().map(dto -> dto.getCartId()).collect(Collectors.toList());

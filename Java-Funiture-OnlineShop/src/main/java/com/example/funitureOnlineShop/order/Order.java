@@ -33,7 +33,7 @@ public class Order {
     private LocalDateTime orderDate;
 
 
-    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
+
     private OrderStatus orderStatus;
 
 
