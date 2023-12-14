@@ -24,6 +24,9 @@ public class FileProduct {
     // ** 파일 포멧
     private String fileType;
 
+    // ** 파일 uuid
+    private String uuid;
+
     // ** 파일 크기
     private Long fileSize;
 
@@ -33,11 +36,12 @@ public class FileProduct {
 
 
     @Builder
-    public FileProduct(Long id, String filePath, String fileName, String fileType, Long fileSize, Product product) {
+    public FileProduct(Long id, String filePath, String fileName, String fileType, String uuid, Long fileSize, Product product) {
         this.id = id;
         this.filePath = filePath;
         this.fileName = fileName;
         this.fileType = fileType;
+        this.uuid = uuid;
         this.fileSize = fileSize;
         this.product = product;
     }
