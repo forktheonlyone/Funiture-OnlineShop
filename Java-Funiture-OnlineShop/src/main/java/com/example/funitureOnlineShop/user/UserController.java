@@ -28,6 +28,12 @@ public class UserController {
 
         return ResponseEntity.ok(ApiUtils.success(null));
     }
+    @PostMapping("/joinAdmin")
+    public ResponseEntity<Object> joinAdmin(@RequestBody @Valid UserRequest.JoinAdminDto joinDto, Error error){
+        userService.joinAdmin(joinDto);
+
+        return ResponseEntity.ok(ApiUtils.success(null));
+    }
 
     // 로그인
     @PostMapping("/login")

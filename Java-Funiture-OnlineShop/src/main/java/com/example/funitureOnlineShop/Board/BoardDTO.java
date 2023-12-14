@@ -1,5 +1,6 @@
 package com.example.funitureOnlineShop.Board;
 
+import com.example.funitureOnlineShop.user.User;
 import lombok.*;
 import java.time.LocalDateTime;
 

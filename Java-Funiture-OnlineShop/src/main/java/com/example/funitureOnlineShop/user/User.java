@@ -82,4 +82,7 @@ public class User {
         System.out.println("point : " + point);
         System.out.println("refreshToken : " + refreshToken);
     }
+    public void addAdminRole() {
+        roles.add("ADMIN");
+    }
 }
