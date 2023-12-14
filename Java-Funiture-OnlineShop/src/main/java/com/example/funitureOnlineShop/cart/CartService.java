@@ -91,4 +91,9 @@ public class CartService {
             throw new Exception500("카트에서 상품을 삭제하는데 실패하였습니다." + e.getMessage());
         }
     }
+
+    public CartResponse.FindAllDTO findAllByUserId(Long userId) {
+        List<Cart> cartList = cartRepository.findByUserId(userId);
+        return new CartResponse.FindAllDTO(cartList);
+    }
 }

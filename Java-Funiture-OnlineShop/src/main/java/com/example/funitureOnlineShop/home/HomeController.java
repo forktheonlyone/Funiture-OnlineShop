@@ -1,11 +1,12 @@
 package com.example.funitureOnlineShop.home;
 
-import com.example.funitureOnlineShop.Board.Board;
 import com.example.funitureOnlineShop.Board.BoardDTO;
 import com.example.funitureOnlineShop.Board.BoardService;
 import com.example.funitureOnlineShop.cart.CartResponse;
 import com.example.funitureOnlineShop.cart.CartService;
+import com.example.funitureOnlineShop.core.error.exception.Exception401;
 import com.example.funitureOnlineShop.core.error.exception.Exception404;
+import com.example.funitureOnlineShop.core.error.exception.Exception500;
 import com.example.funitureOnlineShop.core.security.CustomUserDetails;
 import com.example.funitureOnlineShop.product.Product;
 import com.example.funitureOnlineShop.product.ProductService;
@@ -60,25 +61,33 @@ public class HomeController {
 
     // !!----------< 장바구니 관련 페이지 > -----------
 
-    // 장바구니 조회
+    // 로그인한 사용자의 장바구니 확인
     @GetMapping("/cart")
     public String showCart(Model model, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        try{
-            CartResponse.FindAllDTO cart = cartService.findAll(customUserDetails.getUser());
+        if (customUserDetails == null) {
+            throw new Exception401("로그인이 필요한 서비스입니다.");
+        }
+        try {
+            CartResponse.FindAllDTO cart = cartService.findAllByUserId(customUserDetails.getUser().getId());
+            if (cart == null) {
+                throw new Exception404("장바구니가 비어 있습니다.");
+            }
             model.addAttribute("cart", cart);
-        }catch (Exception e){
-            model.addAttribute("message", "장바구니가 비어 있습니다.");
+        } catch (Exception e) {
+            throw new Exception500("서버 에러입니다.");
         }
         return "cartPage";
     }
 
+
     // !!----------< 결제 관련 페이지 > -----------
 
+    // !!!!!!!!!!! 기능 구현 필요 !!!!!!!!!!!!!
     // 결제 상세 페이지
     @GetMapping("/order")
     public String showOrder(Model model, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
 
-        return ;
+        return "";
     }
 
     // !!----------< 고객센터 관련 페이지 > -----------
