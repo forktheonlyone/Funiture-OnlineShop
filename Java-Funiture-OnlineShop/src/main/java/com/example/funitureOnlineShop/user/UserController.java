@@ -6,10 +6,7 @@ import com.example.funitureOnlineShop.core.utils.ApiUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -21,13 +18,14 @@ public class UserController {
 
     private final UserService userService;
 
-    // 회원가입
+    // 유저 회원가입
     @PostMapping("/join")
     public ResponseEntity<Object> join(@RequestBody @Valid UserRequest.JoinDto joinDto, Error error){
         userService.join(joinDto);
 
         return ResponseEntity.ok(ApiUtils.success(null));
     }
+    // 관리자 회원가입
     @PostMapping("/joinAdmin")
     public ResponseEntity<Object> joinAdmin(@RequestBody @Valid UserRequest.JoinAdminDto joinDto, Error error){
         userService.joinAdmin(joinDto);
@@ -48,4 +46,17 @@ public class UserController {
     public String logout(@AuthenticationPrincipal CustomUserDetails customUserDetails, HttpServletResponse res, Error error){
         return userService.logout(customUserDetails.getUser().getId(), res);
     }
+    // 회원정보확인
+    @GetMapping("/info")
+    public ResponseEntity<UserResponse.UserDTO> getUserInfo(@RequestBody @Valid UserRequest.UserInfoDto userInfoDto) {
+        UserResponse.UserDTO userDTO = userService.getUserInfo(userInfoDto);
+        return ResponseEntity.ok(userDTO);
+    }
+    // 회원탈퇴
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> deleteById(@PathVariable Long id){
+        userService.deleteUserById(id);
+        return ResponseEntity.ok("탈퇴가 성공적으로 이루어졌습니다.. ㅠ");
+    }
+
 }
