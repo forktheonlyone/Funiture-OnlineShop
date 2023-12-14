@@ -49,4 +49,12 @@ public class CategoryController {
 
         return ResponseEntity.ok(ApiUtils.success(null));
     }
+
+    // 카테고리 삭제
+    @PostMapping("/delete/{id}")
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+        categoryService.delete(id);
+
+        return ResponseEntity.ok(ApiUtils.success(null));
+    }
 }

@@ -71,4 +71,10 @@ public class CategoryService {
 
         categoryRepository.save(newCategory);
     }
+
+    // 카테고리 삭제
+    @Transactional
+    public void delete(Long id) {
+        categoryRepository.deleteById(id);
+    }
 }
