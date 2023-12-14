@@ -8,4 +8,6 @@ import java.util.Optional;
 // 메소드 추가 정의도 가능
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String email);
+
+    Optional<User> findByEmailAndUsername(String email, String username);
 }

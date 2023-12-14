@@ -47,9 +47,25 @@ public class UserService {
             // 회원 가입
             userRepository.save(joinDto.toEntity());
 
+
             // 자기 전화번호로 회원가입 메세지가 오도록 함 (돈 내야 해서 지금은 안 씀)
             // SignUpMessageSender.sendMessage("01074517172", joinDto.getPhoneNumber(),"환영합니다. 회원가입이 완료되었습니다.");
         } catch (Exception e) {
+            throw new Exception500(e.getMessage());
+        }
+    }
+    @Transactional
+    public void joinAdmin(UserRequest.JoinAdminDto DTO){
+        checkEmail(DTO.getEmail());
+
+        String encodedPassword = passwordEncoder.encode(DTO.getPassword());
+        DTO.setPassword(encodedPassword);
+
+        try{
+            User user = DTO.toEntity();
+            user.addAdminRole();
+            userRepository.save(user);
+        }catch (Exception e) {
             throw new Exception500(e.getMessage());
         }
     }
@@ -61,6 +77,7 @@ public class UserService {
             throw new Exception400("이미 존재하는 이메일입니다. : " + email);
         }
     }
+
 
     // id, 비밀번호 인증 후 access_token 생성
     @Transactional
@@ -130,5 +147,16 @@ public class UserService {
         // 사용한 토큰의 재사용 막기 (블랙리스트로 이동)
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         JwtTokenProvider.invalidateToken(authentication);
+    }
+
+    public UserResponse.UserDTO getUserInfo(UserRequest.UserInfoDto userInfoDto) {
+        String email = userInfoDto.getEmail();
+        String username = userInfoDto.getUsername();
+
+        // 이메일과 이름을 기반으로 사용자 정보를 조회
+        User user = userRepository.findByEmailAndUsername(email, username)
+                .orElseThrow(() -> new Exception500("사용자를 찾을 수 없습니다."));
+
+        return UserResponse.UserDTO.fromEntity(user);
     }
 }
