@@ -1,6 +1,7 @@
 package com.example.funitureOnlineShop.Board;
 
 import com.example.funitureOnlineShop.BoardFile.BoardFile;
+import com.example.funitureOnlineShop.core.error.exception.Exception500;
 import com.example.funitureOnlineShop.core.utils.ApiUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -62,5 +63,25 @@ public class BoardController {
 
         return ResponseEntity.ok(response);
     }
+    @PostMapping("/update/{id}")
+    public ResponseEntity<String> update( @PathVariable Long id,
+                                          @RequestBody BoardDTO boardDTO,
+                                          @RequestParam MultipartFile[] files) {
+        try {
+            boardService.update(id, boardDTO, files);
+            return ResponseEntity.ok("게시물이 성공적으로 업데이트되었습니다.");
+        } catch (Exception e) {
+            throw new Exception500("게시물 업데이트에 실패했습니다.");
+        }
+    }
 
+    @DeleteMapping("/files/{id}")
+    public ResponseEntity<String> deleteBoardFile(@PathVariable Long id) {
+        try {
+            boardService.deleteByBoardFile(id);
+            return ResponseEntity.ok("게시물 파일이 성공적으로 삭제되었습니다.");
+        } catch (Exception e) {
+            throw new Exception500("게시물 파일 삭제에 실패했습니다.");
+        }
+    }
 }

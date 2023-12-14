@@ -1,10 +1,15 @@
 package com.example.funitureOnlineShop.product;
 
+import com.example.funitureOnlineShop.category.Category;
+import com.example.funitureOnlineShop.fileProduct.FileProduct;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.parameters.P;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor
 @Getter
@@ -39,6 +44,9 @@ public class Product {
     @ManyToOne(fetch = FetchType.LAZY)
     private Category category;
 
+    @OneToMany(mappedBy = "product", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<FileProduct> files =  new ArrayList<>();
+
 
     @Builder
     public Product(
@@ -53,6 +61,12 @@ public class Product {
         this.point = point;
         this.deliveryFee = deliveryFee;
         this.category = category;
+    }
+
+    public Product assignToCategory(Category category) {
+        Product product = new Product();
+        this.category = category;
+        return product;
     }
 
     public void update(ProductResponse.FindByIdDTO findByIdDTO) {

@@ -1,5 +1,6 @@
 package com.example.funitureOnlineShop.user;
 
+import com.example.funitureOnlineShop.coupon.Coupon;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -49,15 +50,19 @@ public class User {
     @Column(length = 255, nullable = false)
     private Long point;
 
+    // 갱신 토큰
     @Column
     private String refreshToken;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Coupon> coupons = new ArrayList<>();
 
     public void setRefreshToken(String refreshToken){
         this.refreshToken = refreshToken;
     }
 
     @Builder
-    public User(Long id, String email, String password, String username, String phoneNumber, String address, List<String> roles, Long point, String refreshToken) {
+    public User(Long id, String email, String password, String username, String phoneNumber, String address, List<String> roles, Long point, String refreshToken, List<Coupon> coupons) {
         this.id = id;
         this.email = email;
         this.password = password;
@@ -67,6 +72,7 @@ public class User {
         this.roles = roles;
         this.point = point;
         this.refreshToken = refreshToken;
+        this.coupons = coupons;
     }
 
     // 회원 정보 출력

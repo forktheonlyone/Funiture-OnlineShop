@@ -35,6 +35,12 @@ public class GeneralExceptionHandler {
         return new ResponseEntity<>(e.body(), e.status());
     }
 
+    // ** 요청을 이해할 수 있으나 해당 요청을 처리할 수 없는 상태 (같은 쿠폰의 중복 소유)
+    @ExceptionHandler(Exception422.class)
+    public ResponseEntity<?> unprocessableEntity(Exception422 e) {
+        return new ResponseEntity<>(e.body(), e.status());
+    }
+
     // ** 서버 문제
     @ExceptionHandler(Exception500.class)
     public ResponseEntity<?> serverError(Exception500 e) {
