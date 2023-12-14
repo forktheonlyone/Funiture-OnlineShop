@@ -36,6 +36,7 @@ public class ProductService {
     // !!!!!!!!!! 꼭 반드시 테스트시 파일 경로 특히 사용자명 확인할것 !!!!!!!!!!
     private final String filePath = "C:/Users/soone/Desktop/FunitureOnlineShopFiles/";
 
+    // 상품 저장 서비스
     @Transactional
     public Product save(ProductResponse.SaveByIdDTO saveByIdDTO, MultipartFile[] files) throws IOException {
         Optional<Category> optionalCategory =
@@ -101,15 +102,7 @@ public class ProductService {
         return null;
     }
 
-    public ProductResponse.FindByIdDTO findById(Long id) {
-        Product product = productRepository.findById(id).orElseThrow(
-                () -> new Exception404("해당 상품을 찾을 수 없습니다. : " + id));
-
-        List<Option> optionList = optionRepository.findByProductId(product.getId());
-
-        return new ProductResponse.FindByIdDTO(product, optionList);
-    }
-
+    // 상품 수정 서비스
     @Transactional
     public ProductResponse.FindByIdDTO update(Long id, ProductResponse.FindByIdDTO findByIdDTO) {
         Product product = productRepository.findById(id).orElseThrow(
@@ -126,8 +119,34 @@ public class ProductService {
         return new ProductResponse.FindByIdDTO(product, optionList);
     }
 
+    // ID로 상품검색 서비스
+    public ProductResponse.FindByIdDTO findById(Long id) {
+        Product product = productRepository.findById(id).orElseThrow(
+                () -> new Exception404("해당 상품을 찾을 수 없습니다. : " + id));
+
+        List<Option> optionList = optionRepository.findByProductId(product.getId());
+
+        return new ProductResponse.FindByIdDTO(product, optionList);
+    }
+
+    // 삭제 서비스
     @Transactional
     public void delete(Long id) {
         productRepository.deleteById(id);
+    }
+
+    public List<Product> findByCategory(Long categoryId) {
+        if (categoryId == null) {
+            throw new Exception404("해당 카테고리가 존재하지 않습니다.");
+        }
+        List<Product> products = productRepository.findByCategoryId(categoryId);
+        if (products.isEmpty()) {
+            throw new Exception404("해당 카테고리에 상품이 없습니다.");
+        }
+        return products;
+    }
+
+    public List<Product> findAll() {
+        return productRepository.findAll();
     }
 }
