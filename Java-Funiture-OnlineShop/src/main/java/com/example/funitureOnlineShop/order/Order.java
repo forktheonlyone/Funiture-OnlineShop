@@ -1,11 +1,16 @@
 package com.example.funitureOnlineShop.order;
 
+import com.example.funitureOnlineShop.order.item.Item;
+import com.example.funitureOnlineShop.order.orderstatus.OrderStatus;
 import com.example.funitureOnlineShop.user.User;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -22,9 +27,23 @@ public class Order {
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    private List<Item> orderItems = new ArrayList<>();
+
+    private LocalDateTime orderDate;
+
+
+
+    private OrderStatus orderStatus;
+
+
     @Builder
-    public Order(Long id, User user) {
+
+    public Order(Long id, User user, List<Item> orderItems, LocalDateTime orderDate, OrderStatus orderStatus) {
         this.id = id;
         this.user = user;
+        this.orderItems = orderItems;
+        this.orderDate = orderDate;
+        this.orderStatus = orderStatus;
     }
 }
