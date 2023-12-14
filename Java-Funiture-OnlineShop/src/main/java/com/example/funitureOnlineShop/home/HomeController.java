@@ -76,7 +76,10 @@ public class HomeController {
         return ;
     }
 
-    //
+    // !!----------< 고객센터 관련 페이지 > -----------
+
+    // !!!!!!!!!!! Qna와 Notice 분리 후 수정 필요 !!!!!!!!!!!!!
+    // 자주 묻는 질문 페이지
     @GetMapping("/qna")
     public String showQna(Model model, @PageableDefault(page = 1)Pageable pageable) {
         Page<BoardDTO> page = boardService.paging(pageable);
@@ -89,5 +92,21 @@ public class HomeController {
         model.addAttribute("endPage", endPage);
 
         return "qnaPage";
-    }x
+    }
+
+    // !!!!!!!!!!! Qna와 Notice 분리 후 수정 필요 !!!!!!!!!!!!!
+    // 공지사항 페이지
+    @GetMapping("/notice")
+    public String showNotice(Model model, @PageableDefault(page = 1)Pageable pageable) {
+        Page<BoardDTO> page = boardService.paging(pageable);
+        int blockLimit = 3;
+        int startPage = (int) (Math.ceil((double) pageable.getPageNumber() / blockLimit) - 1) * blockLimit + 1;
+        int endPage = ((startPage + blockLimit - 1) < page.getTotalPages()) ? (startPage + blockLimit - 1) : page.getTotalPages();
+
+        model.addAttribute("boardList", page.getContent());
+        model.addAttribute("startPage", startPage);
+        model.addAttribute("endPage", endPage);
+
+        return "noticePage";
+    }
 }
