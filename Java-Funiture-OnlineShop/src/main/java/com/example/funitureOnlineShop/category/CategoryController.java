@@ -4,36 +4,39 @@ import com.example.funitureOnlineShop.core.utils.ApiUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import retrofit2.http.Path;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
+@RequestMapping("/category")
 public class CategoryController {
 
     private final CategoryService categoryService;
 
     // 카테고리 저장
-    @PostMapping("/category/save")
-    public ResponseEntity<?> save(@RequestBody CategoryResponse categoryResponse) {
-        categoryService.save(categoryResponse);
-        ApiUtils.ApiResult<?> apiResult = ApiUtils.success(categoryResponse);
-        return ResponseEntity.ok(categoryResponse);
+    @PostMapping("/save")
+    public ResponseEntity<?> save(@RequestBody @Valid CategoryRequest.SaveDto saveDto) {
+        categoryService.save(saveDto);
+
+        return ResponseEntity.ok(ApiUtils.success(null);
     }
 
     // 등록된 카테고리 모두 조회
     @GetMapping("/categories")
     public ResponseEntity<?> findAll() {
-        List<Category> categories = categoryService.findAll();
+        List<CategoryResponse.FindAllDto> categories = categoryService.findAll();
         ApiUtils.ApiResult<?> apiResult = ApiUtils.success(categories);
         return ResponseEntity.ok(apiResult);
     }
 
-    // 등록된 카테고리들의 id번호로 특정한 카테고리 조회
-    @GetMapping("/category/{id}")
+    // 요청 보낸 카테고리의 상위 카테고리와 하위 카테고리들 조회
+    @GetMapping("/{id}")
     public ResponseEntity<?> findById(@PathVariable Long id) {
-        Category category = categoryService.findById(id);
-        ApiUtils.ApiResult<?> apiResult = ApiUtils.success(category);
+        CategoryResponse.FindByIdDto categoryDto = categoryService.findById(id);
+        ApiUtils.ApiResult<?> apiResult = ApiUtils.success(categoryDto);
         return ResponseEntity.ok(apiResult);
     }
 }
