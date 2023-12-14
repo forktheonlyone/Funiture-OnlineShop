@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,6 +26,7 @@ public class BoardController {
     private final BoardService boardService;
 
     @PostMapping("/save")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> save(@RequestBody BoardDTO requestDTO,
                                        @RequestParam MultipartFile[] files) throws IOException {
 
@@ -63,6 +65,7 @@ public class BoardController {
         return ResponseEntity.ok(response);
     }
     @PostMapping("/update/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<String> update( @PathVariable Long id,
                                           @RequestBody BoardDTO boardDTO,
                                           @RequestParam MultipartFile[] files) {
@@ -75,12 +78,23 @@ public class BoardController {
     }
 
     @DeleteMapping("/files/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<String> deleteBoardFile(@PathVariable Long id) {
         try {
             boardService.deleteByBoardFile(id);
             return ResponseEntity.ok("게시물 파일이 성공적으로 삭제되었습니다.");
         } catch (Exception e) {
             throw new Exception500("게시물 파일 삭제에 실패했습니다.");
+        }
+    }
+    @DeleteMapping("/delete/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<String> deleteById(@PathVariable Long id) {
+        try {
+            boardService.deleteById(id);
+            return ResponseEntity.ok("게시물이 성공적으로 삭제되었습니다.");
+        } catch (Exception e) {
+            throw new Exception500("게시물 삭제에 실패했습니다.");
         }
     }
 }

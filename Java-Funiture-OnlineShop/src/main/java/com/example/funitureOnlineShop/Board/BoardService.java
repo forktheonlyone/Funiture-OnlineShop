@@ -2,13 +2,12 @@ package com.example.funitureOnlineShop.Board;
 
 import com.example.funitureOnlineShop.BoardFile.BoardFile;
 import com.example.funitureOnlineShop.BoardFile.BoardFileRepository;
-import com.example.funitureOnlineShop.core.error.exception.Exception500;
-import com.example.funitureOnlineShop.user.User;
 import com.example.funitureOnlineShop.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -151,5 +150,9 @@ public class BoardService {
     public void deleteByBoardFile(Long id) {
         boardFileRepository.deleteById(id);
     }
+
+    @Transactional
+    public void deleteById(Long id){boardRepository.deleteById(id);}
+
 
 }
