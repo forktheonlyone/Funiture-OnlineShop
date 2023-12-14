@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -19,13 +21,16 @@ public class Cart {
     private Long id;
 
     @ManyToOne
-    private User user;
+    private User user; // 구매자
+
 
     @OneToOne
     private Option option;
 
+    // 카트에 담긴 총 가격
     private Long price;
 
+    // 카트에 담긴 총 상품 개수
     private Long quantity;
 
     @Builder
