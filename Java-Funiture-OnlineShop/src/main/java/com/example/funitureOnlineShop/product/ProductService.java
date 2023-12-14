@@ -65,6 +65,9 @@ public class ProductService {
                 // ** 파일명 추출
                 String originalFileName = file.getOriginalFilename();
 
+                // ** uuid 생성
+                String uuid = UUID.randomUUID().toString();
+
                 // ** 확장자 추출
                 String formatType = originalFileName.substring(
                         originalFileName.lastIndexOf("."));
@@ -82,7 +85,7 @@ public class ProductService {
                 }
 
                 // 경로 지정
-                String path = filePath + originalFileName;
+                String path = filePath + uuid + originalFileName;
 
                 // 경로에 파일을 저장 (DB의 저장이 아님)
                 file.transferTo(new File(path));
@@ -90,6 +93,7 @@ public class ProductService {
                 FileProduct fileProduct = FileProduct.builder()
                         .filePath(filePath)
                         .fileName(originalFileName)
+                        .uuid(uuid)
                         .fileType(formatType)
                         .fileSize(file.getSize())
                         .product(product)
