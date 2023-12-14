@@ -159,4 +159,11 @@ public class UserService {
 
         return UserResponse.UserDTO.fromEntity(user);
     }
+
+    @Transactional
+    public void deleteUserById(Long userId) {
+        // 사용자가 존재하는지 확인 후 삭제
+        userRepository.findById(userId).ifPresent(user ->
+        {userRepository.deleteById(userId);});
+    }
 }
