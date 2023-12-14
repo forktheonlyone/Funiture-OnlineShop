@@ -2,6 +2,7 @@ package com.example.funitureOnlineShop.cart;
 import com.example.funitureOnlineShop.core.error.exception.Exception400;
 import com.example.funitureOnlineShop.core.error.exception.Exception404;
 import com.example.funitureOnlineShop.core.error.exception.Exception500;
+import com.example.funitureOnlineShop.core.security.CustomUserDetails;
 import com.example.funitureOnlineShop.option.Option;
 import com.example.funitureOnlineShop.option.OptionRepository;
 
@@ -90,10 +91,5 @@ public class CartService {
         } catch (Exception e) {
             throw new Exception500("카트에서 상품을 삭제하는데 실패하였습니다." + e.getMessage());
         }
-    }
-
-    public CartResponse.FindAllDTO findAllByUserId(Long userId) {
-        List<Cart> cartList = cartRepository.findByUserId(userId);
-        return new CartResponse.FindAllDTO(cartList);
     }
 }
