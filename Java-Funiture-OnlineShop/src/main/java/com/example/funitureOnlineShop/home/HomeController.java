@@ -1,5 +1,8 @@
 package com.example.funitureOnlineShop.home;
 
+import com.example.funitureOnlineShop.Board.Board;
+import com.example.funitureOnlineShop.Board.BoardDTO;
+import com.example.funitureOnlineShop.Board.BoardService;
 import com.example.funitureOnlineShop.cart.CartResponse;
 import com.example.funitureOnlineShop.cart.CartService;
 import com.example.funitureOnlineShop.core.error.exception.Exception404;
@@ -7,6 +10,9 @@ import com.example.funitureOnlineShop.core.security.CustomUserDetails;
 import com.example.funitureOnlineShop.product.Product;
 import com.example.funitureOnlineShop.product.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,6 +27,7 @@ public class HomeController {
 
     private final ProductService productService;
     private final CartService cartService;
+    private final BoardService boardService;
 
     // 메인 홈페이지
     @GetMapping(value = {"/", ""})
@@ -48,6 +55,7 @@ public class HomeController {
 
     // !!----------< 장바구니 관련 페이지 > -----------
 
+    // 장바구니 조회
     @GetMapping("/cart")
     public String showCart(Model model, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         try{
@@ -58,4 +66,28 @@ public class HomeController {
         }
         return "cartPage";
     }
+
+    // !!----------< 결제 관련 페이지 > -----------
+
+    // 결제 상세 페이지
+    @GetMapping("/order")
+    public String showOrder(Model model, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+
+        return ;
+    }
+
+    //
+    @GetMapping("/qna")
+    public String showQna(Model model, @PageableDefault(page = 1)Pageable pageable) {
+        Page<BoardDTO> page = boardService.paging(pageable);
+        int blockLimit = 3;
+        int startPage = (int) (Math.ceil((double) pageable.getPageNumber() / blockLimit) - 1) * blockLimit + 1;
+        int endPage = ((startPage + blockLimit - 1) < page.getTotalPages()) ? (startPage + blockLimit - 1) : page.getTotalPages();
+
+        model.addAttribute("boardList", page.getContent());
+        model.addAttribute("startPage", startPage);
+        model.addAttribute("endPage", endPage);
+
+        return "qnaPage";
+    }x
 }
