@@ -105,8 +105,7 @@ public class ProductService {
     // 상품 수정 서비스
     @Transactional
     public ProductResponse.FindByIdDTO update(Long id, ProductResponse.FindByIdDTO findByIdDTO) {
-        Product product = productRepository.findById(id).orElseThrow(
-                () -> new Exception404("해당 상품을 찾을 수 없습니다. : " + id));
+        Product product = getProduct(id);
 
         product.update(findByIdDTO);
 
@@ -121,8 +120,7 @@ public class ProductService {
 
     // ID로 상품검색 서비스
     public ProductResponse.FindByIdDTO findById(Long id) {
-        Product product = productRepository.findById(id).orElseThrow(
-                () -> new Exception404("해당 상품을 찾을 수 없습니다. : " + id));
+        Product product = getProduct(id);
 
         List<Option> optionList = optionRepository.findByProductId(product.getId());
 
@@ -132,6 +130,7 @@ public class ProductService {
     // 삭제 서비스
     @Transactional
     public void delete(Long id) {
+        getProduct(id);
         productRepository.deleteById(id);
     }
 
@@ -146,7 +145,18 @@ public class ProductService {
         return products;
     }
 
+    // 상품 전체 찾기 서비스
     public List<Product> findAll() {
-        return productRepository.findAll();
+        List<Product> products = productRepository.findAll();
+        if (products.isEmpty()) {
+            throw new Exception404("등록된 상품이 존재하지 않습니다.");
+        }
+        return products;
+    }
+
+    // 상품 id 찾는 로직
+    public Product getProduct(Long id) {
+        return productRepository.findById(id)
+                .orElseThrow(() -> new Exception404("해당 상품을 찾을 수 없습니다."));
     }
 }

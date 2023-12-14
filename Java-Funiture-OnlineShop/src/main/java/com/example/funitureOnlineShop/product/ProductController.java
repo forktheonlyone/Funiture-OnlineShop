@@ -15,7 +15,7 @@ public class ProductController {
     private final ProductService productService;
 
     // 상품 생성
-    @PostMapping("/product/save")
+    @PostMapping("/product")
     public ResponseEntity<?> save(ProductResponse.SaveByIdDTO productResponseFind,
                                   @RequestParam MultipartFile[] files) throws IOException {
         productService.save(productResponseFind, files);
@@ -32,14 +32,14 @@ public class ProductController {
     }
 
     // 상품 수정
-    @PutMapping("/product/{id}/update")
+    @PutMapping("/product/{id}")
     public ResponseEntity<?> update(@PathVariable Long id, ProductResponse.FindByIdDTO findByIdDTO) {
         ProductResponse.FindByIdDTO updatedProduct = productService.update(id, findByIdDTO);
         ApiUtils.ApiResult<?> apiResult = ApiUtils.success(updatedProduct);
         return ResponseEntity.ok(apiResult);
     }
 
-    @DeleteMapping("/product/{id}/delete")
+    @DeleteMapping("/product/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id){
         productService.delete(id);
         ApiUtils.ApiResult<?> apiResult = ApiUtils.success(id);
