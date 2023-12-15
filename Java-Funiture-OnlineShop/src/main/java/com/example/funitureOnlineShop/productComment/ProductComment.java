@@ -58,5 +58,13 @@ public class ProductComment {
     public void updateFromEntity(User user, Option option) {
         this.user = user;
         this.option = option;
+        this.createTime = LocalDateTime.now();
+    }
+
+    public void updateFromDto(ProductCommentDto commentDto) {
+        this.contents = commentDto.getContents();
+        this.star = commentDto.getStar();
+        this.updateTime = commentDto.getUpdateTime();
+        this.commentFiles.clear();
     }
 }

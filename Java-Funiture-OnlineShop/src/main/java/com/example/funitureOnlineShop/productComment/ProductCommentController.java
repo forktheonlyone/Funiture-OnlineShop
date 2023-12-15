@@ -8,6 +8,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
 
@@ -41,9 +42,24 @@ public class ProductCommentController {
 
     // 상품 후기 삭제
     @PostMapping("/delete/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails customUserDetails){
+    public ResponseEntity<?> delete(@PathVariable Long id,
+                                    @AuthenticationPrincipal CustomUserDetails customUserDetails){
         productCommentService.delete(id, customUserDetails.getUser());
 
         return ResponseEntity.ok(ApiUtils.success(null));
+    }
+
+    // 상품 후기 수정
+    @PostMapping("/update")
+    public ResponseEntity<?> update(@ModelAttribute ProductCommentDto commentDto,
+                                    @RequestParam MultipartFile[] files,
+                                    @AuthenticationPrincipal CustomUserDetails customUserDetails) throws IOException {
+        ProductComment comment = productCommentService.update(commentDto, files, customUserDetails.getUser());
+
+        if (comment != null) {
+            return ResponseEntity.ok(ApiUtils.success(commentDto));
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

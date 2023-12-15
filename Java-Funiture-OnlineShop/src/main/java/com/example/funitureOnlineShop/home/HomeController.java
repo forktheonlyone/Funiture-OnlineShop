@@ -11,6 +11,8 @@ import com.example.funitureOnlineShop.core.error.exception.Exception500;
 import com.example.funitureOnlineShop.core.security.CustomUserDetails;
 import com.example.funitureOnlineShop.product.Product;
 import com.example.funitureOnlineShop.product.ProductService;
+import com.example.funitureOnlineShop.productComment.ProductComment;
+import com.example.funitureOnlineShop.productComment.ProductCommentService;
 import com.example.funitureOnlineShop.user.User;
 import com.example.funitureOnlineShop.user.UserRequest;
 import com.example.funitureOnlineShop.user.UserResponse;
@@ -35,6 +37,7 @@ public class HomeController {
     private final CartService cartService;
     private final BoardService boardService;
     private final UserService userService;
+    private final ProductCommentService productCommentService;
 
     // 메인 홈페이지
     @GetMapping(value = {"/", ""})
@@ -155,5 +158,12 @@ public class HomeController {
             throw new Exception500("서버 에러입니다." + e.getMessage());
         }
         return "myPage";
+    }
+
+    @GetMapping("/product_comment/update/{id}")
+    public String updateCommentForm(@PathVariable Long id, Model model){
+        ProductComment dto = productCommentService.findById(id);
+        model.addAttribute("comment", dto);
+        return "commentUpdate";
     }
 }
