@@ -13,7 +13,6 @@ public class OrderRequest {
     private List<OrderItemRequest> items;
 
     @Data
-    @NoArgsConstructor
     public static class OrderItemRequest {
         private Long optionId;
         private Long quantity;

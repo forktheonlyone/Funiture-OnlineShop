@@ -20,7 +20,7 @@ public class CartController {
     public ResponseEntity<?> addCart(@AuthenticationPrincipal CustomUserDetails customUserDetails,
                                      @RequestBody @Valid List<CartRequest.SaveDTO> saveDTOS,
                                      Error error){
-        cartService.addCart(saveDTOS,customUserDetails.getUser());
+        cartService.addCartList(saveDTOS,customUserDetails.getUser());
 
         ApiUtils.ApiResult<?> apiResult = ApiUtils.success(null);
         return ResponseEntity.ok(apiResult);
@@ -36,18 +36,21 @@ public class CartController {
 
     @PutMapping
     public ResponseEntity<?> updateCart(
-            @RequestBody @Valid List<CartRequest.updateDTO> requestDTOS,
+            @RequestBody @Valid List<CartRequest.UpdateDTO> requestDTOS,
             @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         CartResponse.UpdateDTO response = cartService.update(requestDTOS, customUserDetails.getUser());
         return ResponseEntity.ok(response);
     }
 
 
-    @DeleteMapping("/cart/{cartId}")
-    public ResponseEntity<Void> deleteFromCart(
-            @PathVariable Long cartId,
-            @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        cartService.deleteFromCart(cartId, customUserDetails.getUser());
-        return ResponseEntity.noContent().build();
+    @DeleteMapping
+    public ResponseEntity<?> deleteCartList(
+            @RequestBody @Valid List<CartResponse.DeleteDTO> deleteDTO,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails, // 유저 정보확인
+            Error error) { // 인증받은 애들만 메소드에 접근할 수 있음
+        cartService.deleteCartList(deleteDTO, customUserDetails.getUser());
+
+        ApiUtils.ApiResult<?> apiResult = ApiUtils.success(null);
+        return ResponseEntity.ok(apiResult);
     }
 }
