@@ -1,4 +1,4 @@
-package com.example.funitureOnlineShop.order.orderCheck;
+package com.example.funitureOnlineShop.orderCheck;
 
 import com.example.funitureOnlineShop.product.Product;
 import com.example.funitureOnlineShop.user.User;
