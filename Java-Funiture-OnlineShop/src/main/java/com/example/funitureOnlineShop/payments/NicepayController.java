@@ -77,7 +77,6 @@ public class NicepayController {
             // 기타 결제 실패 비즈니스 로직
             // 고객알림? - User에서 작업할 것인지
         }
-
         return "/payresponse";
     }
 
@@ -116,7 +115,6 @@ public class NicepayController {
             // 고객알림? - User에서 작업할 것인지
             // 재고복구 - Option서비스
         }
-
         return "/payresponse";
     }
 
