@@ -2,6 +2,7 @@ package com.example.funitureOnlineShop.productComment;
 
 import com.example.funitureOnlineShop.commentFile.CommentFile;
 import com.example.funitureOnlineShop.commentFile.CommentFileRepository;
+import com.example.funitureOnlineShop.core.error.exception.Exception401;
 import com.example.funitureOnlineShop.core.error.exception.Exception404;
 import com.example.funitureOnlineShop.core.error.exception.Exception500;
 import com.example.funitureOnlineShop.option.Option;
@@ -126,6 +127,26 @@ public class ProductCommentService {
             return commentDtos;
         } catch (Exception e) {
             throw new Exception500("상품 후기 탐색 중 오류 발생 : " + pId);
+        }
+    }
+
+    // 상품 후기 삭제
+    @Transactional
+    public void delete(Long id, User user) {
+        // 삭제할 상품 후기 탐색
+        Optional<ProductComment> optionalProductComment = productCommentRepository.findById(id);
+        // 상품 후기 존재 x
+        if (optionalProductComment.isEmpty())
+            throw new Exception500("해당 상품 후기를 찾을 수 없습니다. : " + id);
+        ProductComment productComment = optionalProductComment.get();
+
+        // 상품 후기 삭제 권한 확인 (작성자 혹은 관리자만 삭제 가능)
+        if (!user.getRoles().contains("ROLE_ADMIN") && !(productComment.getUser().getId().equals(user.getId())))
+            throw new Exception401("해당 상품 후기을 삭제할 권한이 없습니다.");
+        try {
+            productCommentRepository.deleteById(id);
+        } catch (Exception e) {
+            throw new Exception500("상품 후기 삭제 도중 이상이 생겼습니다." + id);
         }
     }
 }
