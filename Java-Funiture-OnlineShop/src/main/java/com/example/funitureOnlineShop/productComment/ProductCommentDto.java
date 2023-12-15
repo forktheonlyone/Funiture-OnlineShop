@@ -3,6 +3,8 @@ package com.example.funitureOnlineShop.productComment;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
+import java.util.List;
 
 @Setter
 @Getter
@@ -47,5 +49,10 @@ public class ProductCommentDto {
                 comment.getUpdateTime(),
                 comment.getOption().getId(),
                 comment.getUser().getId());
+    }
+
+    // 작성일을 기준으로 리스트를 정렬 (최신순)
+    public static void sortByCreateDate(List<ProductCommentDto> comments) {
+        comments.sort(Comparator.comparing(ProductCommentDto::getCreateTime).reversed());
     }
 }

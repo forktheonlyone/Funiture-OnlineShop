@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,5 +26,12 @@ public class ProductCommentController {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @GetMapping("/comments/{id}")
+    public ResponseEntity<?> commentList(@PathVariable Long id){
+        List<ProductCommentDto> commentDtos = productCommentService.commentList(id);
+
+        return ResponseEntity.ok(ApiUtils.success(commentDtos));
     }
 }
