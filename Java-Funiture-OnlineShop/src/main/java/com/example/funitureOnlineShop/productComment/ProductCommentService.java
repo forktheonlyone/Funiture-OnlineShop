@@ -69,6 +69,7 @@ public class ProductCommentService {
                 if (!Files.exists(uploadPath)) {
                     Files.createDirectories(uploadPath);
                 }
+
                 for (MultipartFile file : files) {
                     // 파일명 추출
                     String originalFilename = file.getOriginalFilename();
@@ -137,7 +138,7 @@ public class ProductCommentService {
         Optional<ProductComment> optionalProductComment = productCommentRepository.findById(id);
         // 상품 후기 존재 x
         if (optionalProductComment.isEmpty())
-            throw new Exception500("해당 상품 후기를 찾을 수 없습니다. : " + id);
+            throw new Exception404("해당 상품 후기를 찾을 수 없습니다. : " + id);
         ProductComment productComment = optionalProductComment.get();
 
         // 상품 후기 삭제 권한 확인 (작성자 혹은 관리자만 삭제 가능)
@@ -148,5 +149,81 @@ public class ProductCommentService {
         } catch (Exception e) {
             throw new Exception500("상품 후기 삭제 도중 이상이 생겼습니다." + id);
         }
+    }
+
+    // 상품 후기 수정
+    @Transactional
+    public ProductComment update(ProductCommentDto commentDto, MultipartFile[] files, User user) {
+        // 수정할 상품 후기 탐색
+        Optional<ProductComment> optionalProductComment =
+                productCommentRepository.findById(commentDto.getId());
+        // 상품 후기 존재 x
+        if (optionalProductComment.isEmpty())
+            throw new Exception404("해당 상품 후기를 찾을 수 없습니다. : " + commentDto.getId());
+        ProductComment productComment = optionalProductComment.get();
+
+        // 상품 후기 삭제 권한 확인 (작성자만 수정 가능)
+        if (user.getRoles().contains("ROLE_USER") && !(productComment.getUser().getId().equals(user.getId())))
+            throw new Exception401("해당 상품 후기을 수정할 권한이 없습니다.");
+
+        try {
+            // 내용, 별점, 수정일 수정
+            productComment.updateFromDto(commentDto);
+            productCommentRepository.save(productComment);
+
+            // 파일 재설정
+            commentFileRepository.deleteByProductComment_id(productComment.getId());
+            if (!files[0].isEmpty()) {
+                Path uploadPath = Paths.get(filePath);
+
+                // 만약 경로가 없다면... 경로 생성
+                if (!Files.exists(uploadPath)) {
+                    Files.createDirectories(uploadPath);
+                }
+
+                for (MultipartFile file : files) {
+                    // 파일명 추출
+                    String originalFilename = file.getOriginalFilename();
+
+                    // 확장자 추출
+                    String formatType = originalFilename.substring(
+                            originalFilename.lastIndexOf("."));
+
+                    // UUID 생성
+                    String uuid = UUID.randomUUID().toString();
+
+                    // 경로 지정
+                    String path = filePath + uuid + originalFilename;
+
+                    // 파일을 물리적으로 저장 (DB에 저장 X)
+                    file.transferTo( new File(path) );
+
+                    CommentFile commentFile = CommentFile.builder()
+                            .filePath(filePath)
+                            .fileName(originalFilename)
+                            .uuid(uuid)
+                            .fileType(formatType)
+                            .fileSize(file.getSize())
+                            .productComment(productComment)
+                            .build();
+
+                    commentFileRepository.save(commentFile);
+                }
+            }
+            return productComment;
+        } catch (Exception e) {
+            throw new Exception500("상품 후기 수정 도중 이상이 생겼습니다." + commentDto.getId());
+        }
+    }
+
+    // 상품 후기 단일 탐색
+    public ProductComment findById (Long id) {
+        // 상품 후기 존재?
+        Optional<ProductComment> optionalProductComment =
+                productCommentRepository.findById(id);
+        if (optionalProductComment.isEmpty())
+            throw new Exception404("해당 상품 후기를 찾을 수 없습니다. : " + id);
+
+        return optionalProductComment.get();
     }
 }
