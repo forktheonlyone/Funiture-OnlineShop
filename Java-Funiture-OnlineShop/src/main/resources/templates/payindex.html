@@ -15,18 +15,15 @@
 
 <script>
   function serverAuth() {
-    AUTHNICE.requestPay({
-      clientId: '{{clientId}}',
-      method: 'card',
-      orderId: '{{orderId}}',
-      amount: 1004,
-      goodsName: '나이스페이-상품',
-      returnUrl: 'http://localhost:8080/serverAuth',
-      fnError: function (result) {
-        alert('개발자확인용 : ' + result.errorMsg + '')
-      }
-    });
-  }
+  AUTHNICE.requestPay({
+    clientId: 'S2_302df305816d49c2bbb1156e5a10527a',
+    method: 'card',
+    orderId: 'your-unique-orderid',
+    amount: 1004,
+    goodsName: '나이스페이-상품',
+    returnUrl: 'http://localhost:4567/serverAuth'
+ });
+}
 </script>
 </body>
 
