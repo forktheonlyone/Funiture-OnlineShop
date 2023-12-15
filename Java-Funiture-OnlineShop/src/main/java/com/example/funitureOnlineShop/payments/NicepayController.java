@@ -65,7 +65,6 @@ public class NicepayController {
         } else {
             // 결제 실패 비즈니스 로직 구현
         }
-
         return "/payresponse";
     }
 
@@ -100,7 +99,6 @@ public class NicepayController {
         } else {
             // 취소 실패 비즈니스 로직 구현
         }
-
         return "/payresponse";
     }
 
