@@ -2,6 +2,7 @@ package com.example.funitureOnlineShop.productComment;
 
 import com.example.funitureOnlineShop.commentFile.CommentFile;
 import com.example.funitureOnlineShop.commentFile.CommentFileRepository;
+import com.example.funitureOnlineShop.core.error.exception.Exception401;
 import com.example.funitureOnlineShop.core.error.exception.Exception404;
 import com.example.funitureOnlineShop.core.error.exception.Exception500;
 import com.example.funitureOnlineShop.option.Option;
@@ -19,6 +20,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -35,6 +38,7 @@ public class ProductCommentService {
     private String filePath = "";
 
     // 상품 후기 저장
+    @Transactional
     public ProductComment save(ProductCommentDto commentDto,
                                MultipartFile[] files) throws IOException {
         Optional<User> optionalUser = userRepository.findById(commentDto.getUserId());
@@ -98,6 +102,51 @@ public class ProductCommentService {
             return savedComment;
         } catch (Exception e) {
             throw new Exception500("상품 후기 저장 도중 오류 발생");
+        }
+    }
+
+    // 상품의 상품 후기들을 탐색
+    public List<ProductCommentDto> commentList(Long pId) {
+        try {
+            List<Option> optionList = optionRepository.findByProductId(pId);
+            // 작성된 후기가 없는 경우
+            if (optionList.isEmpty())
+                return null;
+            // 각 옵션의 후기들을 수집
+            List<ProductCommentDto> commentDtos = new ArrayList<>();
+            for (Option option : optionList) {
+                List<ProductComment> comments = productCommentRepository.findAllByOptionId(option.getId());
+                for (ProductComment comment : comments) {
+                    // Dto로 바꾸어 넣기
+                    commentDtos.add(ProductCommentDto.toSaveDto(comment));
+                }
+            }
+            // 작성일 기준 최신순으로 정렬
+            ProductCommentDto.sortByCreateDate(commentDtos);
+
+            return commentDtos;
+        } catch (Exception e) {
+            throw new Exception500("상품 후기 탐색 중 오류 발생 : " + pId);
+        }
+    }
+
+    // 상품 후기 삭제
+    @Transactional
+    public void delete(Long id, User user) {
+        // 삭제할 상품 후기 탐색
+        Optional<ProductComment> optionalProductComment = productCommentRepository.findById(id);
+        // 상품 후기 존재 x
+        if (optionalProductComment.isEmpty())
+            throw new Exception500("해당 상품 후기를 찾을 수 없습니다. : " + id);
+        ProductComment productComment = optionalProductComment.get();
+
+        // 상품 후기 삭제 권한 확인 (작성자 혹은 관리자만 삭제 가능)
+        if (!user.getRoles().contains("ROLE_ADMIN") && !(productComment.getUser().getId().equals(user.getId())))
+            throw new Exception401("해당 상품 후기을 삭제할 권한이 없습니다.");
+        try {
+            productCommentRepository.deleteById(id);
+        } catch (Exception e) {
+            throw new Exception500("상품 후기 삭제 도중 이상이 생겼습니다." + id);
         }
     }
 }

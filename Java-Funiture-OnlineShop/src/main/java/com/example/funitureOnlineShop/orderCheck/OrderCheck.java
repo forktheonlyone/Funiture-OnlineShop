@@ -1,5 +1,6 @@
 package com.example.funitureOnlineShop.orderCheck;
 
+import com.example.funitureOnlineShop.option.Option;
 import com.example.funitureOnlineShop.product.Product;
 import com.example.funitureOnlineShop.user.User;
 import lombok.Builder;
@@ -19,20 +20,20 @@ public class OrderCheck {
 
     private String tid;
 
-    private String optionName;
+    private Long quantity;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private Product product;
+    private Option option;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
     @Builder
-    public OrderCheck(Long id, String tid, String optionName, Product product, User user) {
+    public OrderCheck(Long id, String tid, Long quantity, Option option, User user) {
         this.id = id;
         this.tid = tid;
-        this.optionName = optionName;
-        this.product = product;
+        this.quantity = quantity;
+        this.option = option;
         this.user = user;
     }
 }
