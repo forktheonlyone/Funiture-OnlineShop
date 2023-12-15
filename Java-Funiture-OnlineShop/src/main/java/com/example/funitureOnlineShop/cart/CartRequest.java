@@ -23,7 +23,7 @@ public class CartRequest {
     }
 
     @Data
-    public static class updateDTO {
+    public static class UpdateDTO {
         private Long cartId;
         private Long quantity;
     }
