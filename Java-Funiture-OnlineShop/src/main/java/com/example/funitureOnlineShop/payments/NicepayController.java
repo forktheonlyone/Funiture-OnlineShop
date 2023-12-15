@@ -28,12 +28,12 @@ public class NicepayController {
         UUID id = UUID.randomUUID();
         model.addAttribute("orderId", id);
         model.addAttribute("clientId", CLIENT_ID);
-        return "/topay";
+        return "/payindex";
     }
 
     @RequestMapping(value="/cancel")
     public String cancelDemo(){
-        return "/cancel";
+        return "/paycancel";
     }
 
     @RequestMapping("/serverAuth")
@@ -66,7 +66,7 @@ public class NicepayController {
             // 결제 실패 비즈니스 로직 구현
         }
 
-        return "/response";
+        return "/payresponse";
     }
 
     @RequestMapping("/cancelAuth")
@@ -101,7 +101,7 @@ public class NicepayController {
             // 취소 실패 비즈니스 로직 구현
         }
 
-        return "/response";
+        return "/payresponse";
     }
 
     @RequestMapping("/hook")
