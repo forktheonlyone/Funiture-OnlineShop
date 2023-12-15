@@ -5,41 +5,54 @@ import com.example.funitureOnlineShop.user.User;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
-@Entity
 @NoArgsConstructor
 @Getter
-@ToString
+@Entity
+@Table(name = "cart_tb",
+        indexes = {
+                @Index(name = "cart_user_id_idx", columnList = "user_id"),
+                @Index(name = "cart_option_id_idx", columnList = "option_id"),
+        },
+        // 고유값
+        uniqueConstraints = {
+                @UniqueConstraint(name = "uk_cart_option_user", columnNames = {"user_id", "option_id"})
+        }
+)
+
 public class Cart {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    private User user; // 구매자
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User user;
 
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY) // 지연로딩
     private Option option;
 
-    // 카트에 담긴 총 가격
-    private Long price;
 
-    // 카트에 담긴 총 상품 개수
-    private Long quantity;
+
+    @Column(nullable = false)
+    private Long quantity; // 장바구니의 총수량
+
+
+    @Column(nullable = false)
+    private Long price; //장바구니 총 가격
+
 
     @Builder
-    public Cart(Long id, User user, Option option, Long price, Long quantity) {
+    public Cart(Long id, User user, Option option, Long quantity, Long price) {
         this.id = id;
         this.user = user;
         this.option = option;
-        this.price = price;
         this.quantity = quantity;
+        this.price = price;
     }
 
     public void update(Long quantity, Long price){

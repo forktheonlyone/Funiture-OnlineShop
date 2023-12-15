@@ -106,4 +106,10 @@ public class CartResponse {
         }
 
     }
+
+    @Data
+    public static class DeleteDTO {
+        private Long cartId;
+        private Long quantity;
+    }
 }
