@@ -4,12 +4,9 @@ import com.example.funitureOnlineShop.cart.Cart;
 import com.example.funitureOnlineShop.cart.CartRepository;
 import com.example.funitureOnlineShop.core.error.exception.Exception404;
 import com.example.funitureOnlineShop.core.error.exception.Exception500;
-import com.example.funitureOnlineShop.order.orderstatus.OrderStatus;
-import com.example.funitureOnlineShop.order.orderstatus.OrderStatusRepository;
-import com.example.funitureOnlineShop.order.orderstatus.OrderStatusRequest;
-import com.example.funitureOnlineShop.user.User;
 import com.example.funitureOnlineShop.order.item.Item;
 import com.example.funitureOnlineShop.order.item.ItemRepository;
+import com.example.funitureOnlineShop.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,7 +21,6 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final CartRepository cartRepository;
     private final ItemRepository itemRepository;
-    private final OrderStatusRepository orderStatusRepository;
     // 결제 시도시 작동
     @Transactional
     public OrderResponse.FindByIdDTO save(User user) {
@@ -39,9 +35,6 @@ public class OrderService {
         Order order = Order.builder().user(user).build();
         order = orderRepository.save(order);
 
-        // OrderStatus 생성 및 주문 연결
-
-
         // 아이템 저장
         List<Item> itemList = new ArrayList<>();
         for(Cart cart : cartList){
@@ -54,14 +47,9 @@ public class OrderService {
 
             itemList.add(item);
         }
-        OrderStatus orderStatus = new OrderStatusRequest.savedto(order, false); // 주문 상태 초기값: false
-        orderStatusRepository.save(orderStatus);
 
         try{
             itemRepository.saveAll(itemList);
-            OrderStatusRequest.OrderStatusUpdateRequest UpdateRequest = new OrderStatusRequest.OrderStatusUpdateRequest(order.getId(), true);
-            // 주문 완료 시 OrderStatus 값을 변경하여 주문 상태를 완료로 설정
-            orderStatusRepository.save(orderStatus);
         } catch (Exception e){
             throw new Exception500("주문 생성중 오류가 발생하였습니다.");
         }
@@ -79,13 +67,10 @@ public class OrderService {
 
     @Transactional
     public void delete(Long orderId) {
-        Order order = orderRepository.findByOrderId(orderId)
+        Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new Exception404("주문을 찾을 수 없습니다."));
 
-        List<Item> itemsToDelete = itemRepository.findAllByOrderId(orderId);
-
         try {
-            itemRepository.deleteAll(itemsToDelete);
             orderRepository.delete(order);
         } catch (Exception e) {
             throw new Exception500("주문 및 주문 항목 삭제 중 오류가 발생했습니다: " + e.getMessage());
