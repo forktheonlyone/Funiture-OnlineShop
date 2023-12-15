@@ -1,7 +1,9 @@
 package com.example.funitureOnlineShop.payments;
 
+import com.example.funitureOnlineShop.option.OptionService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,7 +18,10 @@ import java.util.Map;
 import java.util.UUID;
 
 @Controller
+@RequiredArgsConstructor
 public class NicepayController {
+    private final OptionService optionService;
+
     private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -61,9 +66,16 @@ public class NicepayController {
         System.out.println(responseNode.toPrettyString());
 
         if (resultCode.equalsIgnoreCase("0000")) {
-            // 결제 성공 비즈니스 로직 구현
+            // 결제 성공시 결제 후 옵션서비스에서 재고 갱신 로직 - optionService
+            // 결제 성공시 오더체크에서 주문 정보 저장 로직 -OrderCheck
+            // 결제 성공시 장바구니 비우기 - CartService
+            // 기타 결제 성공 비즈니스 로직
+            // (예시: 성공한 결제에 대한 로그 기록 등)
+            // 결제 성공 시 오더 생성
         } else {
-            // 결제 실패 비즈니스 로직 구현
+            // 실패한 결제에 대한 로그 기록
+            // 기타 결제 실패 비즈니스 로직
+            // 고객알림? - User에서 작업할 것인지
         }
         return "/payresponse";
     }
@@ -96,8 +108,12 @@ public class NicepayController {
 
         if (resultCode.equalsIgnoreCase("0000")) {
             // 취소 성공 비즈니스 로직 구현
+            // 취소된 주문 정보 갱신 - OrderCheck
+            // 결제 성공 시 오더 취소
         } else {
             // 취소 실패 비즈니스 로직 구현
+            // 고객알림? - User에서 작업할 것인지
+            // 재고복구 - Option서비스
         }
         return "/payresponse";
     }
