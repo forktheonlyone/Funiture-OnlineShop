@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -35,6 +37,7 @@ public class ProductCommentService {
     private String filePath = "";
 
     // 상품 후기 저장
+    @Transactional
     public ProductComment save(ProductCommentDto commentDto,
                                MultipartFile[] files) throws IOException {
         Optional<User> optionalUser = userRepository.findById(commentDto.getUserId());
@@ -98,6 +101,31 @@ public class ProductCommentService {
             return savedComment;
         } catch (Exception e) {
             throw new Exception500("상품 후기 저장 도중 오류 발생");
+        }
+    }
+
+    // 상품의 상품 후기들을 탐색
+    public List<ProductCommentDto> commentList(Long pId) {
+        try {
+            List<Option> optionList = optionRepository.findByProductId(pId);
+            // 작성된 후기가 없는 경우
+            if (optionList.isEmpty())
+                return null;
+            // 각 옵션의 후기들을 수집
+            List<ProductCommentDto> commentDtos = new ArrayList<>();
+            for (Option option : optionList) {
+                List<ProductComment> comments = productCommentRepository.findAllByOptionId(option.getId());
+                for (ProductComment comment : comments) {
+                    // Dto로 바꾸어 넣기
+                    commentDtos.add(ProductCommentDto.toSaveDto(comment));
+                }
+            }
+            // 작성일 기준 최신순으로 정렬
+            ProductCommentDto.sortByCreateDate(commentDtos);
+
+            return commentDtos;
+        } catch (Exception e) {
+            throw new Exception500("상품 후기 탐색 중 오류 발생 : " + pId);
         }
     }
 }
