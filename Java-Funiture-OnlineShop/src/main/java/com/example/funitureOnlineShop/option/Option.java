@@ -21,18 +21,22 @@ public class Option {
     private String optionName;
     // ** 옵션 가격
     private Long price;
-    // ** 옵션 수량
+    // ** 주문된 상품의 수량
     private Long quantity;
+
+    // ** 상품의 재고 수량
+    private Long stockQuantity;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Product product;
 
     @Builder
-    public Option(Long id, String optionName, Long price, Long quantity, Product product) {
+    public Option(Long id, String optionName, Long price, Long quantity, Long stockQuantity, Product product) {
         this.id = id;
         this.optionName = optionName;
         this.price = price;
         this.quantity = quantity;
+        this.stockQuantity = stockQuantity;
         this.product = product;
     }
 

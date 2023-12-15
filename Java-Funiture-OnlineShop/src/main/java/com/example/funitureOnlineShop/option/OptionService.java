@@ -1,6 +1,8 @@
 package com.example.funitureOnlineShop.option;
 
 import com.example.funitureOnlineShop.core.error.exception.Exception500;
+import com.example.funitureOnlineShop.order.Order;
+import com.example.funitureOnlineShop.order.item.Item;
 import com.example.funitureOnlineShop.product.Product;
 import com.example.funitureOnlineShop.product.ProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -85,5 +87,47 @@ public class OptionService {
         option.updateStockQuantity(newStockQuantity);
 
         optionRepository.save(option);
+    }
+    // 옵션 수량 차감
+    @Transactional
+    public void deductStock(Long optionId, Long quantity) {
+        Option option = optionRepository.findById(optionId)
+                .orElseThrow(() -> new Exception500("옵션이 존재하지 않습니다. 옵션 ID: " + optionId));
+
+        Long currentStock = option.getStockQuantity();
+        if (currentStock >= quantity) {
+            option.updateStockQuantity(currentStock - quantity);
+            optionRepository.save(option);
+        } else {
+            throw new Exception500("재고가 부족합니다. 옵션 ID: " + optionId);
+        }
+    }
+    // 결제 완료 후 재고 차감
+    @Transactional
+    public void deductStockOnOrder(Order order) {
+        for (Item orderItem : order.getOrderItems()) {
+            Long optionId = orderItem.getOption().getId();
+            Long quantity = orderItem.getQuantity();
+            deductStock(optionId, quantity);
+        }
+    }
+    // 옵션 수량 복구
+    @Transactional
+    public void restoreStock(Long optionId, Long quantity) {
+        Option option = optionRepository.findById(optionId)
+                .orElseThrow(() -> new Exception500("옵션이 존재하지 않습니다. 옵션 ID: " + optionId));
+
+        option.updateStockQuantity(option.getStockQuantity() + quantity);
+        optionRepository.save(option);
+    }
+
+    // 주문 취소 시 재고 복구
+    @Transactional
+    public void restoreStockOnOrderCancel(Order order) {
+        for (Item orderItem : order.getOrderItems()) {
+            Long optionId = orderItem.getOption().getId();
+            Long quantity = orderItem.getQuantity();
+            restoreStock(optionId, quantity);
+        }
     }
 }
