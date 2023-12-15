@@ -1,4 +1,4 @@
-package com.example.funitureOnlineShop.order.orderCheck;
+package com.example.funitureOnlineShop.orderCheck;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

@@ -42,7 +42,7 @@ public class CommentFile {
         this.productComment = productComment;
     }
 
-    public void updateFromBoard(ProductComment comment){
+    public void updateFromComment(ProductComment comment){
         this.productComment = comment;
     }
 }
