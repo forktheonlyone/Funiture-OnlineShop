@@ -35,17 +35,12 @@ public class Order {
     private LocalDateTime orderDate;
 
 
-    @OneToOne(fetch = FetchType.LAZY)
-    private OrderStatus orderStatus;
-
-
     @Builder
     public Order(Long id, User user, List<Item> orderItems, LocalDateTime orderDate, OrderStatus orderStatus) {
         this.id = id;
         this.user = user;
         this.orderItems = orderItems;
         this.orderDate = orderDate;
-        this.orderStatus = orderStatus;
     }
 
 
