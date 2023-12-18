@@ -20,6 +20,8 @@ public class BoardDTO {
 
     private String contents;
 
+    private Long categoryId;
+
     private LocalDateTime createTime;
 
     private LocalDateTime updateTime;
@@ -39,21 +41,27 @@ public class BoardDTO {
                 board.getUser().getId(),
                 board.getTitle(),
                 board.getContents(),
+                board.getCategory().getId(),
                 board.getCreateTime(),
                 board.getUpdateTime());
     }
 
+    @Getter
+    @Setter
     public static class BoardMapper {
-
-        private BoardMapper() {}
+        private Long categoryId;
 
         public static BoardDTO mapToDTO(Board board) {
             BoardDTO boardDTO = new BoardDTO();
             boardDTO.setId(board.getId());
             boardDTO.setTitle(board.getTitle());
             boardDTO.setCreateTime(board.getCreateTime());
-
+            boardDTO.setCategoryId(board.getCategory().getId());
             return boardDTO;
+        }
+
+        public static void mapCategoryId(BoardDTO boardDTO, Board board) {
+            boardDTO.setCategoryId(board.getCategory().getId());
         }
 
         public static List<BoardDTO> mapToDTOs(List<Board> boards) {

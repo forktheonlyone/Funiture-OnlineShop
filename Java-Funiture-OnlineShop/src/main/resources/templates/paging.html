@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>게시판</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 1rem;
+        }
+
+        section {
+            display: flex;
+            justify-content: space-around;
+            padding: 20px;
+        }
+
+        .left-section,
+        .right-section {
+            width: 45%;
+        }
+
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 1rem;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #333;
+            color: #fff;
+        }
+
+        .paging-buttons {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .paging-buttons a {
+            display: inline-block;
+            padding: 8px;
+            margin: 0 5px;
+            text-decoration: none;
+            background-color: #333;
+            color: #fff;
+        }
+
+        .paging-buttons a:hover {
+            background-color: #555;
+        }
+
+        .write-button {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .write-button a {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #4285f4;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        .write-button a:hover {
+            background-color: #3367d6;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>고객센터</h1>
+</header>
+
+<section>
+    <div class="left-section">
+        <h2>공지사항</h2>
+        <table>
+            <tr>
+                <th>번호</th>
+                <th>제목</th>
+                <th>작성자</th>
+                <th>작성 시간</th>
+            </tr>
+            <tr th:each="notice: ${notices}">
+                <td th:text="${notice.getId()}"></td>
+                <td><a th:href="@{'/board/notice/' + ${notice.getId()}}" th:text="${notice.getTitle()}"></a></td>
+                <td th:text="${notice.getWriter()}"></td>
+                <td th:text="*{#temporals.format(notice.getCreateTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+            </tr>
+        </table>
+        <div class="paging-buttons">
+            <!-- 공지사항 페이징 버튼 추가 -->
+            <a th:href="@{'/board/paging/' + ${noticeList.number + 1}}">이전</a>
+            <span th:each="page: ${#numbers.sequence(noticeList.first, noticeList.last)}">
+                <a th:href="@{'/board/paging/' + ${page}}" th:text="${page}"></a>
+            </span>
+            <a th:href="@{'/board/paging/' + ${noticeList.number + 2}}">다음</a>
+        </div>
+    </div>
+
+    <div class="right-section">
+        <h2>QnA</h2>
+        <table>
+            <tr>
+                <th>번호</th>
+                <th>제목</th>
+                <th>작성자</th>
+                <th>작성 시간</th>
+            </tr>
+            <tr th:each="qna: ${qnaList}">
+                <td th:text="${qna.getId()}"></td>
+                <td><a th:href="@{'/board/qna/' + ${qna.getId()}}" th:text="${qna.getTitle()}"></a></td>
+                <td th:text="${qna.getWriter()}"></td>
+                <td th:text="*{#temporals.format(qna.getCreateTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+            </tr>
+        </table>
+        <div class="paging-buttons">
+            <!-- QnA 페이징 버튼 추가 -->
+            <a th:href="@{'/board/paging/' + ${qnaList.number + 1}}">이전</a>
+            <span th:each="page: ${#numbers.sequence(qnaList.first, qnaList.last)}">
+                <a th:href="@{'/board/paging/' + ${page}}" th:text="${page}"></a>
+            </span>
+            <a th:href="@{'/board/paging/' + ${qnaList.number + 2}}">다음</a>
+        </div>
+    </div>
+</section>
+
+<!-- 글쓰기 버튼 추가 -->
+<div class="write-button">
+    <a th:href="@{'/createboard'}">글쓰기</a>
+</div>
+
+<footer>
+    <p>저작권 © 2023 고객센터</p>
+</footer>
+</body>
+</html>

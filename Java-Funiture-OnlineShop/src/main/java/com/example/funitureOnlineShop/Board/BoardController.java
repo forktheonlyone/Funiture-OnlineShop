@@ -2,6 +2,7 @@ package com.example.funitureOnlineShop.Board;
 
 import com.example.funitureOnlineShop.BoardFile.BoardFile;
 import com.example.funitureOnlineShop.core.error.exception.Exception500;
+import com.example.funitureOnlineShop.core.utils.ApiUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,6 +26,7 @@ import java.util.Map;
 public class BoardController {
     private final BoardService boardService;
 
+    /*
     @PostMapping("/save")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> save(@RequestBody BoardDTO requestDTO,
@@ -34,6 +36,16 @@ public class BoardController {
         boardService.save(requestDTO, files);
 
         return ResponseEntity.status(HttpStatus.CREATED).body("게시물이 성공적으로 저장되었습니다.");
+    }
+    */
+    @PostMapping("/save/{categoryId}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<?> save(@RequestBody BoardDTO requestDTO,
+                                  @RequestParam MultipartFile[] files,
+                                  @PathVariable Long categoryId) throws IOException {
+
+        Long savedBoardId = boardService.save(requestDTO, files);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedBoardId);
     }
 
     @GetMapping(value = {"/paging", "/"})
@@ -96,5 +108,21 @@ public class BoardController {
         } catch (Exception e) {
             throw new Exception500("게시물 삭제에 실패했습니다.");
         }
+    }
+
+    // 공지사항 카테고리 추가
+    @GetMapping("/notices/{categoryId}")
+    public ResponseEntity<?> getNoticesByCategory(@PathVariable Long categoryId) {
+        List<BoardDTO> notices = boardService.findByCategoryId(categoryId);
+        ApiUtils.ApiResult<?> apiResult = ApiUtils.success(notices);
+        return ResponseEntity.ok(apiResult);
+    }
+
+    // QnA 카테고리 추가
+    @GetMapping("/qna/{categoryId}")
+    public ResponseEntity<?> getQnAByCategory(@PathVariable Long categoryId) {
+        List<BoardDTO> qnaList = boardService.findByCategoryId(categoryId);
+        ApiUtils.ApiResult<?> apiResult = ApiUtils.success(qnaList);
+        return ResponseEntity.ok(apiResult);
     }
 }
