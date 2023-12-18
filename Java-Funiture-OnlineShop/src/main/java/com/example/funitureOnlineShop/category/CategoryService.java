@@ -19,7 +19,6 @@ import java.util.stream.Collectors;
 public class CategoryService {
 
     private final CategoryRepository categoryRepository;
-    private final BoardRepository boardRepository;
 
     // 카테고리 저장
     @Transactional
@@ -99,13 +98,5 @@ public class CategoryService {
         }
     }
 
-    public List<BoardDTO> findNoticesByCategory(Long categoryId) {
-        // categoryId에 해당하는 카테고리의 공지사항을 조회
-        List<Board> notices = boardRepository.findByCategoryId(categoryId);
 
-        // Board 엔티티를 BoardDTO로 변환
-        List<BoardDTO> boardDTOs = BoardDTO.BoardMapper.mapToDTOs(notices);
-
-        return boardDTOs;
-    }
 }

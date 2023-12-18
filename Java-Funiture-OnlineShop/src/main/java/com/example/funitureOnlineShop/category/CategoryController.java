@@ -57,11 +57,5 @@ public class CategoryController {
 
         return ResponseEntity.ok(ApiUtils.success(null));
     }
-    // 게시판 카테고리 추가
-    @GetMapping("/notices/{categoryId}")
-    public ResponseEntity<?> getNoticesByCategory(@PathVariable Long categoryId) {
-        List<BoardDTO> notices = categoryService.findNoticesByCategory(categoryId);
-        ApiUtils.ApiResult<?> apiResult = ApiUtils.success(notices);
-        return ResponseEntity.ok(apiResult);
-    }
+
 }

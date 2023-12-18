@@ -1,5 +1,6 @@
 package com.example.funitureOnlineShop.Board;
 
+import com.example.funitureOnlineShop.category.Category;
 import com.example.funitureOnlineShop.user.User;
 import lombok.Builder;
 import lombok.Getter;
@@ -32,14 +33,19 @@ public class Board {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private Category category;
+
     @Builder
-    public Board(Long id, String title, String contents, LocalDateTime createTime, LocalDateTime updateTime, User user) {
+    public Board(Long id, String title, String contents, LocalDateTime createTime, LocalDateTime updateTime, User user, Category category) {
         this.id = id;
         this.title = title;
         this.contents = contents;
         this.createTime = createTime;
         this.updateTime = updateTime;
         this.user = user;
+        this.category = category;
     }
 
     public void updateFromDTO(BoardDTO boardDTO) {

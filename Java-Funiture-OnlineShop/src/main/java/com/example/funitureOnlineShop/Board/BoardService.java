@@ -2,6 +2,9 @@ package com.example.funitureOnlineShop.Board;
 
 import com.example.funitureOnlineShop.BoardFile.BoardFile;
 import com.example.funitureOnlineShop.BoardFile.BoardFileRepository;
+import com.example.funitureOnlineShop.category.Category;
+import com.example.funitureOnlineShop.category.CategoryRepository;
+import com.example.funitureOnlineShop.core.error.exception.Exception500;
 import com.example.funitureOnlineShop.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -17,6 +20,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -27,7 +31,7 @@ import java.util.UUID;
 public class BoardService {
     private final BoardRepository boardRepository;
     private final BoardFileRepository boardFileRepository;
-    private final UserRepository userRepository;
+    private final CategoryRepository categoryRepository;
     private final String filePath = "";
 
     public Page<BoardDTO> paging(Pageable pageable){
@@ -45,13 +49,20 @@ public class BoardService {
                 board.getUser().getId(),
                 board.getTitle(),
                 board.getContents(),
+                board.getCategory().getId(),
                 board.getCreateTime(),
                 board.getUpdateTime()));
     }
     @Transactional
-    public void save(BoardDTO dto, MultipartFile[] files) throws IOException {
+    public Long save(BoardDTO dto, MultipartFile[] files) throws IOException {
+        dto.setCreateTime(LocalDateTime.now());
 
-        try {
+        Category category = categoryRepository.findById(dto.getCategoryId()).orElseThrow(() -> new Exception500("카테고리가 없습니다"));
+
+        Long id = boardRepository.save(dto.toEntity()).getId();
+        Board board = boardRepository.findById(id).get();
+
+        try{
             // ** 파일 정보 저장.
             for (MultipartFile file : files) {
 
@@ -72,8 +83,6 @@ public class BoardService {
                 // ** 경로에 파일을 저장.  DB 아님
                 file.transferTo(new File(path));
                 // ** 게시글 DB에 저장 후 pk을 받아옴.
-                Long id = boardRepository.save(dto.toEntity()).getId();
-                Board board = boardRepository.findById(id).get();
 
                 BoardFile boardFile = BoardFile.builder()
                         .filePath(filePath)
@@ -86,11 +95,10 @@ public class BoardService {
 
                 boardFileRepository.save(boardFile);
             }
+        }catch (Exception e){
+            throw new Exception500("파일 이상");
         }
-        catch (Exception e){
-            Long id = boardRepository.save(dto.toEntity()).getId();
-            Board board = boardRepository.findById(id).get();
-        }
+        return id;
     }
 
     public BoardDTO findById(Long id){
@@ -154,5 +162,8 @@ public class BoardService {
     @Transactional
     public void deleteById(Long id){boardRepository.deleteById(id);}
 
-
+    public List<BoardDTO> findByCategoryId(Long categoryId) {
+        List<Board> boards = boardRepository.findByCategoryId(categoryId);
+        return BoardDTO.BoardMapper.mapToDTOs(boards);
+    }
 }

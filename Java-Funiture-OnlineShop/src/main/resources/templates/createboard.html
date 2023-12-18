@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>save</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f6f6f6;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #4285f4;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+        }
+
+        footer {
+            background-color: #4285f4;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin: 20px auto;
+            width: 50%;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        textarea,
+        input[type="file"],
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+            resize: none;
+        }
+
+        input[type="submit"] {
+            background-color: #4285f4;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            display: inline-block;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #3367d6;
+        }
+
+        .message {
+            margin-top: 10px;
+            color: green;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Board Form</h1>
+</header>
+
+<form id="boardForm" action="/board/save" method="post" enctype="multipart/form-data">
+    <label for="title">Title:</label>
+    <input type="text" name="title" id="title" required>
+
+    <label for="contents">Contents:</label>
+    <textarea name="contents" id="contents" cols="30" rows="5" required></textarea>
+
+    <label for="files">Board Files:</label>
+    <input type="file" name="files" id="files" multiple>
+
+    <label for="categoryId">Category:</label>
+    <select name="categoryId" id="categoryId" required>
+        <option value="1">공지사항</option>
+        <option value="2">QnA</option>
+    </select>
+
+    <input type="submit" value="Submit">
+    <div class="message" id="message"></div>
+</form>
+
+<footer>
+    <p>&copy; 2023 Your Website</p>
+</footer>
+
+<script>
+    document.getElementById('boardForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        var formData = new FormData(this);
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/board/save', true);
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
+                    document.getElementById('message').textContent = '게시물이 성공적으로 저장되었습니다.';
+                    setTimeout(function () {
+                        window.location.href = '/board/paging';
+                    }, 2000);
+                } else {
+                    document.getElementById('message').textContent = '게시물 저장에 실패했습니다.';
+                }
+            }
+        };
+        xhr.send(formData);
+    });
+</script>
+
+</body>
+</html>
