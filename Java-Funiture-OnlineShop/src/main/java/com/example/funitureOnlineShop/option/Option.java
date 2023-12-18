@@ -21,9 +21,6 @@ public class Option {
     private String optionName;
     // ** 옵션 가격
     private Long price;
-    // ** 주문된 상품의 수량
-    private Long quantity;
-
     // ** 상품의 재고 수량
     private Long stockQuantity;
 
@@ -35,7 +32,6 @@ public class Option {
         this.id = id;
         this.optionName = optionName;
         this.price = price;
-        this.quantity = quantity;
         this.stockQuantity = stockQuantity;
         this.product = product;
     }
@@ -50,9 +46,9 @@ public class Option {
 
         this.optionName = optionDTO.getOptionName();
         this.price = optionDTO.getPrice();
-        this.quantity = optionDTO.getQuantity();
+        this.stockQuantity = optionDTO.getStockQuantity();
     }
     public void updateStockQuantity(Long newStockQuantity) {
-        this.quantity = newStockQuantity;
+        this.stockQuantity = newStockQuantity;
     }
 }
