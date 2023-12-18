@@ -16,7 +16,7 @@ public class OptionResponse {
 
     private Long Price;
 
-    private Long quantity;
+    private Long stockQuantity;
 
     @NoArgsConstructor
     @Getter
@@ -30,21 +30,21 @@ public class OptionResponse {
 
         private Long Price;
 
-        private Long quantity;
+        private Long stockQuantity;
 
         public FindByProductIdDTO(Option option) {
             this.id = option.getId();
             this.productId = option.getProduct().getId();
             this.optionName = option.getOptionName();
             this.Price = option.getPrice();
-            this.quantity = option.getQuantity();
+            this.stockQuantity = option.getStockQuantity();
         }
 
         public Option toEntity() {
             return Option.builder()
                     .optionName(optionName)
                     .price(Price)
-                    .quantity(quantity)
+                    .stockQuantity(stockQuantity)
                     .build();
         }
     }
@@ -60,21 +60,21 @@ public class OptionResponse {
 
         private Long Price;
 
-        private Long quantity;
+        private Long stockQuantity;
 
         public FindAllDTO(Option option){
             this.id = option.getId();
             this.productId = option.getProduct().getId();
             this.optionName = option.getOptionName();
             this.Price = option.getPrice();
-            this.quantity = option.getQuantity();
+            this.stockQuantity = option.getStockQuantity();
         }
 
         public Option toEntity(){
             return Option.builder()
                     .optionName(optionName)
                     .price(Price)
-                    .quantity(quantity)
+                    .stockQuantity(stockQuantity)
                     .build();
         }
     }

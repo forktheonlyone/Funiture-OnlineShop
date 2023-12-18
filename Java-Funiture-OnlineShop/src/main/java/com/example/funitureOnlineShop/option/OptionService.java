@@ -90,10 +90,10 @@ public class OptionService {
     }
     // 옵션 수량 차감
     @Transactional
-    public void deductStock(Long optionId, Long quantity) {
+    public void deductStock(Long optionId, Item item) {
         Option option = optionRepository.findById(optionId)
                 .orElseThrow(() -> new Exception500("옵션이 존재하지 않습니다. 옵션 ID: " + optionId));
-
+        Long quantity = item.getQuantity();
         Long currentStock = option.getStockQuantity();
         if (currentStock >= quantity) {
             option.updateStockQuantity(currentStock - quantity);
@@ -107,16 +107,15 @@ public class OptionService {
     public void deductStockOnOrder(Order order) {
         for (Item orderItem : order.getOrderItems()) {
             Long optionId = orderItem.getOption().getId();
-            Long quantity = orderItem.getQuantity();
-            deductStock(optionId, quantity);
+            deductStock(optionId, orderItem);
         }
     }
     // 옵션 수량 복구
     @Transactional
-    public void restoreStock(Long optionId, Long quantity) {
+    public void restoreStock(Long optionId, Item item) {
         Option option = optionRepository.findById(optionId)
                 .orElseThrow(() -> new Exception500("옵션이 존재하지 않습니다. 옵션 ID: " + optionId));
-
+        Long quantity = item.getQuantity();
         option.updateStockQuantity(option.getStockQuantity() + quantity);
         optionRepository.save(option);
     }
@@ -126,8 +125,7 @@ public class OptionService {
     public void restoreStockOnOrderCancel(Order order) {
         for (Item orderItem : order.getOrderItems()) {
             Long optionId = orderItem.getOption().getId();
-            Long quantity = orderItem.getQuantity();
-            restoreStock(optionId, quantity);
+            restoreStock(optionId, orderItem);
         }
     }
 }
