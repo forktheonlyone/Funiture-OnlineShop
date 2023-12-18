@@ -1,9 +1,7 @@
 package com.example.funitureOnlineShop.productComment;
 
 import com.example.funitureOnlineShop.commentFile.CommentFile;
-import com.example.funitureOnlineShop.option.Option;
 import com.example.funitureOnlineShop.orderCheck.OrderCheck;
-import com.example.funitureOnlineShop.user.User;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -57,10 +55,10 @@ public class ProductComment {
         this.createTime = LocalDateTime.now();
     }
 
-    public void updateFromDto(ProductCommentDto commentDto) {
-        this.contents = commentDto.getContents();
-        this.star = commentDto.getStar();
-        this.updateTime = commentDto.getUpdateTime();
+    public void updateFromDto(ProductCommentRequest.UpdateDto updateDto) {
+        this.contents = updateDto.getContents();
+        this.star = updateDto.getStar();
+        this.updateTime = LocalDateTime.now();
         this.commentFiles.clear();
     }
 }
