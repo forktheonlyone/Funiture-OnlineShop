@@ -23,7 +23,7 @@ public class ProductResponse {
             this.id = option.getId();
             this.optionName = option.getOptionName();
             this.price = option.getPrice();
-            this.quantity = option.getQuantity();
+            this.quantity = option.getStockQuantity();
         }
     }
 
