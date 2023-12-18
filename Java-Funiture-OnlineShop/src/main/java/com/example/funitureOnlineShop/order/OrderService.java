@@ -70,7 +70,7 @@ public class OrderService {
 
     @Transactional
     public void delete(Long orderId) {
-        Order order = orderRepository.findByOrderId(orderId)
+        Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new Exception404("주문을 찾을 수 없습니다."));
 
         List<Item> itemsToDelete = itemRepository.findAllByOrderId(orderId);

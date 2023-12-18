@@ -1,10 +1,204 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>가구홈페이지</title>
+    <script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
+    <style>
+        /* 스타일 시트를 이용하여 홈페이지를 꾸미기 */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #f0f0f0;
+            padding: 10px 20px;
+        }
+
+        .header-buttons {
+            display: flex;
+            align-items: center;
+        }
+
+        .header-buttons button {
+            flex: 0 0 auto;
+            margin-right: 10px;
+            padding: 4px 14px;
+            display: inline-block;
+            background-color: #f0f0f0;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: normal;
+            color: #333;
+            cursor: pointer;
+            line-height: 25px;
+            transition: background-color 0.3s;
+            vertical-align: top;
+        }
+
+        .header-buttons button:hover {
+            background-color: #c7c7c7;
+        }
+
+        h1 {
+            margin: 20px 0;
+            text-align: center;
+            color: #333;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            padding: 0;
+            margin: 0 0 0 20px;
+            text-decoration: none;
+            font-size: 16px;
+        }
+
+        section {
+            margin: 20px 0;
+            padding: 0 20px;
+        }
+
+        footer {
+            display: flex;
+            background-color: #f0f0f0;
+            padding: 10px 20px;
+            text-align: center;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn {
+            flex: 0 0 auto;
+            display: inline-block;
+            padding: 4px 14px;
+            border-radius: 5px;
+            font-size: 13px;
+            color: #fff;
+            line-height: 25px;
+            vertical-align: top;
+            background-color: #4CAF50;
+            font-weight: normal;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #45a049;
+        }
+
+        .footword{
+            margin-bottom: 5px;
+            font-size: 12px;
+            color: #999;
+        }
+    </style>
+    <script th:inline="javascript">
+        const paging = () => {
+            location.href = "/board/paging";
+        }
+
+        async function logout() {
+            try {
+                const token = getCookie("token");
+                const response = await fetch('/user/logout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': token
+                    }
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    alert("로그아웃에 성공했습니다!");
+                    console.log(location.href);
+                    location.href = result;
+                } else {
+                    console.log(result);
+                    alert("로그아웃에 실패했습니다.\n잠시 후 다시 시도해주세요.");
+                }
+            } catch (error) {
+               console.error('Error:', error);
+            }
+        }
+
+        $(document).ready(function(){
+            checkButtonVisibility();
+        });
+
+        function getCookie(name) {
+            var cookieName = name + "=";
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i].trim();
+                if (cookie.indexOf(cookieName) === 0) {
+                    return cookie.substring(cookieName.length, cookie.length);
+                }
+            }
+            return null;
+        }
+
+        const checkButtonVisibility = () => {
+            var logined = getCookie("token");
+            if (logined != null) {
+                // 버튼을 보여주는 로직 호출
+                showButtons();
+            }
+        }
+
+        const showButtons = () => {
+            // 버튼을 보여주는 로직 작성
+            var buttonsContainer = document.getElementById("loginButtons");
+            buttonsContainer.style.display = "none";
+            var buttonsContainer = document.getElementById("logoutButtons");
+            buttonsContainer.style.display = "block";
+        }
+    </script>
 </head>
 <body>
+<header>
+    <h1 style="color: #333;">가구 쇼핑몰</h1>
 
+    <div>
+        <span class="header-buttons" id="loginButtons" style="display: block;">
+            <button onclick="location.href='/login'">로그인</button>
+            <button onclick="location.href='/join'">회원가입</button>
+        </span>
+        <span class="header-buttons" id="logoutButtons" style="display: none;">
+            <button onclick="logout()">로그아웃</button>
+        </span>
+    </div>
+</header>
+
+<section>
+    <nav>
+        <button class="btn" onclick="location.href='/product'">상품 페이지(준비중)</button>
+        <button class="btn" onclick="paging()">게시판</button>
+    </nav>
+</section>
+
+<section>
+    <h2>핵심 콘텐츠</h2>
+    <!-- 핵심 콘텐츠 내용 추가 -->
+</section>
+
+<section>
+    <h2>소셜 미디어 연동</h2>
+    <!-- 소셜 미디어 연동 내용 추가 -->
+</section>
+
+<footer>
+    <p class="footword">&copy; 2023 My Website. All rights reserved.</p>
+</footer>
 </body>
 </html>
