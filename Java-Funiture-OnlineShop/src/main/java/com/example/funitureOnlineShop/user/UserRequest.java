@@ -100,5 +100,28 @@ public class UserRequest {
         private String username;
     }
 
+    @Getter
+    @Setter
+    public static class LoginDto{
+        // 이메일
+        // 영어+숫자 '@' 영어+숫자
+        @NotEmpty
+        @Pattern(regexp = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$", message = "유효한 이메일 주소를 입력해주세요.")
+        private String email;
 
+        // 비밀번호
+        // 영문자, 숫자, 특수문자를 조합한 8 ~ 20자
+        @NotEmpty(message = "비밀번호를 입력해주세요.")
+        @Size(min = 8, max = 20, message = "8자 이상 20자 이내로 작성 가능합니다.")
+        @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@#$%^&+=!@#$%^&*()_~+=\\[\\]|\\\\;:'\"<>,.?/-])[A-Za-z\\d@#$%^&+=!@#$%^&*()_~+=\\[\\]|\\\\;:'\"<>,.?/-]{8,20}$", message = "영문자, 숫자, 특수문자를 혼합하여 입력해주세요.")
+        private String password;
+
+        // DTO를 Entity로
+        public User toEntity(){
+            return User.builder()
+                    .email(email)
+                    .password(password)
+                    .build();
+        }
+    }
 }

@@ -81,12 +81,12 @@ public class UserService {
 
     // id, 비밀번호 인증 후 access_token 생성
     @Transactional
-    public String login(UserRequest.JoinDto joinDto, HttpServletResponse res) {
+    public String login(UserRequest.LoginDto loginDto, HttpServletResponse res) {
         // 인증 작업
         try{
             UsernamePasswordAuthenticationToken token
                     = new UsernamePasswordAuthenticationToken(
-                    joinDto.getEmail(), joinDto.getPassword());
+                    loginDto.getEmail(), loginDto.getPassword());
 
             // anonymousUser = 비인증
             Authentication authentication
