@@ -35,8 +35,8 @@ public class UserController {
 
     // 로그인
     @PostMapping("/login")
-    public ResponseEntity<Object> login(@RequestBody @Valid UserRequest.JoinDto joinDto, HttpServletResponse res, Error error){
-        String jwt = userService.login(joinDto, res);
+    public ResponseEntity<Object> login(@RequestBody @Valid UserRequest.LoginDto loginDto, HttpServletResponse res, Error error){
+        String jwt = userService.login(loginDto, res);
         return ResponseEntity.ok().header(JwtTokenProvider.HEADER, jwt)
                 .body(ApiUtils.success(null));
     }
