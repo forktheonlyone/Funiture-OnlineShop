@@ -48,28 +48,7 @@
 </div>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        // URL에서 파라미터를 읽어와서 선택한 상품들의 정보를 가져옴
-        var params = new URLSearchParams(window.location.search);
-        var productList = document.querySelector("#order-details ul");
 
-        // URL 파라미터에서 productId에 해당하는 값들을 가져와서 리스트에 추가
-        params.getAll("productId").forEach(function(productId) {
-            // 서버에서 상품 정보를 가져와서 표시
-            fetch("/products/" + productId)
-                .then(function(response) {
-                    return response.json();
-                })
-                .then(function(product) {
-                    var listItem = document.createElement("li");
-                    listItem.textContent = "상품명: " + product.name + " / 가격: " + product.price + "원";
-                    productList.appendChild(listItem);
-                })
-                .catch(function(error) {
-                    console.error("상품 정보를 가져오는 중 오류가 발생했습니다:", error);
-                });
-        });
-    });
 </script>
 </body>
 </html>
