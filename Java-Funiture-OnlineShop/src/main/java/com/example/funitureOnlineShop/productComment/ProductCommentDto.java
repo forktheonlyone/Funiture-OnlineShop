@@ -24,10 +24,8 @@ public class ProductCommentDto {
     private LocalDateTime createTime;
     // 수정일
     private LocalDateTime updateTime;
-    // 상품 id
-    private Long optionId;
-    // 작성자 id
-    private Long userId;
+    // 주문 내역 id
+    private Long orderCheckId;
 
     public ProductComment toEntity() {
         return ProductComment.builder()
@@ -43,12 +41,11 @@ public class ProductCommentDto {
         return new ProductCommentDto(
                 comment.getId(),
                 comment.getStar(),
-                comment.getUser().getUsername(),
+                comment.getOrderCheck().getUser().getUsername(),
                 comment.getContents(),
                 comment.getCreateTime(),
                 comment.getUpdateTime(),
-                comment.getOption().getId(),
-                comment.getUser().getId());
+                comment.getOrderCheck().getId());
     }
 
     // 작성일을 기준으로 리스트를 정렬 (최신순)

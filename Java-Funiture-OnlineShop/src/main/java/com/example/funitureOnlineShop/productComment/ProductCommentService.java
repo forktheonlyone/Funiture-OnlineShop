@@ -6,9 +6,9 @@ import com.example.funitureOnlineShop.core.error.exception.Exception401;
 import com.example.funitureOnlineShop.core.error.exception.Exception404;
 import com.example.funitureOnlineShop.core.error.exception.Exception500;
 import com.example.funitureOnlineShop.option.Option;
-import com.example.funitureOnlineShop.option.OptionRepository;
+import com.example.funitureOnlineShop.orderCheck.OrderCheck;
+import com.example.funitureOnlineShop.orderCheck.OrderCheckRepository;
 import com.example.funitureOnlineShop.user.User;
-import com.example.funitureOnlineShop.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
@@ -31,8 +31,7 @@ import java.util.UUID;
 public class ProductCommentService {
 
     private final ProductCommentRepository productCommentRepository;
-    private final UserRepository userRepository;
-    private final OptionRepository optionRepository;
+    private final OrderCheckRepository orderCheckRepository;
     private final CommentFileRepository commentFileRepository;
     // 파일 저장 경로
     private String filePath = "";
@@ -41,25 +40,19 @@ public class ProductCommentService {
     @Transactional
     public ProductComment save(ProductCommentDto commentDto,
                                MultipartFile[] files) throws IOException {
-        Optional<User> optionalUser = userRepository.findById(commentDto.getUserId());
-        Optional<Option> optionalOption = optionRepository.findById(commentDto.getOptionId());
+        Optional<OrderCheck> optionalOrderCheck = orderCheckRepository.findById(commentDto.getOrderCheckId());
         // 없는 회원일 경우
-        if (optionalUser.isEmpty())
-            throw new Exception404("찾을 수 없는 회원 : " + commentDto.getUserId());
-        // 등록되지 않은 옵션일 경우
-        if (optionalOption.isEmpty())
-            throw new Exception404("해당 옵션을 찾을 수 없습니다. : " + commentDto.getOptionId());
-        User user = optionalUser.get();
-        Option option = optionalOption.get();
+        if (optionalOrderCheck.isEmpty())
+            throw new Exception404("해당 주문내역을 찾을 수 없습니다. : " + commentDto.getOrderCheckId());
+        OrderCheck orderCheck = optionalOrderCheck.get();
         // 값 로딩 맞추기
-        Hibernate.initialize(user);
-        Hibernate.initialize(option);
+        Hibernate.initialize(orderCheck);
 
         // 저장할 엔티티 생성
         ProductComment comment = commentDto.toEntity();
         try {
             ProductComment savedComment = productCommentRepository.save(comment);
-            savedComment.updateFromEntity(user, option);
+            savedComment.updateFromEntity(orderCheck);
 
             // 추가
             if (!files[0].isEmpty()) {
@@ -109,7 +102,7 @@ public class ProductCommentService {
     // 상품의 상품 후기들을 탐색
     public List<ProductCommentDto> commentList(Long pId) {
         try {
-            List<Option> optionList = optionRepository.findByProductId(pId);
+            List<Option> optionList = orderCheckRepository.findByProductId(pId);
             // 작성된 후기가 없는 경우
             if (optionList.isEmpty())
                 return null;

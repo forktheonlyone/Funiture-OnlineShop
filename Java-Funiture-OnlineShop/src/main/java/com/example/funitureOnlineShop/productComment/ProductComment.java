@@ -2,6 +2,7 @@ package com.example.funitureOnlineShop.productComment;
 
 import com.example.funitureOnlineShop.commentFile.CommentFile;
 import com.example.funitureOnlineShop.option.Option;
+import com.example.funitureOnlineShop.orderCheck.OrderCheck;
 import com.example.funitureOnlineShop.user.User;
 import lombok.Builder;
 import lombok.Getter;
@@ -34,30 +35,25 @@ public class ProductComment {
     @Column(length = 30, nullable = false)
     private LocalDateTime updateTime;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private User user;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Option option;
+    @OneToOne(fetch = FetchType.LAZY)
+    private OrderCheck orderCheck;
 
     @OneToMany(mappedBy = "productComment", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<CommentFile> commentFiles = new ArrayList<>();
 
     @Builder
-    public ProductComment(Long id, String contents, int star, LocalDateTime createTime, LocalDateTime updateTime, User user, Option option, List<CommentFile> commentFiles) {
+    public ProductComment(Long id, String contents, int star, LocalDateTime createTime, LocalDateTime updateTime, OrderCheck orderCheck, List<CommentFile> commentFiles) {
         this.id = id;
         this.contents = contents;
         this.star = star;
         this.createTime = createTime;
         this.updateTime = updateTime;
-        this.user = user;
-        this.option = option;
+        this.orderCheck = orderCheck;
         this.commentFiles = commentFiles;
     }
 
-    public void updateFromEntity(User user, Option option) {
-        this.user = user;
-        this.option = option;
+    public void updateFromEntity(OrderCheck orderCheck) {
+        this.orderCheck = orderCheck;
         this.createTime = LocalDateTime.now();
     }
 
