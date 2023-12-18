@@ -3,6 +3,8 @@ package com.example.funitureOnlineShop.Board;
 import com.example.funitureOnlineShop.user.User;
 import lombok.*;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -39,5 +41,25 @@ public class BoardDTO {
                 board.getContents(),
                 board.getCreateTime(),
                 board.getUpdateTime());
+    }
+
+    public static class BoardMapper {
+
+        private BoardMapper() {}
+
+        public static BoardDTO mapToDTO(Board board) {
+            BoardDTO boardDTO = new BoardDTO();
+            boardDTO.setId(board.getId());
+            boardDTO.setTitle(board.getTitle());
+            boardDTO.setCreateTime(board.getCreateTime());
+
+            return boardDTO;
+        }
+
+        public static List<BoardDTO> mapToDTOs(List<Board> boards) {
+            return boards.stream()
+                    .map(BoardMapper::mapToDTO)
+                    .collect(Collectors.toList());
+        }
     }
 }

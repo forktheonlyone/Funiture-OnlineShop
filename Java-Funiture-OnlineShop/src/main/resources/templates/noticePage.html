@@ -170,16 +170,19 @@
             <ul>
                 <li class="dep1 active" id="faqli">FAQ
                     <ul id="faqCate">
-                        <li><a href="#done" onclick="goFaqList('0','','');" style="">전체</a></li>
-                        <li class="faqCate active" id="0"><a href="#done" onclick="goFaqList('1','00100','');" style="">회원/정보관리</a></li>
-                        <!-- 나머지 FAQ 항목들도 동일하게 추가 -->
+                        <li><a href="#done" onclick="toggleContent('faqContent');">전체</a></li>
+                        <li class="faqCate active" th:each="category : ${categories}" th:id="${category.id}">
+                            <a href="#done" th:attr="onclick='showCategoryNotices(\'' + ${category.id} + '\'); return false;'"
+                               th:text="${category.categoryName} + '(' + ${category.subCategories.size()} + ')'">
+                            </a>
+                        </li>
                     </ul>
                 </li>
                 <li class="dep1"><a href="/board/notice">공지사항</a></li>
                 <li class="dep1">QnA
                     <ul>
-                        <li><a href="javascript:goQnaList('https://mall.hanssem.com/csCenter/csQna.do');">자주묻는질문</a></li>
-                        <li><a href="javascript:goQnaList('https://mall.hanssem.com/mypage/csQnaList.do');">뭐물어볼래</a></li>
+                        <li><a href="javascript:goQnaList('http://localhost:8080/csCenter/csQna.do');">자주묻는질문</a></li>
+                        <li><a href="javascript:goQnaList('http://localhost:8080/mypage/csQnaList.do');">뭐물어볼래</a></li>
                     </ul>
                 </li>
                 <!-- 나머지 항목들도 동일하게 추가 -->
@@ -187,15 +190,40 @@
         </div>
     </div>
 
-    <div class="tab_cont ui-tab-contents-item">
+    <!-- FAQ 목록 -->
+    <div class="tab_cont ui-tab-contents-item" id="faqContent">
+        <div class="tbl_info">
+            <p>총 <span>379</span>개의 FAQ가 있습니다.</p>
+        </div>
+        <table class="tred">
+            <!-- FAQ 목록 표시 코드 -->
+        </table>
+
+        <div class="paging">
+            <!-- FAQ 페이징 부분 -->
+        </div>
+    </div>
+
+    <!-- 게시물 목록 -->
+    <div class="tab_cont ui-tab-contents-item" id="noticeContent" style="display: none;">
         <div class="tbl_info">
             <p>총 <span>379</span>개의 공지사항이 있습니다.</p>
         </div>
         <table class="tred">
-            <!-- 이전 코드에서 작성한 오른쪽 섹션 부분을 그대로 가져옴 -->
+            <tr>
+                <th>번호</th>
+                <th>제목</th>
+                <th>작성자</th>
+                <th>작성 시간</th>
+            </tr>
+            <tr th:each="notice : ${notices}">
+                <td th:text="${notice.id}"></td>
+                <td><a th:href="@{'/board/' + ${notice.id}}"></a></td>
+                <td th:text="${notice.writer}"></td>
+                <td th:text="${#temporals.format(notice.createTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+            </tr>
         </table>
 
-        <!-- paging -->
         <div class="paging">
             <table>
                 <tr>
@@ -230,13 +258,24 @@
     </div>
 
 </div>
-
-<!-- 풋터 시작 -->
 <footer>
     <p>&copy; 2023 팀프로젝트. All rights reserved.</p>
 </footer>
-<!-- 풋터 끝 -->
 
+<script>
+    function toggleContent(contentId) {
+        var faqContent = document.getElementById('faqContent');
+        var noticeContent = document.getElementById('noticeContent');
+
+        if (contentId === 'faqContent') {
+            faqContent.style.display = 'block';
+            noticeContent.style.display = 'none';
+        } else {
+            faqContent.style.display = 'none';
+            noticeContent.style.display = 'block';
+        }
+    }
+</script>
 </body>
 </html>
 

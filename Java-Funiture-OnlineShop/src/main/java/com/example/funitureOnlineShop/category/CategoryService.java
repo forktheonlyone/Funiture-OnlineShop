@@ -1,5 +1,8 @@
 package com.example.funitureOnlineShop.category;
 
+import com.example.funitureOnlineShop.Board.Board;
+import com.example.funitureOnlineShop.Board.BoardDTO;
+import com.example.funitureOnlineShop.Board.BoardRepository;
 import com.example.funitureOnlineShop.core.error.exception.Exception404;
 import com.example.funitureOnlineShop.core.error.exception.Exception500;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +19,7 @@ import java.util.stream.Collectors;
 public class CategoryService {
 
     private final CategoryRepository categoryRepository;
+    private final BoardRepository boardRepository;
 
     // 카테고리 저장
     @Transactional
@@ -93,5 +97,15 @@ public class CategoryService {
         } catch (Exception e) {
             throw new Exception500("카테고리 삭제 도중 이상이 생겼습니다.");
         }
+    }
+
+    public List<BoardDTO> findNoticesByCategory(Long categoryId) {
+        // categoryId에 해당하는 카테고리의 공지사항을 조회
+        List<Board> notices = boardRepository.findByCategoryId(categoryId);
+
+        // Board 엔티티를 BoardDTO로 변환
+        List<BoardDTO> boardDTOs = BoardDTO.BoardMapper.mapToDTOs(notices);
+
+        return boardDTOs;
     }
 }

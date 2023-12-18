@@ -1,5 +1,6 @@
 package com.example.funitureOnlineShop.category;
 
+import com.example.funitureOnlineShop.Board.BoardDTO;
 import com.example.funitureOnlineShop.core.utils.ApiUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -55,5 +56,12 @@ public class CategoryController {
         categoryService.delete(id);
 
         return ResponseEntity.ok(ApiUtils.success(null));
+    }
+    // 게시판 카테고리 추가
+    @GetMapping("/notices/{categoryId}")
+    public ResponseEntity<?> getNoticesByCategory(@PathVariable Long categoryId) {
+        List<BoardDTO> notices = categoryService.findNoticesByCategory(categoryId);
+        ApiUtils.ApiResult<?> apiResult = ApiUtils.success(notices);
+        return ResponseEntity.ok(apiResult);
     }
 }
