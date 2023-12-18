@@ -1,7 +1,6 @@
 package com.example.funitureOnlineShop.order;
 
 import com.example.funitureOnlineShop.order.item.Item;
-import com.example.funitureOnlineShop.order.orderstatus.OrderStatus;
 import com.example.funitureOnlineShop.user.User;
 import lombok.Builder;
 import lombok.Getter;
@@ -36,7 +35,7 @@ public class Order {
 
 
     @Builder
-    public Order(Long id, User user, List<Item> orderItems, LocalDateTime orderDate, OrderStatus orderStatus) {
+    public Order(Long id, User user, List<Item> orderItems, LocalDateTime orderDate) {
         this.id = id;
         this.user = user;
         this.orderItems = orderItems;
