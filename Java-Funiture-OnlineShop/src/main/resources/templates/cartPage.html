@@ -1,195 +1,47 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta charset="UTF-8">
     <title>장바구니 페이지</title>
-    <style>
-        /* CSS 스타일링 코드 */
-    </style>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
 </head>
 <body>
-<h1>장바구니</h1>
-<div id="cart-items">
-    <ul>
-        <!-- 장바구니에 있는 상품들을 반복문으로 표시 -->
-        <li th:each="product : ${cart.products}" th:id="'product-' + ${product.id}">
-            <!-- 상품 정보 표시 -->
-            <div>
-                <img th:src="${product.imageUrl}" alt="Product Image">
-                <h3 th:text="${product.name}"></h3>
-                <p>상품 가격: <span id="product-price" th:text="${product.price}"></span>원</p>
-            </div>
-
-            <!-- 옵션 선택 및 수량 조절 -->
-            <div>
-                <label for="option">옵션:</label>
-                <select id="option" name="option" onchange="calculateProductPrice()">
-                    <!-- 상품의 옵션 목록을 반복문으로 표시 -->
-                    <option th:each="option : ${product.options}"
-                            th:value="${option.id}"
-                            th:text="${option.name}"></option>
-                </select>
-
-                <label for="quantity">수량:</label>
-                <input type="number" id="quantity" name="quantity"
-                       th:value="${product.quantity}" min="1" max="10" step="1" onchange="calculateProductPrice()">
-
-                <p>옵션 가격: <span id="option-price"></span>원</p>
-                <p>총 가격: <span id="total-price"></span>원</p>
-
-                <button onclick="updateQuantity(${product.id})">수량 업데이트</button>
-                <button onclick="removeOption(${product.id})">옵션 삭제</button>
-            </div>
-        </li>
-    </ul>
+<div class="container">
+    <h1 class="text-center">장바구니</h1>
+    <table class="table table-striped" id="cartTable">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">옵션명</th>
+            <th scope="col">가격</th>
+            <th scope="col">수량</th>
+            <th scope="col">합계</th>
+            <th scope="col">작업</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="item, stat : ${cart.items}">
+            <th scope="row" th:text="${stat.count}"></th>
+            <td th:text="${item.option.name}"></td>
+            <td th:text="${item.option.price}"></td>
+            <td th:text="${item.quantity}"></td>
+            <td th:text="${item.option.price * item.quantity}"></td>
+            <td>
+                <a th:href="@{/cart/remove/{id}(id=${item.option.id})}" class="btn btn-danger">삭제</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <div class="text-right">
+        <h5>총 금액: <span id="totalPrice"></span></h5>
+    </div>
+    <div class="text-right">
+        <button id="checkoutButton" class="btn btn-primary">결제하기</button>
+    </div>
 </div>
-<button id="checkout-btn">주문하기</button>
-
-<script src="script.js">
-
-    // 카트에 저장된 상품 목록을 서버에서 가져와 화면에 표시하는 함수
-    function loadCartItems() {
-        fetch("/carts")
-            .then(response => {
-                if (response.ok) {
-                    return response.json();
-                } else {
-                    throw new Error("상품 목록을 가져오는데 실패했습니다.");
-                }
-            })
-            .then(cartItems => {
-                var cartItemsContainer = document.getElementById("cart-items");
-                cartItemsContainer.innerHTML = ""; // 기존의 상품 목록을 초기화
-
-                cartItems.forEach(product => {
-                    var productElement = document.createElement("li");
-                    productElement.id = "product-" + product.id;
-
-                    var productInfo = document.createElement("div");
-                    var productImage = document.createElement("img");
-                    productImage.src = product.imageUrl;
-                    productImage.alt = "Product Image";
-                    var productName = document.createElement("h3");
-                    productName.textContent = product.name;
-                    var productPrice = document.createElement("p");
-                    productPrice.innerHTML = "상품 가격: <span id='product-price'>" + product.price + "</span>원";
-
-                    productInfo.appendChild(productImage);
-                    productInfo.appendChild(productName);
-                    productInfo.appendChild(productPrice);
-
-                    var productOptions = document.createElement("div");
-                    // 옵션 선택 및 수량 조절 부분을 구현하세요
-
-                    productElement.appendChild(productInfo);
-                    productElement.appendChild(productOptions);
-
-                    cartItemsContainer.appendChild(productElement);
-                });
-            })
-            .catch(error => {
-                console.error(error);
-            });
-    }
-
-    // 페이지 로드 시 카트에 저장된 상품 목록을 가져와 화면에 표시
-    document.addEventListener("DOMContentLoaded", function() {
-        loadCartItems();
-    });
-
-    // 옵션 가격과 총 가격 계산
-    function calculateProductPrice() {
-        var optionSelect = document.getElementById("option");
-        var optionId = optionSelect.value;
-        var quantityInput = document.getElementById("quantity");
-        var quantity = parseInt(quantityInput.value);
-
-        // 서버로부터 가져온 옵션 가격 정보를 사용하여 옵션 가격을 계산
-        var optionPrice = optionPrice[optionId];
-
-        var optionPriceElement = document.getElementById("option-price");
-        optionPriceElement.textContent = (optionPrice * quantity) + "원";
-
-        var productPriceElement = document.getElementById("product-price");
-        productPriceElement.textContent = (optionPrice * quantity) + "원";
-
-        var totalPriceElement = document.getElementById("total-price");
-        totalPriceElement.textContent = (optionPrice * quantity) + "원";
-    }
-
-    // 페이지 로드 시 옵션 가격과 총 가격 계산
-    document.addEventListener("DOMContentLoaded", function() {
-        calculateProductPrice();
-    });
-
-    function updateQuantity(productId) {
-        var optionSelect = document.getElementById("option");
-        var optionId = optionSelect.value;
-
-        var quantityInput = document.getElementById("quantity");
-        var quantity = quantityInput.value;
-
-        // AJAX를 사용하여 서버에 수량 업데이트 요청을 보냅니다.
-        var xhr = new XMLHttpRequest();
-        xhr.open("PUT", "/cart/update", true);
-        xhr.setRequestHeader("Content-Type", "application/json");
-
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState === XMLHttpRequest.DONE) {
-                if (xhr.status === 200) {
-                    // 서버에서 업데이트된 정보를 받아와 화면을 갱신합니다.
-                    var updatedCart = JSON.parse(xhr.responseText);
-                    loadCartItems();
-                } else {
-                    // 요청이 실패한 경우 에러 처리를 수행합니다.
-                }
-            }
-        };
-
-        var data = {
-            productId: productId,
-            optionId: optionId,
-            quantity: quantity
-        };
-
-        xhr.send(JSON.stringify(data));
-    }
-
-
-    function removeOption(productId) {
-        var optionSelect = document.getElementById("option");
-        var optionId = optionSelect.value;
-
-        // fetch를 사용하여 서버에 옵션 삭제 요청을 보냅니다.
-        fetch("/cart/remove", {
-            method: "DELETE",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                productId: productId,
-                optionId: optionId
-            })
-        })
-            .then(response => {
-                if (response.ok) {
-                    loadCartItems();
-                    return response.json();
-                } else {
-                    // 요청이 실패한 경우 에러 처리를 수행합니다.
-                    throw new Error("옵션 삭제 요청에 실패했습니다.");
-                }
-            })
-            .then(updatedCart => {
-                loadCartItems();
-            })
-            .catch(error => {
-                // 에러 처리를 수행합니다.
-            });
-    }
-
-
-
-
-</script>
+<script src="/js/custom.js"></script>
 </body>
 </html>
