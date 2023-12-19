@@ -130,4 +130,10 @@ public class HomeController {
     public String showProductCreate() {
         return "productCreate";
     }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/product/update")
+    public String showProductUpdate() {
+        return "productUpdate";
+    }
 }
