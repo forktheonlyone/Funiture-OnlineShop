@@ -29,8 +29,10 @@ public class ProductCommentResponse {
         private LocalDateTime updateTime;
         // 주문 내역 id
         private Long orderCheckId;
-        // 상품 id
+        // 옵션 id
         private Long optionId;
+        // 상품 id
+        private Long productId;
         // 작성자 id
         private Long userId;
 
@@ -45,6 +47,7 @@ public class ProductCommentResponse {
                     comment.getUpdateTime(),
                     comment.getOrderCheck().getId(),
                     comment.getOrderCheck().getOption().getId(),
+                    comment.getOrderCheck().getOption().getProduct().getId(),
                     comment.getOrderCheck().getUser().getId());
         }
 
