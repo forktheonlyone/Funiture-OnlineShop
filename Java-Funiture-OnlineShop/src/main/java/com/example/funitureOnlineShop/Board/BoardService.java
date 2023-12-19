@@ -2,15 +2,11 @@ package com.example.funitureOnlineShop.Board;
 
 import com.example.funitureOnlineShop.BoardFile.BoardFile;
 import com.example.funitureOnlineShop.BoardFile.BoardFileRepository;
-import com.example.funitureOnlineShop.category.Category;
-import com.example.funitureOnlineShop.category.CategoryRepository;
 import com.example.funitureOnlineShop.core.error.exception.Exception500;
-import com.example.funitureOnlineShop.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,10 +27,9 @@ import java.util.UUID;
 public class BoardService {
     private final BoardRepository boardRepository;
     private final BoardFileRepository boardFileRepository;
-    private final CategoryRepository categoryRepository;
     private final String filePath = "";
 
-    public Page<BoardDTO> paging(Pageable pageable){
+    public Page<BoardDTO> paging(Pageable pageable) {
 
         // ** 페이지 시작 번호
         int page = pageable.getPageNumber() - 1;
@@ -53,16 +48,14 @@ public class BoardService {
                 board.getCreateTime(),
                 board.getUpdateTime()));
     }
+
     @Transactional
     public Long save(BoardDTO dto, MultipartFile[] files) throws IOException {
         dto.setCreateTime(LocalDateTime.now());
-
-        Category category = categoryRepository.findById(dto.getCategoryId()).orElseThrow(() -> new Exception500("카테고리가 없습니다"));
-
         Long id = boardRepository.save(dto.toEntity()).getId();
         Board board = boardRepository.findById(id).get();
 
-        try{
+        try {
             // ** 파일 정보 저장.
             for (MultipartFile file : files) {
 
@@ -95,21 +88,22 @@ public class BoardService {
 
                 boardFileRepository.save(boardFile);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new Exception500("파일 이상");
         }
         return id;
     }
 
-    public BoardDTO findById(Long id){
+    public BoardDTO findById(Long id) {
         Board board = boardRepository.findById(id).get();
         return BoardDTO.toBoardDTO(board);
     }
 
-    public List<BoardFile> findByBoardId(Long boardId){
+    public List<BoardFile> findByBoardId(Long boardId) {
         List<BoardFile> boardFiles = boardFileRepository.findByBoardId(boardId);
         return boardFiles;
     }
+
     @Transactional
     public void update(Long boardId, BoardDTO boardDTO, MultipartFile[] files) throws IOException {
         Optional<Board> boardOptional = boardRepository.findById(boardId);
@@ -154,16 +148,14 @@ public class BoardService {
             boardRepository.save(board);
         }
     }
+
     @Transactional
     public void deleteByBoardFile(Long id) {
         boardFileRepository.deleteById(id);
     }
 
     @Transactional
-    public void deleteById(Long id){boardRepository.deleteById(id);}
-
-    public List<BoardDTO> findByCategoryId(Long categoryId) {
-        List<Board> boards = boardRepository.findByCategoryId(categoryId);
-        return BoardDTO.BoardMapper.mapToDTOs(boards);
+    public void deleteById(Long id) {
+        boardRepository.deleteById(id);
     }
 }

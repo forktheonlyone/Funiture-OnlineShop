@@ -102,8 +102,8 @@
 </header>
 
 <section>
-    <div class="left-section">
-        <h2>공지사항</h2>
+    <div class="section">
+        <h2>게시판 목록</h2>
         <table>
             <tr>
                 <th>번호</th>
@@ -111,52 +111,32 @@
                 <th>작성자</th>
                 <th>작성 시간</th>
             </tr>
-            <tr th:each="notice: ${notices}">
-                <td th:text="${notice.getId()}"></td>
-                <td><a th:href="@{'/board/notice/' + ${notice.getId()}}" th:text="${notice.getTitle()}"></a></td>
-                <td th:text="${notice.getWriter()}"></td>
-                <td th:text="*{#temporals.format(notice.getCreateTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+            <tr th:each="board: ${boardList}">
+                <td th:text="${board.getId()}"></td>
+                <td><a th:href="@{${board.getId}|(page = ${boardList.number + 1})}" th:text="${board.getTitle()}"></a></td>
+                <td th:text="${board.getWriter()}"></td>
+                <td th:text="*{#temporals.format(board.getCreateTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
             </tr>
         </table>
         <div class="paging-buttons">
-            <!-- 공지사항 페이징 버튼 추가 -->
-            <a th:href="@{'/board/paging/' + ${noticeList.number + 1}}">이전</a>
-            <span th:each="page: ${#numbers.sequence(noticeList.first, noticeList.last)}">
-                <a th:href="@{'/board/paging/' + ${page}}" th:text="${page}"></a>
-            </span>
-            <a th:href="@{'/board/paging/' + ${noticeList.number + 2}}">다음</a>
-        </div>
-    </div>
+            <a th:href="@{/board/paging(page=1)}">처음</a>
+            <a th:href="${boardList.first} ? '#' : @{/board/paging(page=${boardList.number})}">이전</a>
 
-    <div class="right-section">
-        <h2>QnA</h2>
-        <table>
-            <tr>
-                <th>번호</th>
-                <th>제목</th>
-                <th>작성자</th>
-                <th>작성 시간</th>
-            </tr>
-            <tr th:each="qna: ${qnaList}">
-                <td th:text="${qna.getId()}"></td>
-                <td><a th:href="@{'/board/qna/' + ${qna.getId()}}" th:text="${qna.getTitle()}"></a></td>
-                <td th:text="${qna.getWriter()}"></td>
-                <td th:text="*{#temporals.format(qna.getCreateTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
-            </tr>
-        </table>
-        <div class="paging-buttons">
-            <!-- QnA 페이징 버튼 추가 -->
-            <a th:href="@{'/board/paging/' + ${qnaList.number + 1}}">이전</a>
-            <span th:each="page: ${#numbers.sequence(qnaList.first, qnaList.last)}">
-                <a th:href="@{'/board/paging/' + ${page}}" th:text="${page}"></a>
-            </span>
-            <a th:href="@{'/board/paging/' + ${qnaList.number + 2}}">다음</a>
+            <span th:each="page: ${#numbers.sequence(startPage, endPage)}">
+        <span th:if="${page == boardList.number + 1}" th:text="${page}"></span>
+        <span th:unless="${page == boardList.number + 1}">
+            <a th:href="@{/board/paging(page=${page})}" th:text="${page}"></a>
+        </span>
+    </span>
+
+            <a th:href="${boardList.last} ? '#' : @{/board/paging(page=${boardList.number + 2})}">다음</a>
+            <a th:href="@{/board/paging(page=${boardList.totalPages})}">마지막</a>
         </div>
     </div>
 </section>
 
 <!-- 글쓰기 버튼 추가 -->
-<div class="write-button">
+<div class="write-button" th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}">
     <a th:href="@{'/createboard'}">글쓰기</a>
 </div>
 
@@ -164,4 +144,15 @@
     <p>저작권 © 2023 고객센터</p>
 </footer>
 </body>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    document.addEventListener('DOMContentLoaded', function () {
+        var isAdmin = /*[[${#authorization.expression('hasRole(''ROLE_ADMIN'')')}]]*/ false;
+
+        if (!isAdmin) {
+            alert('접근할 수 없습니다.');
+        }
+    });
+    /*]]>*/
+</script>
 </html>
