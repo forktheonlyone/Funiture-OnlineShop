@@ -3,8 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <title>카테고리별상품목록</title>
+    <style>
+        .product {
+            width: 200px;
+            text-align: center;
+        }
+
+        .product img {
+            width: 100%;
+        }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 <body>
+
+<div id="product-list">
+    <!-- 상품 목록이 들어갈 곳 -->
+</div>
+
+<div id="pagination">
+    <!-- 페이지 번호가 들어갈 곳 -->
+</div>
+
+<script>
+    var itemsPerPage = 10; // 한 페이지에 보여줄 상품 수
+    var currentPage = 1; // 현재 페이지 번호
+
+    $(document).ready(function() {
+        loadProducts(currentPage);
+
+        $(document).on('click', '.page-number', function() {
+            currentPage = $(this).data('page');
+            loadProducts(currentPage);
+        });
+    });
+
+    function loadProducts(categoryId, page) {
+        $.ajax({
+            url: '/category/' + categoryId + '/products',
+            type: 'GET',
+            data: {
+                page: page,
+                size: itemsPerPage
+            },
+            success: function(data) {
+                var productList = $('#product-list');
+                var pagination = $('#pagination');
+
+                productList.empty();
+                pagination.empty();
+
+                data.products.forEach(function(product) {
+                    productList.append('<div class="product">' +
+                        '<img src="' + product.image + '" alt="' + product.name + '">' +
+                        '<h2>' + product.name + '</h2>' +
+                        '</div>');
+                });
+
+                for(var i = 1; i <= data.totalPages; i++) {
+                    pagination.append('<span class="page-number" data-page="' + i + '">' + i + '</span>');
+                }
+            }
+        });
+    }
+</script>
 
 </body>
 </html>
