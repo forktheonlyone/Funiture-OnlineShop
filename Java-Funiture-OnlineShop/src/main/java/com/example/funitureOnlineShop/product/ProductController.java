@@ -18,7 +18,7 @@ public class ProductController {
     private final ProductService productService;
 
     // 상품 생성
-    @PostMapping("/product")
+    @PostMapping("/product/save")
     public ResponseEntity<?> save(ProductResponse.SaveByIdDTO productResponseFind,
                                   @RequestParam MultipartFile[] files) throws IOException {
         productService.save(productResponseFind, files);

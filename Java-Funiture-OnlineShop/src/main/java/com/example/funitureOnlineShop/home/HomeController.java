@@ -1,9 +1,12 @@
 package com.example.funitureOnlineShop.home;
 
 import com.example.funitureOnlineShop.core.security.CustomUserDetails;
+import com.example.funitureOnlineShop.orderCheck.OrderCheck;
+import com.example.funitureOnlineShop.orderCheck.OrderCheckDto;
 import com.example.funitureOnlineShop.product.ProductResponse;
 import com.example.funitureOnlineShop.product.ProductService;
 import com.example.funitureOnlineShop.productComment.ProductComment;
+import com.example.funitureOnlineShop.productComment.ProductCommentResponse;
 import com.example.funitureOnlineShop.productComment.ProductCommentService;
 import com.example.funitureOnlineShop.user.UserResponse;
 import com.example.funitureOnlineShop.user.UserService;
@@ -76,9 +79,16 @@ public class HomeController {
 
     @GetMapping("/product_comment/update/{id}")
     public String updateCommentForm(@PathVariable Long id, Model model){
-        ProductComment dto = productCommentService.findById(id);
+        ProductCommentResponse.CommentDto dto = productCommentService.findById(id);
         model.addAttribute("comment", dto);
         return "commentUpdate";
+    }
+
+    @GetMapping("/product_comment/save/{id}")
+    public String writeComment(@PathVariable Long id, Model model){
+        OrderCheckDto orderCheckDto = productCommentService.findOrderCheck(id);
+        model.addAttribute("orderCheck", orderCheckDto);
+        return "productReview";
     }
 
     @GetMapping("/board/create")
@@ -112,4 +122,6 @@ public class HomeController {
     public String payResponse() {
         return "payresponse";
     }
+
+    @GetMapping("/product")
 }
