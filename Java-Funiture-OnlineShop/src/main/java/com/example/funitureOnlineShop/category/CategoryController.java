@@ -2,7 +2,10 @@ package com.example.funitureOnlineShop.category;
 
 import com.example.funitureOnlineShop.Board.BoardDTO;
 import com.example.funitureOnlineShop.core.utils.ApiUtils;
+import com.example.funitureOnlineShop.product.ProductResponse;
+import com.example.funitureOnlineShop.product.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,6 +18,7 @@ import java.util.List;
 public class CategoryController {
 
     private final CategoryService categoryService;
+    private final ProductService productService;
 
     // 카테고리 저장
     @PostMapping("/save")
@@ -39,6 +43,16 @@ public class CategoryController {
         CategoryResponse.FindByIdDto categoryDto = categoryService.findById(id);
 
         ApiUtils.ApiResult<?> apiResult = ApiUtils.success(categoryDto);
+        return ResponseEntity.ok(apiResult);
+    }
+
+    // 카테고리별 상품 조회
+    @GetMapping("/category/{categoryId}/products")
+    public ResponseEntity<?> findProductsByCategory(@PathVariable Long categoryId,
+                                                    @RequestParam(defaultValue = "1") int page,
+                                                    @RequestParam(defaultValue = "10") int size) {
+        Page<ProductResponse.FindByIdDTO> productDTOS = productService.findProductsByCategory(categoryId, page, size);
+        ApiUtils.ApiResult<?> apiResult = ApiUtils.success(productDTOS);
         return ResponseEntity.ok(apiResult);
     }
 
