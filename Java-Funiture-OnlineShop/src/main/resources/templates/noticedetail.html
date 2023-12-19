@@ -6,7 +6,6 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/picnic">
     <script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
     <style>
-        /* 스타일 부분은 그대로 두었습니다. */
         body {
             font-family: Arial, sans-serif;
             background-color: #f6f6f6;
@@ -60,33 +59,6 @@
             font-size: larger;
         }
 
-        #comment-write {
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        #comment-write input {
-            width: 48%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 3px;
-            box-sizing: border-box;
-        }
-
-        #comment-write-btn {
-            background-color: #4285f4;
-            color: #fff;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 3px;
-            cursor: pointer;
-        }
-
-        #comment-list {
-            margin-top: 20px;
-        }
-
         footer {
             background-color: #4285f4;
             color: white;
@@ -129,8 +101,10 @@
     </table>
 
     <button class="btn btn-primary" onclick="listReq()">목록</button>
-    <button class="btn btn-primary" onclick="updateReq()">수정</button>
-    <button class="btn btn-danger" onclick="deleteReq()">삭제</button>
+    <div th:if="${#request.isUserInRole('ROLE_ADMIN')}">
+        <button class="btn btn-primary" onclick="updateReq()">수정</button>
+        <button class="btn btn-danger" onclick="deleteReq()">삭제</button>
+    </div>
 </div>
 
 <footer>
