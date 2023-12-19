@@ -156,4 +156,25 @@ public class ProductResponse {
                     .build();
         }
     }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    public static class FindAllDTO {
+
+        private Long id;
+        private String productName;
+        private String image;
+        private Long price;
+        private Long onSale;
+
+        public FindAllDTO(Long id, String productName, String image, Long price, Long onSale) {
+            this.id = id;
+            this.productName = productName;
+            this.image = image;
+            this.price = price;
+            this.onSale = onSale;
+        }
+    }
+
 }
