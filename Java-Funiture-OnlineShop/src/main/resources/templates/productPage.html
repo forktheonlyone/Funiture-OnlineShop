@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>상품 상세 페이지</title>
+</head>
+<body>
+<div th:if="${product != null}">
+    <!-- 상품 정보 섹션 -->
+    <div>
+        <img th:src="@{${product.image}}" alt="상품 이미지">
+    </div>
+    <div>
+        <h2 th:text="${product.productName}">상품 이름</h2>
+        <h3 th:text="${averageRating}">평균 별점</h3>
+        <p th:text="${product.price}">상품 가격</p>
+        <p th:if="${product.onSale != null && product.onSale > 0}" th:text="${product.onSale}" style="display: none;">세일 가격</p>
+        <p th:text="${product.description}">상품 설명</p>
+        <div th:each="option : ${product.options}">
+            <p th:text="${option.optionName}"></p>
+            <input type="number" min="1" value="1" id="quantity-${option.id}">
+            <button onclick="addToCart(${option.id})">장바구니에 추가</button>
+        </div>
+        <script>
+            function addToCart(optionId) {
+                var quantity = document.getElementById('quantity-' + optionId).value;
+
+                var data = {
+                    optionId: optionId,
+                    quantity: quantity
+                };
+
+                fetch('/cart/add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('장바구니에 상품을 추가했습니다.');
+                    } else {
+                        alert('장바구니에 상품을 추가하는데 실패했습니다.');
+                    }
+                });
+            }
+        </script>
+    </div>
+    <!-- 리뷰 및 평점 섹션 -->
+    <div>
+        <h3>상품 리뷰</h3>
+        <div th:each="comment : ${comments}">
+            <p th:text="${comment.user.name} + ' : ' + ${comment.content}"></p>
+            <p th:text="'별점 : ' + ${comment.rating}"></p>
+        </div>
+        <form id="reviewForm" th:if="${session.user != null}" action="/product_comment/save" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="userId" th:value="${session.user.id}">
+            <input type="hidden" name="optionId" th:value="${product.options[0].id}">
+            <textarea name="content" placeholder="리뷰를 작성하세요."></textarea>
+            <input type="number" name="rating" min="0" max="5" placeholder="별점 (0-5)">
+            <input type="file" name="files" accept="image/*" multiple>
+            <button type="submit">리뷰 작성</button>
+        </form>
+    </div>
+
+    <script>
+        // ...
+        // 리뷰 제출 전 파일 개수 검사
+        document.getElementById('reviewForm').addEventListener('submit', function(e) {
+            let files = this['files'].files;
+            if (files.length > 10) {
+                alert('리뷰 사진은 최대 10장까지 등록 가능합니다.');
+                e.preventDefault();
+            }
+        });
+    </script>
+</div>
+
+
+<div th:if="${product == null}">
+    <p>상품 정보를 찾을 수 없습니다.</p>
+</div>
+<script>
+    window.onload = function() {
+        let comments = /*[[${comments}]]*/ [];  // 백엔드로부터 받은 리뷰 데이터
+        let sum = 0;
+
+        for (let i = 0; i < comments.length; i++) {
+            sum += comments[i].rating;  // 각 리뷰의 별점을 합산
+        }
+
+        let averageRating = (sum / comments.length).toFixed(1);  // 별점 평균 계산
+
+        if (isNaN(averageRating)) {  // 별점 평균이 숫자가 아닌 경우
+            averageRating = '0.0';
+        }
+
+        document.getElementById('averageRating').innerText = averageRating;
+    }
+</script>
+</body>
+</html>
