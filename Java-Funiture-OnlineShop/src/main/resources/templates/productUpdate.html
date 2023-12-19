@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>상품 수정</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+<h2>상품 수정</h2>
+
+<form id="updateProductForm">
+    <label for="productName">상품명:</label><br>
+    <input type="text" id="productName" name="productName"><br>
+    <label for="productDescription">상품 설명:</label><br>
+    <textarea id="productDescription" name="productDescription"></textarea><br>
+    <label for="productImage">상품 이미지:</label><br>
+    <input type="text" id="productImage" name="productImage"><br>
+    <label for="productPrice">상품 가격:</label><br>
+    <input type="number" id="productPrice" name="productPrice"><br>
+    <input type="button" value="Update" id="updateProduct">
+</form>
+
+<input type="button" value="Delete Product" id="deleteProduct">
+
+<h2>옵션 수정</h2>
+
+<ul id="optionList">
+    <!-- 옵션 리스트는 여기에 표시됩니다 -->
+</ul>
+
+<form id="updateOptionForm">
+    <label for="optionName">옵션명:</label><br>
+    <input type="text" id="optionName" name="optionName" ><br>
+    <label for="optionPrice">옵션 가격:</label><br>
+    <input type="number" id="optionPrice" name="optionPrice" ><br>
+    <label for="stockQuantity">재고 수량:</label><br>
+    <input type="number" id="stockQuantity" name="stockQuantity" ><br>
+    <input type="button" value="Update Option" id="updateOption" >
+    <input type="button" value="Delete Option" id="deleteOption">
+</form>
+
+<input type="button" value="New Option" id="createOption">
+
+<script>
+    $(document).ready(function() {
+        var productId = /* 서버로부터 받아온 상품 ID */;
+        var optionId;
+
+        // 상품 정보를 불러오는 함수
+        function loadProductData(productId) {
+            $.ajax({
+                url: "/product/" + productId,
+                type: "GET",
+                success: function(response) {
+                    $("#productName").val(response.data.productName);
+                    $("#productDescription").val(response.data.description);
+                    $("#productImage").val(response.data.image);
+                    $("#productPrice").val(response.data.price);
+                },
+                error: function(xhr, status, error) {
+                    alert("상품 정보 로딩에 실패하였습니다: " + error);
+                }
+            });
+        }
+
+        // 옵션 정보를 불러오는 함수
+        function loadOptionData(productId) {
+            $.ajax({
+                url: "/products/" + productId,
+                type: "GET",
+                success: function(response) {
+                    var options = response.data;
+                    options.forEach(function(option) {
+                        var optionItem = $("<li>").text(option.optionName).click(function() {
+                            $("#optionName").val(option.optionName);
+                            $("#optionPrice").val(option.price);
+                            $("#stockQuantity").val(option.stockQuantity);
+                            optionId = option.id;
+                        });
+                        $("#optionList").append(optionItem);
+                    });
+                },
+                error: function(xhr, status, error) {
+                    alert("옵션 정보 로딩에 실패하였습니다: " + error);
+                }
+            });
+        }
+
+        // 상품 정보 수정 로직
+        $("#updateProduct").click(function() {
+            var productData = {
+                "productName": $("#productName").val(),
+                "description": $("#productDescription").val(),
+                "image": $("#productImage").val(),
+                "price": $("#productPrice").val()
+            };
+
+            $.ajax({
+                url: "/product/" + productId,
+                type: "PUT",
+                data: JSON.stringify(productData),
+                contentType: "application/json",
+                success: function(response) {
+                    alert("상품 정보가 성공적으로 수정되었습니다.");
+                },
+                error: function(xhr, status, error) {
+                    alert("상품 정보 수정에 실패하였습니다: " + error);
+                }
+            });
+        });
+
+        // 상품 삭제 로직
+        $("#deleteProduct").click(function() {
+            $.ajax({
+                url: "/product/" + productId,
+                type: "DELETE",
+                success: function(response) {
+                    alert("상품이 성공적으로 삭제되었습니다.");
+                    window.location.href = "/products";  // 삭제 후 상품 목록 페이지로 이동
+                },
+                error: function(xhr, status, error) {
+                    alert("상품 삭제에 실패하였습니다: " + error);
+                }
+            });
+        });
+
+        // 옵션 정보 수정 로직
+        $("#updateOption").click(function() {
+            var optionData = {
+                "optionName": $("#optionName").val(),
+                "price": $("#optionPrice").val(),
+                "stockQuantity": $("#stockQuantity").val()
+            };
+
+            $.ajax({
+                url: "/update/" + optionId,
+                type: "POST",
+                data: JSON.stringify(optionData),
+                contentType: "application/json",
+                success: function(response) {
+                    alert("옵션 정보가 성공적으로 수정되었습니다.");
+                },
+                error: function(xhr, status, error) {
+                    alert("옵션 정보 수정에 실패하였습니다: " + error);
+                }
+            });
+        });
+
+        // 옵션 삭제 로직
+        $("#deleteOption").click(function() {
+            $.ajax({
+                url: "/option/delete/" + optionId,
+                type: "POST",
+                success: function(response) {
+                    alert("옵션이 성공적으로 삭제되었습니다.");
+                    loadOptionData(productId);  // 삭제 후 옵션 목록을 다시 불러옴
+                },
+                error: function(xhr, status, error) {
+                    alert("옵션 삭제에 실패하였습니다: " + error);
+                }
+            });
+        });
+
+        // 새 옵션 생성 로직
+        $("#createOption").click(function() {
+            $("#optionName").val('');
+            $("#optionPrice").val('');
+            $("#stockQuantity").val('');
+            optionId = null;
+        });
+
+        loadProductData(productId);
+        loadOptionData(productId);
+    });
+</script>
+
+</body>
+</html>
