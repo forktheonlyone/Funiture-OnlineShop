@@ -1,5 +1,7 @@
 package com.example.funitureOnlineShop.home;
 
+import com.example.funitureOnlineShop.category.CategoryResponse;
+import com.example.funitureOnlineShop.category.CategoryService;
 import com.example.funitureOnlineShop.core.security.CustomUserDetails;
 import com.example.funitureOnlineShop.orderCheck.OrderCheck;
 import com.example.funitureOnlineShop.orderCheck.OrderCheckDto;
@@ -18,18 +20,28 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @Controller
 public class HomeController {
 
     private final ProductService productService;
     private final ProductCommentService productCommentService;
+    private final CategoryService categoryService;
     private final UserService userService;
 
     // 메인 홈페이지
     @GetMapping(value = {"/", ""})
     public String home() {
         return "index";
+    }
+    // 카테고리 생성
+    @GetMapping("/categorycreate")
+    public String categoryCreate(Model model) {
+        List<CategoryResponse.FindAllDto> categories = categoryService.findAll();
+        model.addAttribute("categories", categories);
+        return "categorycreate";
     }
 
     // !!----------< 상품 관련 페이지 > -----------
