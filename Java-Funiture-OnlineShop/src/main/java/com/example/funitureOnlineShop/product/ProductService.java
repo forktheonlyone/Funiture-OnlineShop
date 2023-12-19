@@ -9,6 +9,9 @@ import com.example.funitureOnlineShop.fileProduct.FileProductRepository;
 import com.example.funitureOnlineShop.option.Option;
 import com.example.funitureOnlineShop.option.OptionRepository;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,10 +30,11 @@ import java.util.UUID;
 @Transactional(readOnly = true)
 @Service
 public class ProductService {
-    private ProductRepository productRepository;
-    private CategoryRepository categoryRepository;
-    private OptionRepository optionRepository;
-    private FileProductRepository fileProductRepository;
+    private final ProductRepository productRepository;
+    private final CategoryRepository categoryRepository;
+    private final OptionRepository optionRepository;
+    private final FileProductRepository fileProductRepository;
+    private final ModelMapper modelMapper;
 
     // ------------<파일경로>-------------
     // !!!!!!!!!! 꼭 반드시 테스트시 파일 경로 특히 사용자명 확인할것 !!!!!!!!!!
@@ -138,16 +142,11 @@ public class ProductService {
         productRepository.deleteById(id);
     }
 
-    public List<Product> findByCategory(Long categoryId) {
-        if (categoryId == null) {
-            throw new Exception404("해당 카테고리가 존재하지 않습니다.");
-        }
-        List<Product> products = productRepository.findByCategoryId(categoryId);
-        if (products.isEmpty()) {
-            throw new Exception404("해당 카테고리에 상품이 없습니다.");
-        }
-        return products;
+    public Page<ProductResponse.FindByIdDTO> findProductsByCategory(Long categoryId, int page, int size) {
+        Page<Product> productPage = productRepository.findByCategoryId(categoryId, PageRequest.of(page - 1, size));
+        return productPage.map(product -> modelMapper.map(product, ProductResponse.FindByIdDTO.class));
     }
+
 
     // 상품 전체 찾기 서비스
     public List<Product> findAll() {
