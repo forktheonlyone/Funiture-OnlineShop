@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>상품후기 작성</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+        }
+
+        form {
+            margin: 50px auto;
+            width: 400px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"] {
+            box-sizing: border-box;
+            padding: 9px 0 9px 4px;
+            width: 100%;
+            font-size: 14px;
+            border: none;
+            border-bottom: 1px solid rgba(200, 200, 204, 0.9);
+        }
+
+        input[type="text"]:focus {
+            border-bottom: 1px solid rgba(24, 157, 255, 90%);
+            outline: none;
+        }
+
+        textarea {
+            width: 100%;
+            font-size: 14px; /* 글자 크기 수정 */
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            resize: vertical;
+        }
+
+        textarea:focus {
+            outline: none;
+        }
+
+        input[type="file"] {
+            display: inline-block;
+            width: 95%;
+            padding: 10px;
+            border-radius: 3px;
+        }
+
+        .blind {
+            position: absolute;
+            clip: rect(0, 0, 0, 0);
+            width: 1px;
+            height: 1px;
+            margin: -1px;
+            overflow: hidden;
+        }
+
+        .button_upload {
+            flex: 0 0 auto;
+            display: inline-block;
+            padding: 4px 14px;
+            border-radius: 5px;
+            font-size: 13px;
+            color: #fff;
+            line-height: 18px;
+            vertical-align: top;
+            background-color: #4CAF50;
+            font-weight: normal;
+        }
+
+        .title_area {
+            width: 100px;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .option_area {
+            width: 100%;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        input[type="submit"] {
+            flex: 0 0 auto;
+            display: inline-block;
+            padding: 4px 14px;
+            border-radius: 5px;
+            font-size: 13px;
+            color: #fff;
+            line-height: 18px;
+            vertical-align: top;
+            background-color: #4CAF50;
+            border: none;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        .rating-stars {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+        }
+        .rating-stars input[type="radio"] {
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<header> <h2>상품후기 작성</h2> </header>
+<body>
+<form action="/product_comment/save" method="post" enctype="multipart/form-data" onsubmit="return moveView()">
+    <h3> <label th:text="${orderCheck.productName} + ${orderCheck.optionName}">구매 제품명</label> </h3>
+    <div class="form-group">
+        <div class="title_area">
+            <label>별점</label>
+        </div>
+        <div class="option_area">
+            <div class="rating-stars">
+                <input type="radio" id="star1" name="rating" value="1" /> 1
+                <label for="star1" title="1점"></label>
+                <input type="radio" id="star2" name="rating" value="2" /> 2
+                <label for="star2" title="2점"></label>
+                <input type="radio" id="star3" name="rating" value="3" /> 3
+                <label for="star3" title="3점"></label>
+                <input type="radio" id="star4" name="rating" value="4" /> 4
+                <label for="star4" title="4점"></label>
+                <input type="radio" id="star5" name="rating" value="5" checked/> 5
+                <label for="star5" title="5점"></label>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="title_area">
+            <label>내용</label>
+        </div>
+        <div class="option_area">
+            <textarea name="contents" id="contents" cols="30" rows="10" required></textarea>
+        </div>
+    </div>
+    <div class="form-group" style="display: none;">
+        <div class="title_area">
+            <label>주문 내역</label>
+        </div>
+        <div class="option_area">
+            <input type="hidden" name="order_id" value="${orderCheck.id}">
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="title_area">
+            <label>첨부 파일</label>
+        </div>
+        <div class="option_area">
+            <label class="button_upload">파일 선택
+                <span class="blind"></span>
+                <input class="blind" type="file" id="files" name="files" accept="image/*" multiple onchange="updateSelectedFiles(event)">
+            </label>
+            <div id="selected-files"></div>
+        </div>
+    </div>
+    <input type="submit" value="글 작성" class="file-upload">
+</form>
+
+<script>
+    function updateSelectedFiles(event) {
+        const files = event.target.files;
+        const selectedFilesContainer = document.getElementById('selected-files');
+        selectedFilesContainer.innerHTML = '';
+
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const fileName = file.name;
+            const fileType = file.type;
+
+            if (fileType.startsWith("image/")) {
+                const fileItem = document.createElement('div');
+                fileItem.textContent = fileName;
+                selectedFilesContainer.appendChild(fileItem);
+            }
+        }
+    }
+
+    const ratingStars = document.querySelectorAll('.rating-stars input[type="radio"]');
+    ratingStars.forEach(function(star) {
+        star.addEventListener("change", function() {
+            const selectedRating = this.value;
+            console.log("별점 선택:", selectedRating);
+        });
+    });
+
+    function moveView() {
+        location.href = "/";
+    }
+</script>
+</body>
+</html>

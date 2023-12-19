@@ -10,13 +10,21 @@
 <h1>주문 확인</h1>
 <div id="order-details">
     <h2>주문 상품</h2>
-    <ul>
-        <!-- 여기에 장바구니에서 선택한 상품들의 정보를 표시할 부분 -->
-        <li>상품 1: 상품 정보 1</li>
-        <li>상품 2: 상품 정보 2</li>
-        <li>상품 3: 상품 정보 3</li>
-        <!-- 필요에 따라 상품 정보를 동적으로 추가하거나 수정할 수 있습니다 -->
+    <ul th:each="product : ${order.products}">
+        <li>
+            <p>상품 이름: <span th:text="${product.name}"></span></p>
+            <ul th:each="option : ${product.options}">
+                <li>
+                    <p>옵션 이름: <span th:text="${option.name}"></span></p>
+                    <p>옵션 수량: <span th:text="${option.quantity}"></span></p>
+                    <p>옵션 가격: <span th:text="${option.price}"></span></p>
+                    <p>옵션 총 가격: <span th:text="${option.quantity * option.price}"></span></p>
+                </li>
+            </ul>
+            <p>상품 총 가격: <span th:text="${product.options.stream().map(option -> option.quantity * option.price).reduce(0, Integer::sum)}"></span></p>
+        </li>
     </ul>
+    <p>주문 총 가격: <span th:text="${order.products.stream().flatMap(product -> product.options.stream().map(option -> option.quantity * option.price)).reduce(0, Integer::sum)}"></span></p>
 </div>
 
 <div id="order-form">
