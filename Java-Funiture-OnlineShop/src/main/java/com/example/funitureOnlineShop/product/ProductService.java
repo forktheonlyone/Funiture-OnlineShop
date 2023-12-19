@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,7 +63,7 @@ public class ProductService {
 
             // 파일 정보 저장
             for (MultipartFile file : files) {
-                if (file.isEmpty()){
+                if (file.isEmpty()) {
                     continue;
                 }
 
@@ -161,5 +162,18 @@ public class ProductService {
     public Product getProduct(Long id) {
         return productRepository.findById(id)
                 .orElseThrow(() -> new Exception404("해당 상품을 찾을 수 없습니다."));
+    }
+
+
+    @Transactional(readOnly = true)
+    public Page<ProductResponse.FindAllDTO> findAll(Pageable pageable) {
+        return productRepository.findAll(pageable)
+                .map(product -> new ProductResponse.FindAllDTO(
+                        product.getId(),
+                        product.getProductName(),
+                        product.getImage(),
+                        product.getPrice(),
+                        product.getOnSale()
+                ));
     }
 }
