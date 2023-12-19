@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Board Detail</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/picnic">
+    <script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
+    <style>
+        /* 스타일 부분은 그대로 두었습니다. */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f6f6f6;
+            margin: 0;
+            padding: 20px;
+            color: #000;
+        }
+
+        header {
+            background-color: #4285f4;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .container {
+            margin: 20px auto;
+            width: 70%;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            width: 80%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+            color: #000;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            width: 0.1%; /* ID 칸 크기 조정 */
+        }
+
+        #title-td {
+            width: 5%; /* Title, Username, Date 칸 크기 조정 */
+        }
+
+        #contents-td {
+            width: 100%; /* Contents 칸 크기 조정 */
+            white-space: pre-line;
+            font-size: larger;
+        }
+
+        #comment-write {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        #comment-write input {
+            width: 48%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            box-sizing: border-box;
+        }
+
+        #comment-write-btn {
+            background-color: #4285f4;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        #comment-list {
+            margin-top: 20px;
+        }
+
+        footer {
+            background-color: #4285f4;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            width: 100%;
+            position: fixed;
+            bottom: 0;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Board Detail</h1>
+</header>
+
+<div class="container">
+    <table>
+        <tr>
+            <th>ID</th>
+            <td th:text="${board.id}"></td>
+            <th id="title-td">Title</th>
+            <td colspan="2" th:text="${board.getTitle}"></td>
+        </tr>
+        <tr>
+            <th>Username</th>
+            <td th:text="${board.getWriter}"></td>
+            <th>Date</th>
+            <td th:text="${board.getCreateTime}"></td>
+        </tr>
+        <tr th:if="${board.filePath}">
+            <th>Attached Image</th>
+            <td colspan="3">
+                <!-- 이미지 파일이면 이미지를 보여주는 부분 -->
+                <img th:src="${board.filePath}" alt="Attached Image" style="max-width: 100%;">
+            </td>
+        </tr>
+    </table>
+
+    <button class="btn btn-primary" onclick="listReq()">목록</button>
+    <button class="btn btn-primary" onclick="updateReq()">수정</button>
+    <button class="btn btn-danger" onclick="deleteReq()">삭제</button>
+</div>
+
+<footer>
+    <p>&copy; 2023 Your Website</p>
+</footer>
+
+</body>
+<script th:inline="javascript">
+    const listReq = () => {
+        console.log("목록 요청");
+        const page = [[${page}]];
+        location.href = "/board/paging?page="+page;
+    }
+
+    const updateReq = () => {
+        console.log("수정 요청");
+        const id = [[${board.id}]];
+        location.href = "/board/update/" + id;
+    }
+
+    const deleteReq = () => {
+        console.log("삭제 요청");
+        const id = [[${board.id}]];
+        location.href = "/board/delete/" + id;
+    }
+</script>
+</html>
