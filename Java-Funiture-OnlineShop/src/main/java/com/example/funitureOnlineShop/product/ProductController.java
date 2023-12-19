@@ -2,6 +2,9 @@ package com.example.funitureOnlineShop.product;
 
 import com.example.funitureOnlineShop.core.utils.ApiUtils;
 import lombok.RequiredArgsConstructor;
+import okhttp3.Response;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,6 +23,15 @@ public class ProductController {
                                   @RequestParam MultipartFile[] files) throws IOException {
         productService.save(productResponseFind, files);
         ApiUtils.ApiResult<?> apiResult = ApiUtils.success(productResponseFind);
+        return ResponseEntity.ok(apiResult);
+    }
+
+    // 전체 상품 조회
+    @GetMapping("/products")
+    public ResponseEntity<?> findAll(@RequestParam(required = false, defaultValue = "0") int page,
+                                     @RequestParam(required = false, defaultValue = "10") int size) {
+        Page<ProductResponse.FindAllDTO> products = productService.findAll(PageRequest.of(page, size));
+        ApiUtils.ApiResult<Page<ProductResponse.FindAllDTO>> apiResult = ApiUtils.success(products);
         return ResponseEntity.ok(apiResult);
     }
 
