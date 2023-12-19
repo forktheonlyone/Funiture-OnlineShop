@@ -96,7 +96,7 @@ public class HomeController {
         return "createboard";
     }
 
-    @GetMapping("/")
+    @GetMapping("/login")
     public String showLogin() {
         return "login";
     }
