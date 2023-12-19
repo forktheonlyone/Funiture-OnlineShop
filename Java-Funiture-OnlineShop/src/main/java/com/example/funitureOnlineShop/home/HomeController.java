@@ -31,8 +31,8 @@ public class HomeController {
     // !!----------< 상품 관련 페이지 > -----------
 
     // 전체 상품 확인
-    @GetMapping("/product")
-    public String showAllProduct() {
+    @GetMapping("/productAll")
+    public String showAllProduct()    {
         return "allProductPage";
     }
 
