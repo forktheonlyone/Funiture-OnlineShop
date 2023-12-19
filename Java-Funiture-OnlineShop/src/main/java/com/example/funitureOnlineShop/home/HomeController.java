@@ -112,4 +112,6 @@ public class HomeController {
     public String payResponse() {
         return "payresponse";
     }
+
+    @GetMapping("/product")
 }

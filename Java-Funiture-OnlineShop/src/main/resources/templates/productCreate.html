@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>신규 상품 등록</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+<h2>신규 상품 등록</h2>
+
+<form id="productForm">
+    <label for="productName">상품명:</label><br>
+    <input type="text" id="productName" name="productName" required><br>
+    <label for="productDescription">상품 설명:</label><br>
+    <textarea id="productDescription" name="productDescription"></textarea><br>
+    <label for="productImage">상품 이미지:</label><br>
+    <input type="text" id="productImage" name="productImage"><br>
+    <label for="productPrice">상품 가격:</label><br>
+    <input type="number" id="productPrice" name="productPrice"><br>
+    <!-- 기타 필드들 추가 -->
+    <input type="button" value="Save" id="saveProduct">
+</form>
+
+<h2>상품 옵션 생성</h2>
+
+<form id="optionForm">
+    <label for="optionName">옵션명:</label><br>
+    <input type="text" id="optionName" name="optionName" disabled><br>
+    <label for="optionPrice">옵션 가격:</label><br>
+    <input type="number" id="optionPrice" name="optionPrice" disabled><br>
+    <label for="stockQuantity">재고 수량:</label><br>
+    <input type="number" id="stockQuantity" name="stockQuantity" disabled><br>
+    <!-- 기타 필드들 추가 -->
+    <input type="button" value="Add Option" id="addOption" disabled>
+</form>
+
+<script>
+    $("#saveProduct").click(function(){
+        var productData = {
+            "productName": $("#productName").val(),
+            "price": $("#productPrice").val()
+
+            if (!productName) {
+                alert("상품명을 입력해주세요");
+                return;
+            }
+
+            if (!price || price < 0) {
+                alert("상품 가격을 0 이상으로 입력해주세요");
+                return;
+            }
+
+            var productData = {
+                "productName": productName,
+                "description": $("#productDescription").val(),
+                "image": $("#productImage").val(),
+                "price": price
+        };
+
+        $.ajax({
+            url: "/product/save",
+            type: "POST", // HTTP 메서드
+            data: JSON.stringify(productData), // 전송할 데이터
+            contentType: "application/json", // 전송할 데이터의 타입
+            success: function(response) {
+                // 서버로부터 응답이 성공적으로 왔을 때 수행할 로직
+                // 예: 옵션 입력 활성화
+                $("#optionName").prop('disabled', false);
+                $("#optionPrice").prop('disabled', false);
+                $("#stockQuantity").prop('disabled', false);
+                $("#addOption").prop('disabled', false);
+            },
+            error: function(xhr, status, error) {
+                // 서버로부터 에러 응답이 왔을 때 수행할 로직
+                // 예: 사용자에게 에러 메시지 표시
+                alert("상품 저장에 실패하였습니다: " + error);
+            }
+        });
+    });
+
+    $(document).ready(function() {
+    var isAdmin = /* 서버로부터 받은 사용자의 권한 정보 */;
+    if (!isAdmin) {
+        alert("관리자만 상품을 등록할 수 있습니다.");
+        $("#saveProduct").prop('disabled', true);
+    }
+
+    $("#addOption").click(function(){
+    var optionName = $("#optionName").val();
+    var optionPrice = $("#optionPrice").val();
+    var stockQuantity = $("#stockQuantity").val();
+
+    if (!optionName) {
+        alert("옵션명을 입력해주세요.");
+        return;
+    }
+
+    if (!optionPrice || optionPrice < 0) {
+        alert("옵션 가격을 0 이상으로 입력해주세요.");
+        return;
+    }
+
+    if (!stockQuantity || stockQuantity < 0) {
+        alert("재고 수량을 0 이상으로 입력해주세요.");
+        return;
+    }
+
+    var optionData = {
+        "optionName": optionName,
+        "price": optionPrice,
+        "stockQuantity": stockQuantity
+    };
+
+    $.ajax({
+        url: "/options/products/" + /* 상품의 ID */ + "/save",
+        type: "POST",
+        data: JSON.stringify(optionData),
+        contentType: "application/json",
+        success: function(response) {
+            alert("옵션이 성공적으로 추가되었습니다.");
+            // 필요하다면 옵션 입력 필드 초기화
+            $("#optionName").val('');
+            $("#optionPrice").val('');
+            $("#stockQuantity").val('');
+        },
+        error: function(xhr, status, error) {
+            alert("옵션 추가에 실패하였습니다: " + error);
+        }
+    });
+
+});
+</script>
+
+</body>
+</html>
