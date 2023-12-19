@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>주문 상세 정보</title>
+</head>
+<body>
+<h1>주문 상세 정보</h1>
+<div th:if="${order != null}">
+    <p>주문 번호: <span th:text="${order.id}"></span></p>
+    <p>주문 날짜: <span th:text="${order.date}"></span></p>
+
+    <h2>주문 상품 목록</h2>
+    <div th:each="product : ${order.products}">
+        <p>상품 이름: <span th:text="${product.name}"></span></p>
+        <ul th:each="option : ${product.options}">
+            <li>
+                <p>옵션 이름: <span th:text="${option.name}"></span></p>
+                <p>옵션 수량: <span th:text="${option.quantity}"></span></p>
+                <p>옵션 가격: <span th:text="${option.price}"></span></p>
+                <p>옵션 총 가격: <span th:text="${option.quantity * option.price}"></span></p>
+            </li>
+        </ul>
+        <p>상품 총 가격: <span th:text="${product.options.stream().map(option -> option.quantity * option.price).reduce(0, Integer::sum)}"></span></p>
+        <button onclick="window.location.href = '/reviews/write/{id}(id=${product.id})'">후기 작성하기</button>
+    </div>
+
+    <p>주문 총 가격: <span th:text="${order.products.stream().flatMap(product -> product.options.stream().map(option -> option.quantity * option.price)).reduce(0, Integer::sum)}"></span></p>
+</div>
+<div th:if="${order == null}">
+    <p>주문 정보를 찾을 수 없습니다.</p>
+</div>
+</body>
+</html>
