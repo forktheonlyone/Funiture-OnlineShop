@@ -25,13 +25,6 @@ public class UserController {
 
         return ResponseEntity.ok(ApiUtils.success(null));
     }
-    // 관리자 회원가입
-    @PostMapping("/joinAdmin")
-    public ResponseEntity<Object> joinAdmin(@RequestBody @Valid UserRequest.JoinAdminDto joinDto, Error error){
-        userService.joinAdmin(joinDto);
-
-        return ResponseEntity.ok(ApiUtils.success(null));
-    }
 
     // 로그인
     @PostMapping("/login")
@@ -43,19 +36,22 @@ public class UserController {
 
     // 로그아웃
     @PostMapping("/logout")
-    public String logout(@AuthenticationPrincipal CustomUserDetails customUserDetails, HttpServletResponse res, Error error){
-        return userService.logout(customUserDetails.getUser().getId(), res);
+    public ResponseEntity<Object> logout(@AuthenticationPrincipal CustomUserDetails customUserDetails, HttpServletResponse res, Error error){
+        userService.logout(customUserDetails.getUser().getId(), res);
+        return ResponseEntity.ok(ApiUtils.success(null));
     }
+
     // 회원정보확인
     @GetMapping("/info")
-    public ResponseEntity<UserResponse.UserDTO> getUserInfo(@RequestBody @Valid UserRequest.UserInfoDto userInfoDto) {
-        UserResponse.UserDTO userDTO = userService.getUserInfo(userInfoDto);
-        return ResponseEntity.ok(userDTO);
+    public ResponseEntity<?> getUserInfo(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        UserResponse.UserDTO userDTO = userService.getUserInfo(customUserDetails.getUser().getId());
+        return ResponseEntity.ok(ApiUtils.success(userDTO));
     }
+
     // 회원탈퇴
     @DeleteMapping("/delete")
-    public ResponseEntity<?> deleteById(@PathVariable Long id){
-        userService.deleteUserById(id);
-        return ResponseEntity.ok("탈퇴가 성공적으로 이루어졌습니다.. ㅠ");
+    public ResponseEntity<?> deleteById(@AuthenticationPrincipal CustomUserDetails customUserDetails){
+        userService.deleteUserById(customUserDetails.getUser().getId());
+        return ResponseEntity.ok(ApiUtils.success("탈퇴가 성공적으로 이루어졌습니다.. ㅠ"));
     }
 }

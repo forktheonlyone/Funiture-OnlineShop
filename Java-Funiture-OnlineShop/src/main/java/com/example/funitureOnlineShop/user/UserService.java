@@ -2,6 +2,7 @@ package com.example.funitureOnlineShop.user;
 
 import com.example.funitureOnlineShop.core.error.exception.Exception400;
 import com.example.funitureOnlineShop.core.error.exception.Exception401;
+import com.example.funitureOnlineShop.core.error.exception.Exception404;
 import com.example.funitureOnlineShop.core.error.exception.Exception500;
 import com.example.funitureOnlineShop.core.security.CustomUserDetails;
 import com.example.funitureOnlineShop.core.security.JwtTokenProvider;
@@ -47,25 +48,9 @@ public class UserService {
             // 회원 가입
             userRepository.save(joinDto.toEntity());
 
-
             // 자기 전화번호로 회원가입 메세지가 오도록 함 (돈 내야 해서 지금은 안 씀)
             // SignUpMessageSender.sendMessage("01074517172", joinDto.getPhoneNumber(),"환영합니다. 회원가입이 완료되었습니다.");
         } catch (Exception e) {
-            throw new Exception500(e.getMessage());
-        }
-    }
-    @Transactional
-    public void joinAdmin(UserRequest.JoinAdminDto DTO){
-        checkEmail(DTO.getEmail());
-
-        String encodedPassword = passwordEncoder.encode(DTO.getPassword());
-        DTO.setPassword(encodedPassword);
-
-        try{
-            User user = DTO.toEntity();
-            user.addAdminRole();
-            userRepository.save(user);
-        }catch (Exception e) {
             throw new Exception500(e.getMessage());
         }
     }
@@ -110,7 +95,7 @@ public class UserService {
     }
 
     // 쿠키 설정
-    public void setCookie(HttpServletResponse res, String name, String value){
+    private void setCookie(HttpServletResponse res, String name, String value){
         Cookie cookie = new Cookie(name, value);
         cookie.setMaxAge(3600);
         cookie.setPath("/");
@@ -118,7 +103,7 @@ public class UserService {
     }
 
     // 쿠키 삭제
-    public void deleteCookie(HttpServletResponse res, String name){
+    private void deleteCookie(HttpServletResponse res, String name){
         Cookie cookie = new Cookie(name, null);
         cookie.setMaxAge(3600);
         cookie.setPath("/");
@@ -127,16 +112,16 @@ public class UserService {
 
     // 로그아웃
     @Transactional
-    public String logout(Long id, HttpServletResponse res) {
+    public void logout(Long id, HttpServletResponse res) {
+        if (id == null)
+            throw new Exception401("현재 로그인한 회원이 아닙니다.");
+        User user = userRepository.findById(id).orElseThrow(
+                () -> new Exception404("존재하지 않는 회원입니다."));
         try {
-            User user = userRepository.findById(id).orElseThrow();
             killToken(user);
             deleteCookie(res, "token");
-
-            // 메인 화면으로
-            return "/";
         } catch (Exception e){
-            throw new Exception500(e.getMessage());
+            throw new Exception500("로그아웃 도중 에러가 발생했습니다.");
         }
     }
 
@@ -149,21 +134,29 @@ public class UserService {
         JwtTokenProvider.invalidateToken(authentication);
     }
 
-    public UserResponse.UserDTO getUserInfo(UserRequest.UserInfoDto userInfoDto) {
-        String email = userInfoDto.getEmail();
-        String username = userInfoDto.getUsername();
+    public UserResponse.UserDTO getUserInfo(Long id) {
+        // 현재 로그인한 회원의 정보를 조회
+        if (id == null)
+            throw new Exception401("현재 로그인한 회원이 아닙니다.");
+        Optional<User> optionalUser = userRepository.findById(id);
+        if (optionalUser.isEmpty())
+            throw new Exception404("존재하지 않는 회원입니다.");
 
-        // 이메일과 이름을 기반으로 사용자 정보를 조회
-        User user = userRepository.findByEmailAndUsername(email, username)
-                .orElseThrow(() -> new Exception500("사용자를 찾을 수 없습니다."));
-
-        return UserResponse.UserDTO.fromEntity(user);
+        return UserResponse.UserDTO.toUserDto(optionalUser.get());
     }
 
     @Transactional
-    public void deleteUserById(Long userId) {
+    public void deleteUserById(Long id) {
+        if (id == null)
+            throw new Exception401("현재 로그인한 회원이 아닙니다.");
         // 사용자가 존재하는지 확인 후 삭제
-        userRepository.findById(userId).ifPresent(user ->
-        {userRepository.deleteById(userId);});
+        Optional<User> optionalUser = userRepository.findById(id);
+        if (optionalUser.isEmpty())
+            throw new Exception404("존재하지 않는 회원입니다.");
+        try {
+            userRepository.deleteById(id);
+        } catch (Exception e) {
+            throw new Exception500("탈퇴 도중 에러가 발생했습니다.");
+        }
     }
 }

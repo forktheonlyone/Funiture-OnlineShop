@@ -45,10 +45,6 @@ public class User {
     @Convert(converter = StringArrayConverter.class)
     private List<String> roles = new ArrayList<>();
 
-    // 적립 포인트
-    @Column(length = 255, nullable = false)
-    private Long point;
-
     // 갱신 토큰
     @Column
     private String refreshToken;
@@ -58,7 +54,7 @@ public class User {
     }
 
     @Builder
-    public User(Long id, String email, String password, String username, String phoneNumber, String address, List<String> roles, Long point, String refreshToken) {
+    public User(Long id, String email, String password, String username, String phoneNumber, String address, List<String> roles, String refreshToken) {
         this.id = id;
         this.email = email;
         this.password = password;
@@ -66,7 +62,6 @@ public class User {
         this.phoneNumber = phoneNumber;
         this.address = address;
         this.roles = roles;
-        this.point = point;
         this.refreshToken = refreshToken;
     }
 
@@ -79,10 +74,6 @@ public class User {
         System.out.println("phoneNumber : " + phoneNumber);
         System.out.println("address : " + address);
         System.out.println("roles : " + roles);
-        System.out.println("point : " + point);
         System.out.println("refreshToken : " + refreshToken);
-    }
-    public void addAdminRole() {
-        roles.add("ADMIN");
     }
 }
