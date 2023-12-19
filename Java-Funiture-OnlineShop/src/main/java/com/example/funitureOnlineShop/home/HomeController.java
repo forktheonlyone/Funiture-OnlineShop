@@ -1,13 +1,17 @@
 package com.example.funitureOnlineShop.home;
 
 import com.example.funitureOnlineShop.core.security.CustomUserDetails;
+import com.example.funitureOnlineShop.orderCheck.OrderCheck;
+import com.example.funitureOnlineShop.orderCheck.OrderCheckDto;
 import com.example.funitureOnlineShop.product.ProductResponse;
 import com.example.funitureOnlineShop.product.ProductService;
 import com.example.funitureOnlineShop.productComment.ProductComment;
+import com.example.funitureOnlineShop.productComment.ProductCommentResponse;
 import com.example.funitureOnlineShop.productComment.ProductCommentService;
 import com.example.funitureOnlineShop.user.UserResponse;
 import com.example.funitureOnlineShop.user.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -76,9 +80,16 @@ public class HomeController {
 
     @GetMapping("/product_comment/update/{id}")
     public String updateCommentForm(@PathVariable Long id, Model model){
-        ProductComment dto = productCommentService.findById(id);
+        ProductCommentResponse.CommentDto dto = productCommentService.findById(id);
         model.addAttribute("comment", dto);
         return "commentUpdate";
+    }
+
+    @GetMapping("/product_comment/save/{id}")
+    public String writeComment(@PathVariable Long id, Model model){
+        OrderCheckDto orderCheckDto = productCommentService.findOrderCheck(id);
+        model.addAttribute("orderCheck", orderCheckDto);
+        return "productReview";
     }
 
     @GetMapping("/board/create")
@@ -86,7 +97,7 @@ public class HomeController {
         return "createboard";
     }
 
-    @GetMapping("/")
+    @GetMapping("/login")
     public String showLogin() {
         return "login";
     }
@@ -111,5 +122,12 @@ public class HomeController {
     @GetMapping("/payments/response")
     public String payResponse() {
         return "payresponse";
+    }
+
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/product/add")
+    public String showProductCreate() {
+        return "productCreate";
     }
 }

@@ -14,7 +14,7 @@ import java.util.List;
 public class OptionController {
     private final OptionService optionService;
     // ** 옵션 저장
-    @PostMapping("/save")
+    @PostMapping("/products/{productId}/save")
     public ResponseEntity save(@RequestBody @Valid OptionResponse.FindByProductIdDTO requestDTO) {
 
         Option option = optionService.save(requestDTO);
