@@ -22,7 +22,9 @@
             <label for="optionSelect">옵션 선택</label>
             <select id="optionSelect">
                 <option value="">-- 옵션을 선택하세요 --</option>
-                <option th:each="option : ${product.options}" th:value="${option.id}" th:text="${option.optionName}"></option>
+                <option th:each="option : ${product.options}" th:value="${option.id}" th:text="${option.optionName + ' (' + option.stockQuantity + '개)'}"
+                        th:if="${option.stockQuantity > 0}"></option>
+                <option value="" th:if="${option.stockQuantity <= 0}">Sold Out</option>
             </select>
         </div>
 
@@ -32,6 +34,10 @@
             function addToCart() {
                 var optionId = document.getElementById('optionSelect').value;
 
+                if (optionSelect.selectedIndex === optionSelect.options.length - 1) {
+                       alert('이 옵션은 품절되었습니다.');
+                       return;
+                }
                 if (!optionId) {
                     alert('옵션을 선택해주세요.');
                     return;
