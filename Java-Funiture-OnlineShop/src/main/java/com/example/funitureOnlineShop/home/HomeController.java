@@ -1,8 +1,12 @@
 package com.example.funitureOnlineShop.home;
 
 import com.example.funitureOnlineShop.core.security.CustomUserDetails;
+import com.example.funitureOnlineShop.product.ProductResponse;
+import com.example.funitureOnlineShop.product.ProductService;
 import com.example.funitureOnlineShop.productComment.ProductComment;
 import com.example.funitureOnlineShop.productComment.ProductCommentService;
+import com.example.funitureOnlineShop.user.UserResponse;
+import com.example.funitureOnlineShop.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -14,7 +18,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 @Controller
 public class HomeController {
 
+    private final ProductService productService;
     private final ProductCommentService productCommentService;
+    private final UserService userService;
 
     // 메인 홈페이지
     @GetMapping(value = {"/", ""})
@@ -62,7 +68,9 @@ public class HomeController {
     // !!----------< 유저 관련 페이지 > -----------
     // 각 유저의 마이페이지
     @GetMapping("/myPage")
-    public String showUserInfo(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+    public String showUserInfo(@AuthenticationPrincipal CustomUserDetails customUserDetails, Model model) {
+        UserResponse.UserDTO userDTO = userService.getUserInfo(customUserDetails.getUser().getId());
+        model.addAttribute("user", userDTO);
         return "myPage";
     }
 
@@ -83,8 +91,10 @@ public class HomeController {
         return "login";
     }
 
-    @GetMapping("/product/{id}")
-    public String showProduct(@PathVariable Long id) {
+    @GetMapping("/product/show/{id}")
+    public String showProduct(@PathVariable Long id, Model model) {
+        ProductResponse.FindByIdDTO findByIdDTO = productService.findById(id);
+        model.addAttribute("product", findByIdDTO);
         return "productPage";
     }
 
