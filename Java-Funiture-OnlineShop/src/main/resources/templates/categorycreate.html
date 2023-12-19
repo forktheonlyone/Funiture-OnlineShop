@@ -11,10 +11,17 @@
 <!-- 카테고리 추가 폼 -->
 <form th:action="@{/category/save}" method="post">
     <label for="categoryName">카테고리 이름:</label>
-    <select id="categoryName" name="categoryName" required>
+    <input type="text" id="categoryName" name="categoryName" required>
+    <button type="submit">카테고리 추가</button>
+</form>
+
+<!-- 카테고리 목록 콤보 박스 -->
+<form th:action="@{/some/action}" method="post">
+    <label for="selectedCategory">카테고리 선택:</label>
+    <select id="selectedCategory" name="selectedCategory" required>
         <option th:each="category : ${categories}" th:value="${category.name}" th:text="${category.name}"></option>
     </select>
-    <button type="submit">카테고리 추가</button>
+    <button type="submit">선택한 카테고리 조회</button>
 </form>
 
 <!-- 카테고리 목록 -->
