@@ -8,6 +8,7 @@ import com.example.funitureOnlineShop.core.error.exception.Exception500;
 import com.example.funitureOnlineShop.option.Option;
 import com.example.funitureOnlineShop.option.OptionRepository;
 import com.example.funitureOnlineShop.orderCheck.OrderCheck;
+import com.example.funitureOnlineShop.orderCheck.OrderCheckDto;
 import com.example.funitureOnlineShop.orderCheck.OrderCheckRepository;
 import com.example.funitureOnlineShop.user.User;
 import com.example.funitureOnlineShop.user.UserRepository;
@@ -194,13 +195,24 @@ public class ProductCommentService {
     }
 
     // 상품 후기 단일 탐색
-    public ProductComment findById (Long id) {
+    public ProductCommentResponse.CommentDto findById(Long id) {
         // 상품 후기 존재?
         Optional<ProductComment> optionalProductComment =
                 productCommentRepository.findById(id);
         if (optionalProductComment.isEmpty())
             throw new Exception404("해당 상품 후기를 찾을 수 없습니다. : " + id);
 
-        return optionalProductComment.get();
+        return ProductCommentResponse.CommentDto.toDto(optionalProductComment.get());
+    }
+
+    // 주문 내역 단일 탐색
+    public OrderCheckDto findOrderCheck(Long id) {
+        // 주문 내역 존재?
+        Optional<OrderCheck> optionalOrderCheck =
+                orderCheckRepository.findById(id);
+        if (optionalOrderCheck.isEmpty())
+            throw new Exception404("해당 주문 내역을 찾을 수 없습니다. : " + id);
+
+        return OrderCheckDto.toOrderCheckDto(optionalOrderCheck.get());
     }
 }
