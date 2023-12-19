@@ -11,6 +11,7 @@ import com.example.funitureOnlineShop.productComment.ProductCommentService;
 import com.example.funitureOnlineShop.user.UserResponse;
 import com.example.funitureOnlineShop.user.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -123,5 +124,10 @@ public class HomeController {
         return "payresponse";
     }
 
-    @GetMapping("/product")
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/product/add")
+    public String showProductCreate() {
+        return "productCreate";
+    }
 }
