@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>카테고리 수정</title>
+</head>
+<body>
+<form>
+    <label>수정할 카테고리 : </label><select id="categorySelect" onchange="setInputValue()">
+        <option value="" disabled selected>선택하세요</option>
+        <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.categoryName}"></option>
+    </select>
+
+    <label>이름 수정 : </label><input type="text" id="selectedValueInput" required>
+    <button onclick="">수정</button>
+    <button onclick="">삭제</button>
+</form>
+<script>
+    function setInputValue() {
+        var selectElement = document.getElementById("categorySelect");
+        var selectedName = selectElement.options[selectElement.selectedIndex].text;
+        document.getElementById("selectedValueInput").value = selectedName;
+    }
+
+    function updateCategory() {
+        const selectElement = document.getElementById('categorySelect');
+        const selectedName = selectElement.options[selectElement.selectedIndex];
+
+        try {
+            fetch('/product_comment/update', {
+                method: 'POST',
+                body: formData
+            });
+            const result = await response.json();
+
+            if (result.success) {
+                alert("상품 후기 수정 완료");
+                console.log(location.href);
+                location.href = '/product/show/' + [[${comment.productId}]];
+            } else {
+                console.log(result);
+                alert("상품 후기 수정 실패");
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+</script>
+</body>
+</html>
