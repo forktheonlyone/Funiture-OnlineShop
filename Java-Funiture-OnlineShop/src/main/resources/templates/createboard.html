@@ -139,7 +139,7 @@
                 if (xhr.status === 200) {
                     document.getElementById('message').textContent = '게시물이 성공적으로 저장되었습니다.';
                     setTimeout(function () {
-                        window.location.href = '/board/paging';
+                        window.location.href = '/notice';
                     }, 2000);
                 } else {
                     document.getElementById('message').textContent = '게시물 저장에 실패했습니다.';
