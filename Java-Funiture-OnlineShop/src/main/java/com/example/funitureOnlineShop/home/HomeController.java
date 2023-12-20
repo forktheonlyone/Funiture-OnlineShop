@@ -61,7 +61,7 @@ public class HomeController {
     }
 
     // 카테고리 클릭시 특정 카테고리 상품 확인
-    @GetMapping("/category/{id}")
+    @GetMapping("/category/show/{id}")
     public String showProductByCategory(@PathVariable Long id) {
         return "productCategoryPage";
     }
