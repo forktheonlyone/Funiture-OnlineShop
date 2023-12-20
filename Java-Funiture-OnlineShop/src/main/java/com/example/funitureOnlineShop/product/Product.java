@@ -26,17 +26,8 @@ public class Product {
     @Column(length = 1000, nullable = false)
     private String description;
 
-    @Column(length = 100, nullable = false)
-    private String image;
-
     @Column(nullable = false)
     private Long price;
-
-    @Column(length = 100, nullable = false)
-    private Long onSale;
-
-    @Column(nullable = false)
-    private Long point;
 
     @Column(nullable = false)
     private Long deliveryFee;
@@ -55,10 +46,7 @@ public class Product {
         this.id = id;
         this.productName = productName;
         this.description = description;
-        this.image = image;
         this.price = price;
-        this.onSale = onSale;
-        this.point = point;
         this.deliveryFee = deliveryFee;
         this.category = category;
     }
@@ -72,10 +60,7 @@ public class Product {
     public void update(ProductResponse.FindByIdDTO findByIdDTO) {
         this.productName = findByIdDTO.getProductName();
         this.description = findByIdDTO.getDescription();
-        this.image = findByIdDTO.getImage();
         this.price = findByIdDTO.getPrice();
-        this.onSale = findByIdDTO.getOnSale();
-        this.point = findByIdDTO.getPoint();
         this.deliveryFee = findByIdDTO.getDeliveryFee();
     }
 

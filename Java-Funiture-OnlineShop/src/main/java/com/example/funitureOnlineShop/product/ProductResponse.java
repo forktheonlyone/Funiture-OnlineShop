@@ -38,13 +38,7 @@ public class ProductResponse {
 
         private String description;
 
-        private String image;
-
         private Long price;
-
-        private Long onSale;
-
-        private Long point;
 
         private Long deliveryFee;
 
@@ -55,10 +49,7 @@ public class ProductResponse {
             this.id = product.getId();
             this.productName = product.getProductName();
             this.description = product.getDescription();
-            this.image = product.getImage();
             this.price = product.getPrice();
-            this.onSale = product.getOnSale();
-            this.point = product.getPoint();
             this.deliveryFee = product.getDeliveryFee();
             this.categoryId = product.getCategory().getId();
         }
@@ -66,12 +57,10 @@ public class ProductResponse {
 
         public Product toEntity(Category category) {
             return Product.builder()
+                    .id(id)
                     .productName(productName)
                     .description(description)
-                    .image(image)
                     .price(price)
-                    .onSale(onSale)
-                    .point(point)
                     .deliveryFee(deliveryFee)
                     .category(category)
                     .build();
@@ -89,13 +78,7 @@ public class ProductResponse {
 
         private String description;
 
-        private String image;
-
         private Long price;
-
-        private Long onSale;
-
-        private Long point;
 
         private Long deliveryFee;
 
@@ -108,10 +91,7 @@ public class ProductResponse {
             this.id = product.getId();
             this.productName = product.getProductName();
             this.description = product.getDescription();
-            this.image = product.getImage();
             this.price = product.getPrice();
-            this.onSale = product.getOnSale();
-            this.point = product.getPoint();
             this.deliveryFee = product.getDeliveryFee();
             this.categoryId = product.getCategory().getId();
             this.optionList = optionList.stream().map(OptionDTO::new)
@@ -124,19 +104,11 @@ public class ProductResponse {
     @Getter
     public static class SaveByIdDTO {
 
-        private Long id;
-
         private String productName;
 
         private String description;
 
-        private String image;
-
         private Long price;
-
-        private Long onSale;
-
-        private Long point;
 
         private Long deliveryFee;
 
@@ -148,10 +120,7 @@ public class ProductResponse {
             return Product.builder()
                     .productName(productName)
                     .description(description)
-                    .image(image)
                     .price(price)
-                    .onSale(onSale)
-                    .point(point)
                     .deliveryFee(deliveryFee)
                     .build();
         }
@@ -164,16 +133,12 @@ public class ProductResponse {
 
         private Long id;
         private String productName;
-        private String image;
         private Long price;
-        private Long onSale;
 
-        public FindAllDTO(Long id, String productName, String image, Long price, Long onSale) {
+        public FindAllDTO(Long id, String productName, Long price) {
             this.id = id;
             this.productName = productName;
-            this.image = image;
             this.price = price;
-            this.onSale = onSale;
         }
     }
 
