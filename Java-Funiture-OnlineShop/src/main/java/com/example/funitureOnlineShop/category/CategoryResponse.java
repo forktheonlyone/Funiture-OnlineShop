@@ -16,10 +16,13 @@ public class CategoryResponse {
         private Long id;
         // 카테고리 명
         private String categoryName;
+        // 상위 카테고리 id
+        private Long superCategory_id;
 
         public FindAllDto(Category category) {
             this.id = category.getId();
             this.categoryName = category.getCategoryName();
+            this.superCategory_id =category.getSuperCategory().getId();
         }
     }
 
