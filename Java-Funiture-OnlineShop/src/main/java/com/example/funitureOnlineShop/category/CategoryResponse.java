@@ -22,7 +22,10 @@ public class CategoryResponse {
         public FindAllDto(Category category) {
             this.id = category.getId();
             this.categoryName = category.getCategoryName();
-            this.superCategory_id =category.getSuperCategory().getId();
+            if (category.getSuperCategory() != null)
+                this.superCategory_id = category.getSuperCategory().getId();
+            else
+                this.superCategory_id = null;
         }
     }
 

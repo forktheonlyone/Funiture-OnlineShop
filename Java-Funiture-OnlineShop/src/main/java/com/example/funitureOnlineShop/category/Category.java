@@ -38,4 +38,8 @@ public class Category {
     public void updateSuperCategory(Category superCategory) {
         this.superCategory = superCategory;
     }
+
+    public void updateFromDto(CategoryRequest.UpdateDto updateDto) {
+        this.categoryName = updateDto.getCategoryName();
+    }
 }

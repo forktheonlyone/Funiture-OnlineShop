@@ -65,24 +65,17 @@ public class CategoryService {
         return new CategoryResponse.FindByIdDto(category, subCategories);
     }
 
-    // 카테고리의 이름과 그 상위 카테고리 수정
+    // 카테고리의 이름 수정
     @Transactional
     public void update(CategoryRequest.UpdateDto updateDto) {
         // 수정할 카테고리 존재?
-        categoryRepository.findById(updateDto.getId()).orElseThrow(
-                () -> new Exception404("해당 카테고리를 찾을 수 없습니다. : " + updateDto.getId()));
-        // 연결한 상위 카테고리 존재?
-        Category superCategory = categoryRepository.findById(updateDto.getSuperCategory_id()).orElseThrow(
-                () -> new Exception404("해당 상위 카테고리를 찾을 수 없습니다. : " + updateDto.getSuperCategory_id()));
-        // 수정 된 카테고리
-        Category newCategory = Category.builder()
-                .id(updateDto.getId())
-                .categoryName(updateDto.getCategoryName())
-                .superCategory(superCategory)
-                .build();
-
+        Optional<Category> optionalCategory = categoryRepository.findById(updateDto.getId());
+        if (optionalCategory.isEmpty())
+            throw new Exception404("해당 카테고리를 찾을 수 없습니다. : " + updateDto.getId());
+        // 카테고리 수정
+        Category category = optionalCategory.get();
         try {
-            categoryRepository.save(newCategory);
+            category.updateFromDto(updateDto);
         } catch (Exception e) {
             throw new Exception500("카테고리 수정 도중 이상이 생겼습니다.");
         }
