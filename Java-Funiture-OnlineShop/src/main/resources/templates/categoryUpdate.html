@@ -3,20 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <title>카테고리 수정</title>
+    <script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
 </head>
 <body>
-<form>
     <header> <h2>카테고리 수정 / 삭제</h2> </header>
     <label>수정할 카테고리 : </label><select id="categorySelect" onchange="setInputValue()">
         <option value="" disabled selected>선택하세요</option>
-        <option th:each="category : ${categories}" th:value="${category.id}" data-super-id="{category.superCategory_id}" th:text="${category.categoryName}"></option>
+        <option th:each="category : ${categories}" th:value="${category.id}" th:data-id="${category.id}" th:data-superid="${category.superCategory_id}" th:text="${category.categoryName}"></option>
     </select><br><br>
 
     <label>이름 수정 : </label><input type="text" id="selectedValueInput" required>
     <button onclick="updateCategory()">수정</button>
     <button onclick="deleteCategory()">삭제</button>
-</form>
-<script>
+<script th:inline="javascript">
     function setInputValue() {
         var selectElement = document.getElementById("categorySelect");
         var selectedName = selectElement.options[selectElement.selectedIndex].text;
@@ -26,14 +25,14 @@
     function updateCategory() {
         const selectElement = document.getElementById('categorySelect');
         const selectedOption = selectElement.options[selectElement.selectedIndex];
-        const categoryId = selectedOption.value;
-        const superCategoryId = selectedOption.getAttribute("date-super-id");
+        const categoryId = selectedOption.dataset.id;
+        const superCategoryId = selectedOption.dataset.superid;
         const categoryName = document.getElementById("selectedValueInput").value;
 
         $.ajax({
-            // 요청방식: post, 요청주소: /product_comment/update, 요청데이터: 카테고리 id, 이름, 상위 id
+            // 요청방식: post, 요청주소: /category/update, 요청데이터: 카테고리 id, 이름, 상위 id
             type: "post",
-            url: "/product_comment/update",
+            url: "/category/update",
             data: {
                 "id" : categoryId,
                 "superCategory_id" : superCategoryId,
@@ -41,7 +40,8 @@
             },
             success: function (res) {
                 alert("카테고리 수정 완료");
-                document.getElementById("selectedValueInput").value = "";
+                console.log(location.href);
+                location.href = "/category/updateForm";
             },
             error: function (err) {
                 alert("카테고리 수정 실패");
@@ -56,9 +56,9 @@
         const categoryId = selectedOption.value;
 
         $.ajax({
-            // 요청방식: post, 요청주소: /product_comment/delete/{id}
+            // 요청방식: post, 요청주소: /category/delete/{id}
             type: "post",
-            url: '/product_comment/delete/' + categoryId,
+            url: '/category/delete/' + categoryId,
             success: function (res) {
                 alert("카테고리 삭제 완료");
                 console.log(location.href);

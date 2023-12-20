@@ -22,7 +22,7 @@ public class CategoryController {
 
     // 카테고리 저장
     @PostMapping("/save")
-    public ResponseEntity<?> save(@RequestBody @Valid CategoryRequest.SaveDto saveDto) {
+    public ResponseEntity<?> save(@ModelAttribute CategoryRequest.SaveDto saveDto) {
         categoryService.save(saveDto);
 
         return ResponseEntity.ok(ApiUtils.success(null));
