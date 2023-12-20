@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>카테고리 수정</title>
+</head>
+<body>
+<form>
+    <header> <h2>카테고리 수정 / 삭제</h2> </header>
+    <label>수정할 카테고리 : </label><select id="categorySelect" onchange="setInputValue()">
+        <option value="" disabled selected>선택하세요</option>
+        <option th:each="category : ${categories}" th:value="${category.id}" data-super-id="{category.superCategory_id}" th:text="${category.categoryName}"></option>
+    </select><br><br>
+
+    <label>이름 수정 : </label><input type="text" id="selectedValueInput" required>
+    <button onclick="updateCategory()">수정</button>
+    <button onclick="deleteCategory()">삭제</button>
+</form>
+<script>
+    function setInputValue() {
+        var selectElement = document.getElementById("categorySelect");
+        var selectedName = selectElement.options[selectElement.selectedIndex].text;
+        document.getElementById("selectedValueInput").value = selectedName;
+    }
+
+    function updateCategory() {
+        const selectElement = document.getElementById('categorySelect');
+        const selectedOption = selectElement.options[selectElement.selectedIndex];
+        const categoryId = selectedOption.value;
+        const superCategoryId = selectedOption.getAttribute("date-super-id");
+        const categoryName = document.getElementById("selectedValueInput").value;
+
+        $.ajax({
+            // 요청방식: post, 요청주소: /product_comment/update, 요청데이터: 카테고리 id, 이름, 상위 id
+            type: "post",
+            url: "/product_comment/update",
+            data: {
+                "id" : categoryId,
+                "superCategory_id" : superCategoryId,
+                "categoryName" : categoryName
+            },
+            success: function (res) {
+                alert("카테고리 수정 완료");
+                document.getElementById("selectedValueInput").value = "";
+            },
+            error: function (err) {
+                alert("카테고리 수정 실패");
+                console.log("요청실패", err);
+            }
+        });
+    }
+
+    function deleteCategory() {
+        const selectElement = document.getElementById('categorySelect');
+        const selectedOption = selectElement.options[selectElement.selectedIndex];
+        const categoryId = selectedOption.value;
+
+        $.ajax({
+            // 요청방식: post, 요청주소: /product_comment/delete/{id}
+            type: "post",
+            url: '/product_comment/delete/' + categoryId,
+            success: function (res) {
+                alert("카테고리 삭제 완료");
+                console.log(location.href);
+                location.href = "/category/updateForm";
+            },
+            error: function (err) {
+                alert("카테고리 삭제 실패");
+                console.log("요청실패", err);
+            }
+        });
+    }
+</script>
+</body>
+</html>
