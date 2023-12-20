@@ -13,7 +13,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,7 +23,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -41,58 +39,38 @@ public class ProductService {
     // !!!!!!!!!! 꼭 반드시 테스트시 파일 경로 특히 사용자명 확인할것 !!!!!!!!!!
     private final String filePath = "C:/Users/soone/Desktop/FunitureOnlineShopFiles/";
 
-    // 상품 저장 서비스
     @Transactional
     public Product save(ProductResponse.SaveByIdDTO saveByIdDTO, MultipartFile[] files) throws IOException {
-        Optional<Category> optionalCategory =
-                categoryRepository.findById(saveByIdDTO.getCategoryId());
+        // 카테고리 조회
+        Category category = categoryRepository.findById(saveByIdDTO.getCategoryId())
+                .orElseThrow(() -> new Exception400("해당 카테고리가 존재하지 않습니다."));
 
-        if (optionalCategory.isPresent()) {
-            Category category = optionalCategory.get();
+        // 상품 엔티티 생성 및 카테고리 할당
+        Product productEntity = modelMapper.map(saveByIdDTO, Product.class);
+        productEntity.assignToCategory(category);
 
-            Product productEntity = saveByIdDTO.toEntity();
-            productEntity.assignToCategory(category);
+        // 상품 엔티티 저장
+        Product savedProduct = productRepository.save(productEntity);
 
-            Long id = productRepository.save(saveByIdDTO.toEntity()).getId();
-            Product product = productRepository.findById(id).get();
-
-            // 업로드시 파일이 없을 경우의 예외처리
-            if (files == null || files.length == 0 || files[0].isEmpty()) {
-                return product;
-            }
-
-            // 파일 정보 저장
+        // 파일 처리 로직
+        if (files != null && files.length > 0 && !files[0].isEmpty()) {
             for (MultipartFile file : files) {
-                if (file.isEmpty()) {
-                    continue;
-                }
+                if (file.isEmpty()) continue;
 
-                // ** 파일명 추출
                 String originalFileName = file.getOriginalFilename();
-
-                // ** uuid 생성
                 String uuid = UUID.randomUUID().toString();
+                String formatType = originalFileName.substring(originalFileName.lastIndexOf("."));
 
-                // ** 확장자 추출
-                String formatType = originalFileName.substring(
-                        originalFileName.lastIndexOf("."));
-
-                // ** 확장자 검사
                 if (!formatType.equals(".jpg") && !formatType.equals(".jpeg") && !formatType.equals(".png")) {
                     throw new Exception400("파일 확장자는 .jpg, .jpeg, .png 만 가능합니다.");
                 }
 
                 Path uploadPath = Paths.get(filePath);
-
-                // 경로가 없다면 `filePath`의 경로로 경로 생성.
                 if (!Files.exists(uploadPath)) {
                     Files.createDirectories(uploadPath);
                 }
 
-                // 경로 지정
                 String path = filePath + uuid + originalFileName;
-
-                // 경로에 파일을 저장 (DB의 저장이 아님)
                 file.transferTo(new File(path));
 
                 FileProduct fileProduct = FileProduct.builder()
@@ -101,14 +79,14 @@ public class ProductService {
                         .uuid(uuid)
                         .fileType(formatType)
                         .fileSize(file.getSize())
-                        .product(product)
+                        .product(savedProduct)
                         .build();
 
                 fileProductRepository.save(fileProduct);
             }
-            return product;
         }
-        return null;
+
+        return savedProduct;
     }
 
     // 상품 수정 서비스

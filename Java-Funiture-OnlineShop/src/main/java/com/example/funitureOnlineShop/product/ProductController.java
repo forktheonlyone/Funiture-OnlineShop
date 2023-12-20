@@ -2,7 +2,6 @@ package com.example.funitureOnlineShop.product;
 
 import com.example.funitureOnlineShop.core.utils.ApiUtils;
 import lombok.RequiredArgsConstructor;
-import okhttp3.Response;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
