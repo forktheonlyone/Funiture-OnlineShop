@@ -106,9 +106,7 @@ public class HomeController {
     // !!----------< 유저 관련 페이지 > -----------
     // 각 유저의 마이페이지
     @GetMapping("/myPage")
-    public String showUserInfo(@AuthenticationPrincipal CustomUserDetails customUserDetails, Model model) {
-        UserResponse.UserDTO userDTO = userService.getUserInfo(customUserDetails.getUser().getId());
-        model.addAttribute("user", userDTO);
+    public String showUserInfo() {
         return "myPage";
     }
 
