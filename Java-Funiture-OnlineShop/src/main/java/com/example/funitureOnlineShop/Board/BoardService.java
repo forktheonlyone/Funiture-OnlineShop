@@ -3,7 +3,10 @@ package com.example.funitureOnlineShop.Board;
 import com.example.funitureOnlineShop.BoardFile.BoardFile;
 import com.example.funitureOnlineShop.BoardFile.BoardFileRepository;
 import com.example.funitureOnlineShop.core.error.exception.Exception500;
+import com.example.funitureOnlineShop.user.User;
+import com.example.funitureOnlineShop.user.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -22,12 +25,14 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class BoardService {
     private final BoardRepository boardRepository;
     private final BoardFileRepository boardFileRepository;
-    private final String filePath = "";
+    private final UserRepository userRepository;
+    private final String filePath = "C:/Users/Ahyun/OneDrive/바탕 화면/카카오 로그인/수정본";
 
     public Page<BoardDTO> paging(Pageable pageable) {
 
@@ -44,16 +49,13 @@ public class BoardService {
                 board.getUser().getId(),
                 board.getTitle(),
                 board.getContents(),
-                board.getCategory().getId(),
                 board.getCreateTime(),
                 board.getUpdateTime()));
     }
 
     @Transactional
-    public Long save(BoardDTO dto, MultipartFile[] files) throws IOException {
+    public void save(BoardDTO dto, MultipartFile[] files) throws IOException {
         dto.setCreateTime(LocalDateTime.now());
-        Long id = boardRepository.save(dto.toEntity()).getId();
-        Board board = boardRepository.findById(id).get();
 
         try {
             // ** 파일 정보 저장.
@@ -76,6 +78,14 @@ public class BoardService {
                 // ** 경로에 파일을 저장.  DB 아님
                 file.transferTo(new File(path));
                 // ** 게시글 DB에 저장 후 pk을 받아옴.
+                Long id = boardRepository.save(dto.toEntity()).getId();
+                Board board = boardRepository.findById(id).orElseThrow(() ->
+                        new Exception500("게시글을 찾을 수 없습니다."));
+
+                User user = userRepository.findById(dto.getUserId()).orElseThrow(() ->
+                        new Exception500("유저가 존재하지 않습니다 : " + dto.getUserId()));
+
+                board.saveUser(user);
 
                 BoardFile boardFile = BoardFile.builder()
                         .filePath(filePath)
@@ -89,9 +99,14 @@ public class BoardService {
                 boardFileRepository.save(boardFile);
             }
         } catch (Exception e) {
-            throw new Exception500("파일 이상");
+            Long id = boardRepository.save(dto.toEntity()).getId();
+            Board board = boardRepository.findById(id).get();
+
+            User user = userRepository.findById(board.getUser().getId()).orElseThrow(() ->
+                    new Exception500("User not found with id: " + board.getUser().getId()));
+            board.saveUser(user);
+            boardRepository.save(board);
         }
-        return id;
     }
 
     public BoardDTO findById(Long id) {

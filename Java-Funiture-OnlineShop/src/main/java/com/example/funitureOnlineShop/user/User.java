@@ -1,5 +1,6 @@
 package com.example.funitureOnlineShop.user;
 
+import com.example.funitureOnlineShop.Board.Board;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -44,6 +45,9 @@ public class User {
     @Column(length = 30)
     @Convert(converter = StringArrayConverter.class)
     private List<String> roles = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Board> boards = new ArrayList<>();
 
     // 갱신 토큰
     @Column

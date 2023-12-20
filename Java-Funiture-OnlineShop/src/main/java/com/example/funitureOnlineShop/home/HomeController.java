@@ -22,9 +22,12 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -70,6 +73,17 @@ public class HomeController {
         model.addAttribute("endPage", endPage);
 
         return "noticePage";
+    }
+
+    @PostMapping("/save")
+    @PreAuthorize("hasRole('ADMIN')")
+    public String save(@ModelAttribute BoardDTO boardDTO,
+                       @RequestParam MultipartFile[] files) throws IOException {
+        boardDTO.setCreateTime(LocalDateTime.now());
+        boardService.save(boardDTO, files);
+        System.out.println("○ 게시글 저장 ○");
+
+        return "redirect:/board/";
     }
 
     // !!----------< 상품 관련 페이지 > -----------
