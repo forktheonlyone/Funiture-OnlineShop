@@ -103,10 +103,6 @@
         }
     </style>
     <script th:inline="javascript">
-        const paging = () => {
-            location.href = "/board/paging";
-        }
-
         async function logout() {
             try {
                 const token = getCookie("token");
@@ -176,14 +172,15 @@
         </span>
         <span class="header-buttons" id="logoutButtons" style="display: none;">
             <button onclick="logout()">로그아웃</button>
+            <button onclick="location.href='/myPage'">내 정보</button>
         </span>
     </div>
 </header>
 
 <section>
     <nav>
-        <button class="btn" onclick="location.href='/product'">상품 페이지(준비중)</button>
-        <button class="btn" onclick="paging()">게시판</button>
+        <button class="btn" onclick="location.href='/productAll'">상품 페이지(준비중)</button>
+        <button class="btn" onclick="/notice">게시판</button>
     </nav>
 </section>
 

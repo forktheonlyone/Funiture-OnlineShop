@@ -78,19 +78,19 @@
     <table>
         <tr>
             <th>이름</th>
-            <td th:text="${user.username}"></td>
+            <td id="name"></td>
         </tr>
         <tr>
             <th>아이디</th>
-            <td th:text="${user.email}"></td>
+            <td id="email"></td>
         </tr>
         <tr>
             <th>전화번호</th>
-            <td> <span id="phoneNumber"></span> </td>
+            <td id="phone"></td>
         </tr>
         <tr>
             <th>주소</th>
-            <td th:text="${user.address}"></td>
+            <td id="address"></td>
         </tr>
     </table>
 </body>
@@ -98,15 +98,56 @@
     <p class="footword">&copy; 2023 My Website. All rights reserved.</p>
 </footer>
 <script>
-    var phoneNumber = [[${user.phoneNumber}]];
-    var formattedNum;
-    if (phoneNumber.length === 10) {
-        formattedNum = phoneNumber.replace(/(\d{2})(\d{4})(\d{4})/, '$1-$2-$3');
-    } else if (phoneNumber.length === 11) {
-        formattedNum = phoneNumber.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
-    } else {
-        formattedNum = "유효하지 않은 전화번호";
+    async function myInfo() {
+        try {
+            const token = getCookie("token");
+            const response = await fetch('/user/info', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': token
+                }
+            });
+            const result = await response.json();
+
+            if (result.success) {
+                document.getElementById("name").textContent = result.response.username;
+                document.getElementById("email").textContent = result.response.email;
+
+                const phoneNumber = result.response.phoneNumber;
+                var formattedNum;
+                if (phoneNumber.length === 10) {
+                    formattedNum = phoneNumber.replace(/(\d{2})(\d{4})(\d{4})/, '$1-$2-$3');
+                } else if (phoneNumber.length === 11) {
+                    formattedNum = phoneNumber.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
+                } else {
+                    formattedNum = "유효하지 않은 전화번호";
+                }
+                document.getElementById("phone").textContent = formattedNum;
+
+                document.getElementById("address").textContent = result.response.address;
+            } else {
+                alert("로그인을 해 주십시오.");
+                console.log(result);
+                location.href = "/";
+            }
+        } catch (error) {
+           console.error('Error:', error);
+        }
     }
-    document.getElementById("phoneNumber").textContent = formattedNum;
+
+    myInfo();
+
+    function getCookie(name) {
+        var cookieName = name + "=";
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            if (cookie.indexOf(cookieName) === 0) {
+                return cookie.substring(cookieName.length, cookie.length);
+            }
+        }
+        return null;
+    }
 </script>
 </html>
