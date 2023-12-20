@@ -73,6 +73,9 @@ public class UserService {
                     = new UsernamePasswordAuthenticationToken(
                     loginDto.getEmail(), loginDto.getPassword());
 
+            String pppp = passwordEncoder.encode("asdf1234!");
+            System.out.println(pppp);
+
             // anonymousUser = 비인증
             Authentication authentication
                     = authenticationManager.authenticate(token);
@@ -105,7 +108,7 @@ public class UserService {
     // 쿠키 삭제
     private void deleteCookie(HttpServletResponse res, String name){
         Cookie cookie = new Cookie(name, null);
-        cookie.setMaxAge(3600);
+        cookie.setMaxAge(0);
         cookie.setPath("/");
         res.addCookie(cookie);
     }
