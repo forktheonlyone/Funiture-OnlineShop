@@ -156,4 +156,9 @@ public class HomeController {
     public String showProductUpdate() {
         return "productUpdate";
     }
+
+    @GetMapping("/join")
+    public String joinForm() {
+        return "join";
+    }
 }
