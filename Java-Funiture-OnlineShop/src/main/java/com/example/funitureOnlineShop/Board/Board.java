@@ -5,6 +5,7 @@ import com.example.funitureOnlineShop.user.User;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -33,23 +34,31 @@ public class Board {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id")
-    private Category category;
-
     @Builder
-    public Board(Long id, String title, String contents, LocalDateTime createTime, LocalDateTime updateTime, User user, Category category) {
+    public Board(Long id, String title, String contents, LocalDateTime createTime, LocalDateTime updateTime, User user) {
         this.id = id;
         this.title = title;
         this.contents = contents;
         this.createTime = createTime;
         this.updateTime = updateTime;
         this.user = user;
-        this.category = category;
     }
 
     public void updateFromDTO(BoardDTO boardDTO) {
         this.title = boardDTO.getTitle();
         this.contents = boardDTO.getContents();
+    }
+
+    public void saveUser(User user){
+        this.user = user;
+        user.getBoards().add(this);
+    }
+
+    public Long getUserId() {
+        if (user != null) {
+            Hibernate.initialize(user);
+            return user.getId();
+        }
+        return null;
     }
 }

@@ -20,11 +20,10 @@ public class BoardDTO {
 
     private String contents;
 
-    private Long categoryId;
-
     private LocalDateTime createTime;
 
     private LocalDateTime updateTime;
+
 
     public Board toEntity(){
         return Board.builder()
@@ -41,7 +40,6 @@ public class BoardDTO {
                 board.getUser().getId(),
                 board.getTitle(),
                 board.getContents(),
-                board.getCategory().getId(),
                 board.getCreateTime(),
                 board.getUpdateTime());
     }
@@ -56,13 +54,9 @@ public class BoardDTO {
             boardDTO.setId(board.getId());
             boardDTO.setTitle(board.getTitle());
             boardDTO.setCreateTime(board.getCreateTime());
-            boardDTO.setCategoryId(board.getCategory().getId());
             return boardDTO;
         }
 
-        public static void mapCategoryId(BoardDTO boardDTO, Board board) {
-            boardDTO.setCategoryId(board.getCategory().getId());
-        }
 
         public static List<BoardDTO> mapToDTOs(List<Board> boards) {
             return boards.stream()

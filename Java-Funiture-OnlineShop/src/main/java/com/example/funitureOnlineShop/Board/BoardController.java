@@ -3,6 +3,7 @@ package com.example.funitureOnlineShop.Board;
 import com.example.funitureOnlineShop.BoardFile.BoardFile;
 import com.example.funitureOnlineShop.core.error.exception.Exception500;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -19,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/board")
@@ -26,12 +28,12 @@ public class BoardController {
     private final BoardService boardService;
 
     @PostMapping("/save")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> save(@RequestBody BoardDTO requestDTO,
                                        @RequestParam MultipartFile[] files) throws IOException {
 
         requestDTO.setCreateTime(LocalDateTime.now());
-        boardService.save(requestDTO, files);
+        //boardService.save(requestDTO, files);
 
         return ResponseEntity.status(HttpStatus.CREATED).body("게시물이 성공적으로 저장되었습니다.");
     }
