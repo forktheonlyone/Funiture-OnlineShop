@@ -47,7 +47,7 @@ public class CategoryController {
     }
 
     // 카테고리별 상품 조회
-    @GetMapping("/category/{categoryId}/products")
+    @GetMapping("/{categoryId}/products")
     public ResponseEntity<?> findProductsByCategory(@PathVariable Long categoryId,
                                                     @RequestParam(defaultValue = "1") int page,
                                                     @RequestParam(defaultValue = "10") int size) {

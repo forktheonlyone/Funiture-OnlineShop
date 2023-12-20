@@ -49,9 +49,9 @@ public class UserController {
     }
 
     // 회원탈퇴
-    @DeleteMapping("/delete")
+    @PostMapping("/delete")
     public ResponseEntity<?> deleteById(@AuthenticationPrincipal CustomUserDetails customUserDetails){
         userService.deleteUserById(customUserDetails.getUser().getId());
-        return ResponseEntity.ok(ApiUtils.success("탈퇴가 성공적으로 이루어졌습니다.. ㅠ"));
+        return ResponseEntity.ok(ApiUtils.success(null));
     }
 }

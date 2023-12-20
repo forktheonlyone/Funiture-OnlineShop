@@ -44,6 +44,14 @@ public class HomeController {
         return "categorycreate";
     }
 
+    @GetMapping("/category/updateForm")
+    public String categoryUdate(Model model) {
+        List<CategoryResponse.FindAllDto> dtos = categoryService.findAll();
+        model.addAttribute("categories", dtos);
+
+        return "categoryUpdate";
+    }
+
     // !!----------< 상품 관련 페이지 > -----------
 
     // 전체 상품 확인
