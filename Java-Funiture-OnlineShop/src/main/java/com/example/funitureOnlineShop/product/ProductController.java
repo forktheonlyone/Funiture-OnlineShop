@@ -34,14 +34,6 @@ public class ProductController {
     @PostMapping("/product/save")
     public ResponseEntity<?> save(ProductResponse.SaveByIdDTO productResponseFind,
                                   @RequestParam MultipartFile[] files) throws IOException {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new Exception401("로그인이 필요합니다.");
-        }
-        Object principal = authentication.getPrincipal();
-        if (!(principal instanceof UserDetails) || !((UserDetails)principal).getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
-            throw new Exception403("관리자가 아닙니다.");
-        }
         productService.save(productResponseFind, files);
         ApiUtils.ApiResult<?> apiResult = ApiUtils.success(productResponseFind);
         return ResponseEntity.ok(apiResult);
