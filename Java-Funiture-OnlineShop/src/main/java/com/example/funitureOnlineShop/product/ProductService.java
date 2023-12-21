@@ -149,9 +149,7 @@ public class ProductService {
                 .map(product -> new ProductResponse.FindAllDTO(
                         product.getId(),
                         product.getProductName(),
-                        product.getImage(),
-                        product.getPrice(),
-                        product.getOnSale()
+                        product.getPrice()
                 ));
     }
 }
