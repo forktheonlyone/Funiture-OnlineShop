@@ -82,11 +82,6 @@ public class BoardService {
                 Board board = boardRepository.findById(id).orElseThrow(() ->
                         new Exception500("게시글을 찾을 수 없습니다."));
 
-                User user = userRepository.findById(dto.getUserId()).orElseThrow(() ->
-                        new Exception500("유저가 존재하지 않습니다 : " + dto.getUserId()));
-
-                board.saveUser(user);
-
                 BoardFile boardFile = BoardFile.builder()
                         .filePath(filePath)
                         .fileName(originalFileName)
@@ -101,11 +96,6 @@ public class BoardService {
         } catch (Exception e) {
             Long id = boardRepository.save(dto.toEntity()).getId();
             Board board = boardRepository.findById(id).get();
-
-            User user = userRepository.findById(board.getUser().getId()).orElseThrow(() ->
-                    new Exception500("User not found with id: " + board.getUser().getId()));
-            board.saveUser(user);
-            boardRepository.save(board);
         }
     }
 

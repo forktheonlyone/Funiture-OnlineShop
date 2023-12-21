@@ -33,7 +33,7 @@ public class BoardController {
                                        @RequestParam MultipartFile[] files) throws IOException {
 
         requestDTO.setCreateTime(LocalDateTime.now());
-        //boardService.save(requestDTO, files);
+        boardService.save(requestDTO, files);
 
         return ResponseEntity.status(HttpStatus.CREATED).body("게시물이 성공적으로 저장되었습니다.");
     }
