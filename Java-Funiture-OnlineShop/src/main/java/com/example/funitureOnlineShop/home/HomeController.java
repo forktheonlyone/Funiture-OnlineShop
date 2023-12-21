@@ -180,7 +180,9 @@ public class HomeController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/product/add")
-    public String showProductCreate() {
+    public String showProductCreate(Model model) {
+        List<CategoryResponse.FindAllDto> categories = categoryService.findAll();
+        model.addAttribute("categories", categories);
         return "productCreate";
     }
 

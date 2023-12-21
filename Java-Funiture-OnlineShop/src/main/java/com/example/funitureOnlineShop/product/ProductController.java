@@ -1,7 +1,11 @@
 package com.example.funitureOnlineShop.product;
 
 import com.example.funitureOnlineShop.core.utils.ApiUtils;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
@@ -11,21 +15,37 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 public class ProductController {
 
     private final ProductService productService;
+    private static final Logger logger = LoggerFactory.getLogger(ProductController.class);
 
     // 상품 생성
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/product/save")
-    public ResponseEntity<?> save(ProductResponse.SaveByIdDTO productResponseFind,
-                                  @RequestParam MultipartFile[] files) throws IOException {
-        productService.save(productResponseFind, files);
-        ApiUtils.ApiResult<?> apiResult = ApiUtils.success(productResponseFind);
-        return ResponseEntity.ok(apiResult);
+    public ResponseEntity<?> save(@RequestParam("productData") String productDataJson,
+                                  @RequestParam("files") MultipartFile[] files) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            ProductResponse.SaveByIdDTO productResponseFind = objectMapper.readValue(productDataJson, ProductResponse.SaveByIdDTO.class);
+
+            logger.info("Product save requested with data: {}", productResponseFind);
+
+            productService.save(productResponseFind, files);
+            ApiUtils.ApiResult<?> apiResult = ApiUtils.success(productResponseFind);
+            return ResponseEntity.ok(apiResult);
+        } catch (IOException e) {
+            logger.error("Error parsing product data: ", e);
+            return ResponseEntity.badRequest().body("Error parsing product data: " + e.getMessage());
+        } catch (Exception e) {
+            logger.error("Error saving product: ", e);
+            return ResponseEntity.internalServerError().body("Error saving product: " + e.getMessage());
+        }
     }
+
 
     // 전체 상품 조회
     @GetMapping("/products")

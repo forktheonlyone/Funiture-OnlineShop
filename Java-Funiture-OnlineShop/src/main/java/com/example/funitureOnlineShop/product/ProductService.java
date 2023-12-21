@@ -143,7 +143,6 @@ public class ProductService {
     }
 
 
-    @Transactional(readOnly = true)
     public Page<ProductResponse.FindAllDTO> findAll(Pageable pageable) {
         return productRepository.findAll(pageable)
                 .map(product -> new ProductResponse.FindAllDTO(
