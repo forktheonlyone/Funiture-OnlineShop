@@ -4,10 +4,12 @@ import com.example.funitureOnlineShop.category.Category;
 import com.example.funitureOnlineShop.category.CategoryRepository;
 import com.example.funitureOnlineShop.core.error.exception.Exception400;
 import com.example.funitureOnlineShop.core.error.exception.Exception404;
+import com.example.funitureOnlineShop.core.security.CustomUserDetails;
 import com.example.funitureOnlineShop.fileProduct.FileProduct;
 import com.example.funitureOnlineShop.fileProduct.FileProductRepository;
 import com.example.funitureOnlineShop.option.Option;
 import com.example.funitureOnlineShop.option.OptionRepository;
+import lombok.CustomLog;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -41,13 +43,8 @@ public class ProductService {
 
     @Transactional
     public Product save(ProductResponse.SaveByIdDTO saveByIdDTO, MultipartFile[] files) throws IOException {
-        // 카테고리 조회
-        //Category category = categoryRepository.findById(saveByIdDTO.getCategoryId())
-        //        .orElseThrow(() -> new Exception400("해당 카테고리가 존재하지 않습니다."));
-
         // 상품 엔티티 생성 및 카테고리 할당
         Product productEntity = saveByIdDTO.toEntity();
-        //productEntity.assignToCategory(category);
 
         // 상품 엔티티 저장
         Product savedProduct = productRepository.save(productEntity);

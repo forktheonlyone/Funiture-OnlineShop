@@ -1,9 +1,10 @@
 server:
+  port: 8080
   servlet:
     encoding:
-      charset: utf-8
+      charset: UTF-8
+      enabled: true
       force: true
-  port: 8080
 
 spring:
   servlet:
@@ -13,9 +14,9 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3307/green?serverTimezone=Asia/Seoul&charatorEncoding=UTF-8
+    url: jdbc:mysql://localhost:3306/green?useSSL=false&serverTimezone=UTC&characterEncoding=UTF-8
     username: root
-    password: 1234
+    password:
   thymeleaf:
     cache: false
   jpa:
@@ -24,15 +25,21 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: create
+      connection:
+        charSet: UTF_8
+
     properties:
       hibernate:
         hbm2ddl:
           import_files: classpath:db/data.sql
-        format_sql: true
-      default_batch_fetch_size: 100
-  output:
-    ansi:
-      enabled: always
+
   h2:
     console:
       enabled: true
+
+  logging:
+    level:
+      root: DEBUG
+      org:
+        springframework:
+          web: DEBUG

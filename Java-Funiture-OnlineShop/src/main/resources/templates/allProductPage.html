@@ -7,7 +7,7 @@
         .product {
             width: 200px;
             text-align: center;
-            cursor: pointer; /* 상품 클릭 가능함을 나타내기 위해 커서 모양 변경 */
+            cursor: pointer;
         }
 
         .product img {
@@ -19,58 +19,19 @@
 <body>
 
 <div id="product-list">
-    <!-- 상품 목록이 들어갈 곳 -->
+    <div th:each="product : ${apiResult.data.content}" class="product">
+        <img th:src="${product.image}" th:alt="${product.name}">
+        <h2 th:text="${product.name}"></h2>
+    </div>
 </div>
 
 <div id="pagination">
-    <!-- 페이지 번호가 들어갈 곳 -->
+    <a th:each="i : ${#numbers.sequence(1, apiResult.data.totalPages)}"
+       th:href="@{/products(size=${size}, page=${i-1})}"
+       th:text="${i}"
+       th:class="${i == currentPage ? 'current-page' : 'page-number'}"
+    ></a>
 </div>
-
-<script>
-    var itemsPerPage = 10; // 한 페이지에 보여줄 상품 수
-    var currentPage = 1; // 현재 페이지 번호
-
-    $(document).ready(function() {
-        loadProducts(currentPage);
-
-        $(document).on('click', '.page-number', function() {
-            currentPage = $(this).data('page');
-            loadProducts(currentPage);
-        });
-    });
-
-    function loadProducts(page) {
-        $.ajax({
-            url: '/products',
-            type: 'GET',
-            data: {
-                page: page - 1,
-                size: itemsPerPage
-            },
-            success: function(data) {
-                var productList = $('#product-list');
-                var pagination = $('#pagination');
-
-                productList.empty();
-                pagination.empty();
-
-                data.products.forEach(function(product) {
-                    var productDiv = $('<div class="product"></div>');
-                    productDiv.append('<img src="' + product.image + '" alt="' + product.name + '">');
-                    productDiv.append('<h2>' + product.name + '</h2>');
-                    productDiv.on('click', function() {
-                        window.location.href = '/product/' + product.id; // 상품 클릭 시 상품 상세 페이지로 이동
-                    });
-                    productList.append(productDiv);
-                });
-
-                for(var i = 1; i <= data.totalPages; i++) {
-                    pagination.append('<span class="page-number" data-page="' + i + '">' + i + '</span>');
-                }
-            }
-        });
-    }
-</script>
 
 </body>
 </html>
