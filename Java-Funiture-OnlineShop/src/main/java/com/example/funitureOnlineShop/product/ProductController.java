@@ -15,35 +15,20 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
-@Slf4j
 @RequiredArgsConstructor
 @RestController
 public class ProductController {
 
     private final ProductService productService;
-    private static final Logger logger = LoggerFactory.getLogger(ProductController.class);
 
     // 상품 생성
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/product/save")
-    public ResponseEntity<?> save(@RequestParam("productData") String productDataJson,
-                                  @RequestParam("files") MultipartFile[] files) {
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            ProductResponse.SaveByIdDTO productResponseFind = objectMapper.readValue(productDataJson, ProductResponse.SaveByIdDTO.class);
-
-            logger.info("Product save requested with data: {}", productResponseFind);
-
-            productService.save(productResponseFind, files);
-            ApiUtils.ApiResult<?> apiResult = ApiUtils.success(productResponseFind);
-            return ResponseEntity.ok(apiResult);
-        } catch (IOException e) {
-            logger.error("Error parsing product data: ", e);
-            return ResponseEntity.badRequest().body("Error parsing product data: " + e.getMessage());
-        } catch (Exception e) {
-            logger.error("Error saving product: ", e);
-            return ResponseEntity.internalServerError().body("Error saving product: " + e.getMessage());
-        }
+    public ResponseEntity<?> save(ProductResponse.SaveByIdDTO productResponseFind,
+                                  @RequestParam MultipartFile[] files) throws IOException {
+        productService.save(productResponseFind, files);
+        ApiUtils.ApiResult<?> apiResult = ApiUtils.success(productResponseFind);
+        return ResponseEntity.ok(apiResult);
     }
 
 
