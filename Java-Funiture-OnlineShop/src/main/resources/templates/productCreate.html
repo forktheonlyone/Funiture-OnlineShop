@@ -4,16 +4,35 @@
     <meta charset="UTF-8">
     <title>신규 상품 등록</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <style>
+        .max-size-image {
+            max-width: 300px; /* 최대 가로 크기 */
+            max-height: 300px; /* 최대 세로 크기 */
+        }
+    </style>
 </head>
 <body>
-<h2>신규 상품 등록</h2>
 
 <form id="productForm">
+    <h2>신규 상품 등록</h2>
+
     <label for="productName">상품명:</label><br>
     <input type="text" id="productName" name="productName" required><br>
 
-    <label for="productImage">상품 이미지:</label><br>
-    <input type="file" id="productImage" name="files" required><br>
+    <div class="form-group">
+        <div class="title_area">
+            <label>첨부 파일</label>
+        </div>
+        <div class="option_area">
+            <label class="button_upload">
+                <span class="blind"></span>
+                <input class="blind" type="file" id="files" name="files" accept="image/*" multiple onchange="updateSelectedFiles(event)">
+            </label>
+            <div id="selected-files">
+                <!--사진 나옴-->
+            </div>
+        </div>
+    </div>
 
     <label for="productDescription">상품 설명:</label><br>
     <textarea id="productDescription" name="description" required></textarea><br>
@@ -21,105 +40,95 @@
     <label for="productPrice">상품 가격:</label><br>
     <input type="number" id="productPrice" name="price" required><br>
 
-    <label for="onSale">할인 여부:</label><br>
-    <input type="number" id="onSale" name="onSale" required><br>
-
     <label for="deliveryFee">배송비:</label><br>
-    <input type="number" id="deliveryFee" name="deliveryFee" required><br>
+    <input type="number" id="deliveryFee" name="deliveryFee"required><br>
 
-    <input type="button" value="Save" id="saveProduct"><br>
+    <button type="submit" onclick="sendProduct()">save</button>
 </form>
 
-<h2>상품 옵션 추가</h2>
 <form id="optionForm" style="display:none;">
+    <h2>상품 옵션 추가</h2>
+
     <label for="optionName">옵션명:</label><br>
-    <input type="text" id="optionName" name="optionName" required disabled><br>
+    <input type="text" id="optionName" name="optionName" required><br>
 
     <label for="optionPrice">옵션 가격:</label><br>
-    <input type="number" id="optionPrice" name="optionPrice" required disabled><br>
+    <input type="number" id="optionPrice" name="optionPrice" required><br>
 
     <label for="stockQuantity">재고 수량:</label><br>
-    <input type="number" id="stockQuantity" name="stockQuantity" required disabled><br>
+    <input type="number" id="stockQuantity" name="stockQuantity" required><br>
 
-    <input type="button" value="Add Option" id="addOption" disabled><br>
+    <input type="button" value="Add Option" id="addOption"><br>
 </form>
 
-<script>
-    document.addEventListener('DOMContentLoaded', (event) => {
-    if (document.querySelector("#id")) {
-        console.log("#id 요소가 존재합니다.");
-    } else {
-        console.log("#id 요소를 찾을 수 없습니다.");
+<script th:inline="javascript">
+    function updateSelectedFiles(event) {
+        for (var image of event.target.files) {
+            var reader = new FileReader();
+
+            reader.onload = function(event) {
+                var img = document.createElement("img");
+                img.setAttribute("src", event.target.result);
+                img.classList.add("max-size-image");
+
+                document.querySelector("#selected-files").appendChild(img);
+                console.log(img);
+            };
+
+            console.log(image);
+            reader.readAsDataURL(image);
+        }
     }
 
-    var productId; // 상품 저장 후 생성된 ID를 저장할 변수
+    async function sendProduct() {
+        const form = document.getElementById('productForm');
+        const formData = new FormData(form);
+        const token = getCookie("token");
 
-    // saveProduct 버튼 클릭 이벤트 핸들러
-    document.querySelector('#saveProduct').addEventListener('click', async () => {
-        const formData = new FormData();
-        formData.append("productName", document.querySelector("#productName").value);
-        formData.append("productImage", document.querySelector("#productImage").value);
-        formData.append("description", document.querySelector("#productDescription").value);
-        formData.append("price", document.querySelector("#productPrice").value);
-        formData.append("onSale", document.querySelector("#onSale").value);
-        formData.append("deliveryFee", document.querySelector("#deliveryFee").value);
-
-        // 파일 추가
-        const fileInput = document.querySelector("input[type='file']");
-        const file = fileInput.files[0];
-        if (file) {
-            formData.append("files", file);
+        for (let entry of formData.entries()) {
+            console.log(entry[0] + ': ' + entry[1]);
         }
 
-        // AJAX 요청으로 상품 데이터 전송
         try {
             const response = await fetch('/product/save', {
                 method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer ' + token
+                },
                 body: formData
             });
-            if (!response.ok) throw new Error(response.statusText);
-            alert('상품이 성공적으로 저장되었습니다.');
-            const data = await response.json();
-            productId = data.response.id;
-            document.querySelector('#optionForm').querySelectorAll('input, button').forEach(el => el.disabled = false);
+            const result = await response.json();
+
+            if (result.success) {
+                alert("상품이 성공적으로 저장되었습니다.");
+                optionOn();
+            } else {
+                console.log(result);
+                alert("상품 저장에 실패하였습니다: ${error}");
+            }
         } catch (error) {
-            alert(`상품 저장에 실패하였습니다: ${error}`);
+            console.error('Error:', error);
         }
-    });
+    }
 
-    // 옵션 추가 버튼 클릭 이벤트 처리
-    document.querySelector('#addOption').addEventListener('click', async () => {
-        if (!productId) {
-            alert('먼저 상품을 저장해주세요.');
-            return;
+    function getCookie(name) {
+        var cookieName = name + "=";
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            if (cookie.indexOf(cookieName) === 0) {
+                return cookie.substring(cookieName.length, cookie.length);
+            }
         }
+        return null;
+    }
 
-        const optionData = {
-            "optionName": document.querySelector("#optionName").value,
-            "optionPrice": document.querySelector("#optionPrice").value,
-            "stockQuantity": document.querySelector("#stockQuantity").value,
-            "productId": productId
-        };
-
-        // AJAX 요청으로 옵션 데이터 전송
-        try {
-            const response = await fetch('/options/save', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(optionData)
-            });
-            if (!response.ok) throw new Error(response.statusText);
-            alert('옵션이 성공적으로 추가되었습니다.');
-            document.querySelector("#optionName").value = '';
-            document.querySelector("#optionPrice").value = '';
-            document.querySelector("#stockQuantity").value = '';
-        } catch (error) {
-            alert(`옵션 추가에 실패하였습니다: ${error}`);
-        }
-    });
-});
+    const optionOn = () => {
+        var aaa = document.getElementById("productForm");
+        aaa.style.display = "none";
+        var bbb = document.getElementById("optionForm");
+        bbb.style.display = "block";
+    }
 </script>
 </body>
 </html>

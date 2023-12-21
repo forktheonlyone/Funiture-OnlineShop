@@ -114,8 +114,6 @@ public class ProductResponse {
 
         private Long categoryId;
 
-        List<OptionDTO> optionList;
-
         public Product toEntity() {
             return Product.builder()
                     .productName(productName)

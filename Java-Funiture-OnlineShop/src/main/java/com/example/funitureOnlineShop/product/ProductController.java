@@ -1,7 +1,11 @@
 package com.example.funitureOnlineShop.product;
 
 import com.example.funitureOnlineShop.core.utils.ApiUtils;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +30,7 @@ public class ProductController {
         ApiUtils.ApiResult<?> apiResult = ApiUtils.success(productResponseFind);
         return ResponseEntity.ok(apiResult);
     }
+
 
     // 전체 상품 조회
     @GetMapping("/products")
