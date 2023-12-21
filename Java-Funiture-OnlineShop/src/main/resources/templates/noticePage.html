@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>게시판</title>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -104,6 +105,17 @@
 
 <header>
     <h1>고객센터</h1>
+    <div>
+        <span class="header-buttons" id="loginButtons" style="display: block;">
+            <button onclick="location.href='/login'">로그인</button>
+            <button onclick="location.href='/join'">회원가입</button>
+        </span>
+        <span class="header-buttons" id="logoutButtons" style="display: none;">
+            <button onclick="logout()">로그아웃</button>
+            <button onclick="location.href='/myPage'">내 정보</button>
+        </span>
+    </div>
+    <!-- 홈으로 가는 버튼 -->
     <a th:href="@{/}" class="home-button">Home</a>
 </header>
 
@@ -141,9 +153,8 @@
     </div>
 </section>
 
-<!-- 글쓰기 버튼 추가 -->
 <div class="write-button">
-    <a th:href="@{'/board/create'}">글쓰기</a>
+    <a th:href="@{/board/create(token=${token})}">글쓰기</a>
 </div>
 
 <footer>
@@ -151,5 +162,54 @@
 </footer>
 </body>
 <script th:inline="javascript">
+    $(document).ready(function () {
+        checkLoginStatus();
+    });
+
+    // 로그인 여부를 확인하고, 필요한 동작을 수행하는 함수
+    function checkLoginStatus() {
+        // 쿠키에서 토큰을 가져옴
+        var token = getCookie("token");
+
+        // 만약 토큰이 있다면 로그인 상태로 간주
+        if (token) {
+            // 로그인 상태에 따른 동작 수행
+            showLoggedInButtons();
+        } else {
+            // 로그아웃 상태에 따른 동작 수행
+            showLoggedOutButtons();
+        }
+    }
+
+    // 로그인 상태에 따른 동작을 수행하는 함수
+    function showLoggedInButtons() {
+        var loginButtonsContainer = document.getElementById("loginButtons");
+        loginButtonsContainer.style.display = "none";
+
+        var logoutButtonsContainer = document.getElementById("logoutButtons");
+        logoutButtonsContainer.style.display = "block";
+    }
+
+    // 로그아웃 상태에 따른 동작을 수행하는 함수
+    function showLoggedOutButtons() {
+        var loginButtonsContainer = document.getElementById("loginButtons");
+        loginButtonsContainer.style.display = "block";
+
+        var logoutButtonsContainer = document.getElementById("logoutButtons");
+        logoutButtonsContainer.style.display = "none";
+    }
+
+    // 쿠키를 가져오는 함수
+    function getCookie(name) {
+        var cookieName = name + "=";
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            if (cookie.indexOf(cookieName) === 0) {
+                return cookie.substring(cookieName.length, cookie.length);
+            }
+        }
+        return null;
+    }
 </script>
 </html>
