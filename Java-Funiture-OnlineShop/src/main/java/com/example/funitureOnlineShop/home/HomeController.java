@@ -4,31 +4,23 @@ import com.example.funitureOnlineShop.Board.BoardDTO;
 import com.example.funitureOnlineShop.Board.BoardService;
 import com.example.funitureOnlineShop.category.CategoryResponse;
 import com.example.funitureOnlineShop.category.CategoryService;
-import com.example.funitureOnlineShop.core.security.CustomUserDetails;
-import com.example.funitureOnlineShop.orderCheck.OrderCheck;
 import com.example.funitureOnlineShop.orderCheck.OrderCheckDto;
 import com.example.funitureOnlineShop.product.ProductResponse;
 import com.example.funitureOnlineShop.product.ProductService;
-import com.example.funitureOnlineShop.productComment.ProductComment;
 import com.example.funitureOnlineShop.productComment.ProductCommentResponse;
 import com.example.funitureOnlineShop.productComment.ProductCommentService;
-import com.example.funitureOnlineShop.user.User;
-import com.example.funitureOnlineShop.user.UserResponse;
 import com.example.funitureOnlineShop.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -50,15 +42,15 @@ public class HomeController {
     // 카테고리 생성
     @GetMapping("/categorycreate")
     public String categoryCreate(Model model) {
-        List<CategoryResponse.FindAllDto> categories = categoryService.findAll();
+        List<CategoryResponse.FindAllDto> categories = categoryService.findAllSuper();
         model.addAttribute("categories", categories);
         return "categorycreate";
     }
 
     @GetMapping("/category/updateForm")
     public String categoryUdate(Model model) {
-        List<CategoryResponse.FindAllDto> dtos = categoryService.findAll();
-        model.addAttribute("categories1", dtos);
+        List<CategoryResponse.FindAllDto> dtos = categoryService.findAllSuper();
+        model.addAttribute("categories", dtos);
 
         return "categoryUpdate";
     }

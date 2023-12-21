@@ -8,22 +8,73 @@
 <body>
 <!-- 카테고리 관리 화면 -->
     <h2>카테고리 관리</h2>
+    선택 없을 시 대분류 카테고리 생성<br>
+    대분류 선택 시 중분류 카테고리 생성<br>
+    중분류 선택 시 소분류 카테고리 생성<br><br>
 
-    <label for="categoryName">카테고리 이름:</label>
-    <input type="text" id="categoryName" name="categoryName" required>
-    <br><br>
     <!-- 카테고리 목록 콤보 박스 -->
-    <label for="selectedCategory">상위 카테고리 선택:</label>
-    <select id="selectedCategory" name="superCategory_id">
+    <label for="selectedCategory1">대분류 카테고리 선택:</label>
+    <select id="selectedCategory1" name="superCategory_id" onchange="callSons()">
         <option value="0">없음</option>
         <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.categoryName}"></option>
-    </select>
+    </select><br>
+
+    <!-- 카테고리 목록 콤보 박스 -->
+    <label for="selectedCategory2">중분류 카테고리 선택:</label>
+    <select id="selectedCategory2" name="superCategory_id">
+        <option value="0">없음</option>
+    </select><br>
+
+    <label for="categoryName">카테고리 생성: </label>
+    <input type="text" id="categoryName" name="categoryName" required>
+
     <button onclick="createCategory()">카테고리 생성</button>
 
 <script th:inline="javascript">
+    async function callSons() {
+        var option1 = document.getElementById("selectedCategory1");
+        var option2 = document.getElementById("selectedCategory2");
+        var selectedOption = option1.value;
+
+        if (selectedOption !== "0") {
+            // AJAX 요청 보내기
+            try{
+                const response = await fetch('/category/son/' + selectedOption, {
+                    method: 'GET'
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    console.log(result.response);
+                    option2.innerHTML = '<option value="0">없음</option>';
+                    var sons = result.response;
+                    for (var par in sons) {
+                        var sub = sons[par];
+                        console.log(sub);
+                        option2.innerHTML += '<option value="' + sub.id + '">' + sub.categoryName + '</option>';
+                    }
+                } else {
+                    console.log(result);
+                    alert("없는 카테고리를 선택");
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+    }
+
     const createCategory = () => {
+        var option1 = document.getElementById("selectedCategory1");
+        var option2 = document.getElementById("selectedCategory2");
+        var selectedOption1 = option1.value;
+        var selectedOption2 = option2.value;
+
+        var superCategoryId = selectedOption2;
+        if (selectedOption2 === "0") {
+            superCategoryId = selectedOption1;
+        }
+
         try {
-            const superCategoryId = document.getElementById("selectedCategory").value;
             const categoryName = document.getElementById("categoryName").value;
 
             $.ajax({
