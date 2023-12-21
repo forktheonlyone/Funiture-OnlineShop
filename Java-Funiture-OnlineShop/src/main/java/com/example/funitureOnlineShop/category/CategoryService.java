@@ -48,7 +48,7 @@ public class CategoryService {
     }
 
     // 등록된 모든 카테고리 탐색
-    public List<CategoryResponse.FindAllDto> findAllSuper() {
+    public List<CategoryResponse.FindAllDto> findAll() {
         List<Category> categories = categoryRepository.findAll();
 
         return categories.stream()

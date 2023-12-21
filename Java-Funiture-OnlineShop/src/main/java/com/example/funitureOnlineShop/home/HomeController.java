@@ -57,7 +57,7 @@ public class HomeController {
 
     @GetMapping("/category/updateForm")
     public String categoryUdate(Model model) {
-        List<CategoryResponse.FindAllDto> dtos = categoryService.findAll1();
+        List<CategoryResponse.FindAllDto> dtos = categoryService.findAll();
         model.addAttribute("categories1", dtos);
 
         return "categoryUpdate";
@@ -180,9 +180,7 @@ public class HomeController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/product/add")
-    public String showProductCreate(Model model) {
-        List<CategoryResponse.FindAllDto> categories = categoryService.findAll();
-        model.addAttribute("categories", categories);
+    public String showProductCreate() {
         return "productCreate";
     }
 
