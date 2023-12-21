@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -47,12 +48,32 @@ public class CategoryService {
     }
 
     // 등록된 모든 카테고리 탐색
-    public List<CategoryResponse.FindAllDto> findAll() {
+    public List<CategoryResponse.FindAllDto> findAllSuper() {
         List<Category> categories = categoryRepository.findAll();
 
         return categories.stream()
                 .map(CategoryResponse.FindAllDto::new).collect(Collectors.toList());
     }
+
+    // 등록된 모든 카테고리 탐색
+//    public List<CategoryResponse.FindAllDto> findAllLast(Long id) {
+//        List<Category> leafCategories = new ArrayList<>();
+//        findLeafCategories(id, leafCategories);
+//
+//        return categories.stream()
+//                .map(CategoryResponse.FindAllDto::new).collect(Collectors.toList());
+//    }
+//
+//    private void findLeafCategories(Long id, List<Category> leafCategories) {
+//        List<Category> subCategories = categoryRepository.findBySuperCategoryId(id);
+//        if (subCategories.isEmpty()) {
+//            leafCategories.add(category);
+//        } else {
+//            for (Category subCategory : subCategories) {
+//                findLeafCategories(subCategory, leafCategories);
+//            }
+//        }
+//    }
 
     // 요청 받은 카테고리와 그 상하위 카테고리 탐색
     public CategoryResponse.FindByIdDto findById(Long id) {

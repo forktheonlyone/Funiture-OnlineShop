@@ -57,8 +57,8 @@ public class HomeController {
 
     @GetMapping("/category/updateForm")
     public String categoryUdate(Model model) {
-        List<CategoryResponse.FindAllDto> dtos = categoryService.findAll();
-        model.addAttribute("categories", dtos);
+        List<CategoryResponse.FindAllDto> dtos = categoryService.findAll1();
+        model.addAttribute("categories1", dtos);
 
         return "categoryUpdate";
     }

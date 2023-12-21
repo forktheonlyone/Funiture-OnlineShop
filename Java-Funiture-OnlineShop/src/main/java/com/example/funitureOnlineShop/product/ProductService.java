@@ -42,12 +42,12 @@ public class ProductService {
     @Transactional
     public Product save(ProductResponse.SaveByIdDTO saveByIdDTO, MultipartFile[] files) throws IOException {
         // 카테고리 조회
-        Category category = categoryRepository.findById(saveByIdDTO.getCategoryId())
-                .orElseThrow(() -> new Exception400("해당 카테고리가 존재하지 않습니다."));
+        //Category category = categoryRepository.findById(saveByIdDTO.getCategoryId())
+        //        .orElseThrow(() -> new Exception400("해당 카테고리가 존재하지 않습니다."));
 
         // 상품 엔티티 생성 및 카테고리 할당
-        Product productEntity = modelMapper.map(saveByIdDTO, Product.class);
-        productEntity.assignToCategory(category);
+        Product productEntity = saveByIdDTO.toEntity();
+        //productEntity.assignToCategory(category);
 
         // 상품 엔티티 저장
         Product savedProduct = productRepository.save(productEntity);

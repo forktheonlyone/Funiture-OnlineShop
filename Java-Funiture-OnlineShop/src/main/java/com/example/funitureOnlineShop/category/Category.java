@@ -1,10 +1,13 @@
 package com.example.funitureOnlineShop.category;
 
+import com.example.funitureOnlineShop.fileProduct.FileProduct;
+import com.example.funitureOnlineShop.product.Product;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
@@ -27,12 +30,16 @@ public class Category {
     @OneToMany(mappedBy = "superCategory", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Category> subCategories;
 
+    @OneToMany(mappedBy = "category", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Product> products =  new ArrayList<>();
+
     @Builder
-    public Category(Long id, String categoryName, Category superCategory, List<Category> subCategories) {
+    public Category(Long id, String categoryName, Category superCategory, List<Category> subCategories, List<Product> products) {
         this.id = id;
         this.categoryName = categoryName;
         this.superCategory = superCategory;
         this.subCategories = subCategories;
+        this.products = products;
     }
 
     public void updateSuperCategory(Category superCategory) {
