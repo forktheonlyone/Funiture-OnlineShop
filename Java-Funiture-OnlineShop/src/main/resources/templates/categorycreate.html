@@ -2,31 +2,50 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Category Management</title>
+    <title>카테고리 생성</title>
+    <script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
 </head>
 <body>
 <!-- 카테고리 관리 화면 -->
-<h2>카테고리 관리</h2>
+    <h2>카테고리 관리</h2>
 
-<!-- 카테고리 추가 폼 -->
-<form th:action="@{/category/save}" method="post">
     <label for="categoryName">카테고리 이름:</label>
     <input type="text" id="categoryName" name="categoryName" required>
-    <button type="submit">카테고리 추가</button>
-</form>
-
-<!-- 카테고리 목록 콤보 박스 -->
-<form th:action="@{/some/action}" method="post">
-    <label for="selectedCategory">카테고리 선택:</label>
-    <select id="selectedCategory" name="selectedCategory" required>
-        <option th:each="category : ${categories}" th:value="${category.name}" th:text="${category.name}"></option>
+    <br><br>
+    <!-- 카테고리 목록 콤보 박스 -->
+    <label for="selectedCategory">상위 카테고리 선택:</label>
+    <select id="selectedCategory" name="superCategory_id">
+        <option value="0">없음</option>
+        <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.categoryName}"></option>
     </select>
-    <button type="submit">선택한 카테고리 조회</button>
-</form>
+    <button onclick="createCategory()">카테고리 생성</button>
 
-<!-- 카테고리 목록 -->
-<ul>
-    <li th:each="category : ${categories}" th:text="${category.name}"></li>
-</ul>
+<script th:inline="javascript">
+    const createCategory = () => {
+        try {
+            const superCategoryId = document.getElementById("selectedCategory").value;
+            const categoryName = document.getElementById("categoryName").value;
+
+            $.ajax({
+                // 요청방식: post, 요청주소: /category/save, 요청데이터: 카테고리 id, 이름, 상위 id
+                type: "post",
+                url: "/category/save",
+                data: {
+                    "superCategory_id" : superCategoryId,
+                    "categoryName" : categoryName
+                },
+                success: function (res) {
+                    console.log(location.href);
+                    location.href = "categorycreate";
+                },
+                error: function (err) {
+                    console.log("요청실패", err);
+                }
+            });
+        } catch (error) {
+            console.log('Error: ', error);
+        }
+    }
+</script>
 </body>
 </html>

@@ -87,7 +87,7 @@
     <h1>Board Form</h1>
 </header>
 
-<form id="boardForm" action="/board/save" method="post">
+<form id="boardForm" action="/save" method="post" enctype="multipart/form-data">
     <label for="title">Title:</label>
     <input type="text" name="title" id="title" required>
 
@@ -96,7 +96,7 @@
 
     <!-- 추가된 부분: 파일 업로드 input -->
     <label for="fileInput">Attach File:</label>
-    <input type="file" name="fileInput" id="fileInput">
+    <input type="file" name="files" id="fileInput" multiple>
 
     <input type="submit" value="Submit">
     <div class="message" id="message"></div>
@@ -130,24 +130,30 @@
     });
 
     function submitForm() {
-        var formData = new FormData(document.getElementById('boardForm'));
+    console.log('Submitting form...');
+    var formData = new FormData(document.getElementById('boardForm'));
 
-        var xhr = new XMLHttpRequest();
-        xhr.open('POST', '/board/save', true);
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === 4) {
-                if (xhr.status === 200) {
-                    document.getElementById('message').textContent = '게시물이 성공적으로 저장되었습니다.';
-                    setTimeout(function () {
-                        window.location.href = '/notice';
-                    }, 2000);
-                } else {
-                    document.getElementById('message').textContent = '게시물 저장에 실패했습니다.';
-                }
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', document.getElementById('boardForm').action, true);
+    xhr.onreadystatechange = function () {
+        console.log('Ready state:', xhr.readyState);
+        if (xhr.readyState === 4) {
+            console.log('Status:', xhr.status);
+            console.log('Response:', xhr.responseText);
+            if (xhr.status === 200) {
+                console.log('Success!');
+                document.getElementById('message').textContent = '게시물이 성공적으로 저장되었습니다.';
+                setTimeout(function () {
+                    window.location.href = '/notice';
+                }, 2000);
+            } else {
+                console.log('Error:', xhr.status);
+                document.getElementById('message').textContent = '게시물 저장에 실패했습니다.';
             }
-        };
-        xhr.send(formData);
-    }
+        }
+    };
+    xhr.send(formData);
+}
 </script>
 
 </body>

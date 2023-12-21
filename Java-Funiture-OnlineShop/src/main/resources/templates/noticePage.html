@@ -18,6 +18,11 @@
             text-align: center;
             padding: 1rem;
         }
+        .home-button {
+            text-decoration: none; /* 밑줄 제거 */
+            margin-right: 20px; /* 오른쪽 여백 조절 */
+
+        }
 
         section {
             display: flex;
@@ -99,6 +104,7 @@
 
 <header>
     <h1>고객센터</h1>
+    <a th:href="@{/}" class="home-button">Home</a>
 </header>
 
 <section>
