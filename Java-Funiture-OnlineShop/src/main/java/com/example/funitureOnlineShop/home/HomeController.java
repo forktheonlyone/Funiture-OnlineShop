@@ -12,6 +12,7 @@ import com.example.funitureOnlineShop.product.ProductService;
 import com.example.funitureOnlineShop.productComment.ProductComment;
 import com.example.funitureOnlineShop.productComment.ProductCommentResponse;
 import com.example.funitureOnlineShop.productComment.ProductCommentService;
+import com.example.funitureOnlineShop.user.User;
 import com.example.funitureOnlineShop.user.UserResponse;
 import com.example.funitureOnlineShop.user.UserService;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -60,6 +62,10 @@ public class HomeController {
 
         return "categoryUpdate";
     }
+
+
+
+    // !!----------< 게시판 관련 페이지 > -----------
     @GetMapping("/notice")
     public String noticePaging(@PageableDefault(page = 1) Pageable pageable, Model model) {
         Page<BoardDTO> boards = boardService.paging(pageable);
@@ -84,6 +90,11 @@ public class HomeController {
         System.out.println("○ 게시글 저장 ○");
 
         return "redirect:/board/";
+    }
+
+    @GetMapping("/board/create")
+    public String boardCreateForm() {
+        return "createboard";
     }
 
     // !!----------< 상품 관련 페이지 > -----------
@@ -138,10 +149,6 @@ public class HomeController {
         return "productReview";
     }
 
-    @GetMapping("/board/create")
-    public String boardCreateForm() {
-        return "createboard";
-    }
 
     @GetMapping("/login")
     public String showLogin() {

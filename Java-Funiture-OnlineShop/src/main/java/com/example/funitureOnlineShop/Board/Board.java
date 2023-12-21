@@ -35,7 +35,7 @@ public class Board {
     private User user;
 
     @Builder
-    public Board(Long id, String title, String contents, LocalDateTime createTime, LocalDateTime updateTime, User user) {
+    public Board(Long id, String title, String contents, LocalDateTime createTime, LocalDateTime updateTime,User user) {
         this.id = id;
         this.title = title;
         this.contents = contents;
@@ -49,16 +49,4 @@ public class Board {
         this.contents = boardDTO.getContents();
     }
 
-    public void saveUser(User user){
-        this.user = user;
-        user.getBoards().add(this);
-    }
-
-    public Long getUserId() {
-        if (user != null) {
-            Hibernate.initialize(user);
-            return user.getId();
-        }
-        return null;
-    }
 }

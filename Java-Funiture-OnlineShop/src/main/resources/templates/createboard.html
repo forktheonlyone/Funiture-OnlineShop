@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>save</title>
@@ -98,63 +98,67 @@
     <label for="fileInput">Attach File:</label>
     <input type="file" name="files" id="fileInput" multiple>
 
+    <input type="hidden" name="token" id="tokenInput" value="[(${token})]">
+
+
     <input type="submit" value="Submit">
-    <div class="message" id="message"></div>
 </form>
+
+<div class="message" id="message"></div>
 
 <footer>
     <p>&copy; 2023 Your Website</p>
 </footer>
 
-<script>
-    document.getElementById('boardForm').addEventListener('submit', function (event) {
-        event.preventDefault();
-
-        // 추가된 부분: 파일 업로드 input에서 선택된 파일을 읽어와 contents에 추가
-        var fileInput = document.getElementById('fileInput');
-        var contentsTextarea = document.getElementById('contents');
-
-        if (fileInput.files.length > 0) {
-            var file = fileInput.files[0];
-            var reader = new FileReader();
-
-            reader.onload = function (e) {
-                contentsTextarea.value += '\n\n[Attached File]: ' + file.name + '\n' + e.target.result;
-                submitForm();
-            };
-
-            reader.readAsDataURL(file);
-        } else {
-            submitForm();
-        }
-    });
-
-    function submitForm() {
-    console.log('Submitting form...');
-    var formData = new FormData(document.getElementById('boardForm'));
-
-    var xhr = new XMLHttpRequest();
-    xhr.open('POST', document.getElementById('boardForm').action, true);
-    xhr.onreadystatechange = function () {
-        console.log('Ready state:', xhr.readyState);
-        if (xhr.readyState === 4) {
-            console.log('Status:', xhr.status);
-            console.log('Response:', xhr.responseText);
-            if (xhr.status === 200) {
-                console.log('Success!');
-                document.getElementById('message').textContent = '게시물이 성공적으로 저장되었습니다.';
-                setTimeout(function () {
-                    window.location.href = '/notice';
-                }, 2000);
-            } else {
-                console.log('Error:', xhr.status);
-                document.getElementById('message').textContent = '게시물 저장에 실패했습니다.';
+<script th:inline="javascript">
+    // 토큰을 받아오는 함수
+    function getCookie(name) {
+        var cookieName = name + "=";
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            if (cookie.indexOf(cookieName) === 0) {
+                return cookie.substring(cookieName.length, cookie.length);
             }
         }
-    };
-    xhr.send(formData);
-}
-</script>
+        return null;
+    }
 
+    // 페이지 로딩 시 토큰을 가져와서 input에 설정
+    var tokenFromPreviousPage = getCookie('token');
+    if (tokenFromPreviousPage !== null) {
+        document.getElementById('tokenInput').value = tokenFromPreviousPage;
+    }
+
+    // 폼 제출 시 실행되는 함수
+    async function submitForm() {
+        try {
+            // 추가된 부분: 쿠키에서 토큰 가져와서 콘솔에 출력
+            console.log('Token from cookie:', tokenFromPreviousPage);
+
+            var formData = new FormData(document.getElementById('boardForm'));
+
+            const response = await fetch(document.getElementById('boardForm').action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Authorization': tokenFromPreviousPage
+                }
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                alert("게시물이 성공적으로 생성되었습니다!");
+                // 적절한 리다이렉션 또는 다른 동작 수행
+            } else {
+                console.log(result);
+                alert("게시물 생성에 실패했습니다.\n잠시 후 다시 시도해주세요.");
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+</script>
 </body>
 </html>
