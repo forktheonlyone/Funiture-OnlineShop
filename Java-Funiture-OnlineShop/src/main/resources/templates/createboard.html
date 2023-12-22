@@ -87,22 +87,17 @@
     <h1>Board Form</h1>
 </header>
 
-<form id="boardForm" action="/save" method="post" enctype="multipart/form-data">
-    <label for="title">Title:</label>
-    <input type="text" name="title" id="title" required>
+<label for="title">Title:</label>
+<input type="text" name="title" id="title" required>
 
-    <label for="contents">Contents:</label>
-    <textarea name="contents" id="contents" cols="30" rows="5" required></textarea>
+<label for="contents">Contents:</label>
+<textarea name="contents" id="contents" cols="30" rows="5" required></textarea>
 
-    <!-- 추가된 부분: 파일 업로드 input -->
-    <label for="fileInput">Attach File:</label>
-    <input type="file" name="files" id="fileInput" multiple>
+<!-- 추가된 부분: 파일 업로드 input -->
+<label for="fileInput">Attach File:</label>
+<input type="file" name="files" id="fileInput" multiple>
 
-    <input type="hidden" name="token" id="tokenInput" value="[(${token})]">
-
-
-    <input type="submit" value="Submit">
-</form>
+<button onclick="submitForm()">Submit</button>
 
 <div class="message" id="message"></div>
 
@@ -111,7 +106,9 @@
 </footer>
 
 <script th:inline="javascript">
-    // 토큰을 받아오는 함수
+    // 추가된 부분: 사용자 로그인 시 토큰 생성 및 설정
+    const fileInput = document.querySelector("input[type='file']");
+
     function getCookie(name) {
         var cookieName = name + "=";
         var cookies = document.cookie.split(';');
@@ -124,41 +121,53 @@
         return null;
     }
 
-    // 페이지 로딩 시 토큰을 가져와서 input에 설정
-    var tokenFromPreviousPage = getCookie('token');
-    if (tokenFromPreviousPage !== null) {
-        document.getElementById('tokenInput').value = tokenFromPreviousPage;
-    }
-
-    // 폼 제출 시 실행되는 함수
+    // 추가된 부분: 버튼 클릭 시 실행되는 함수
     async function submitForm() {
         try {
-            // 추가된 부분: 쿠키에서 토큰 가져와서 콘솔에 출력
+            var tokenFromPreviousPage = getCookie('token');
             console.log('Token from cookie:', tokenFromPreviousPage);
 
-            var formData = new FormData(document.getElementById('boardForm'));
 
-            const response = await fetch(document.getElementById('boardForm').action, {
+        const title = document.getElementById('title').value;
+        const contents = document.getElementById('contents').value;
+        const selectedFile = fileInput.files[0];
+
+        // 파일이 없는 경우 빈 파일 생성
+        const emptyFile = new File([""], "empty_file.txt", { type: "text/plain" });
+
+        const formData = new FormData();
+        formData.append('title', title);
+        formData.append('contents', contents);
+        formData.append('files', selectedFile || emptyFile);
+
+
+            const requestOptions = {
                 method: 'POST',
                 body: formData,
                 headers: {
                     'Authorization': tokenFromPreviousPage
                 }
-            });
+            };
 
+            const response = await fetch('/board/save', requestOptions);
             const result = await response.json();
+
+            console.log(result);
 
             if (result.success) {
                 alert("게시물이 성공적으로 생성되었습니다!");
-                // 적절한 리다이렉션 또는 다른 동작 수행
+                location.href = '/noticePage';
             } else {
-                console.log(result);
+                console.error(result);
                 alert("게시물 생성에 실패했습니다.\n잠시 후 다시 시도해주세요.");
+                location.href = '/noticePage';
             }
         } catch (error) {
             console.error('Error:', error);
+            alert("게시물 생성 중 오류가 발생했습니다.\n잠시 후 다시 시도해주세요.");
         }
     }
 </script>
+
 </body>
 </html>

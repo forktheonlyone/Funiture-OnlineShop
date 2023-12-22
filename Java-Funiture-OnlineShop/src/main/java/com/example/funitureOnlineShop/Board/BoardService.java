@@ -2,6 +2,7 @@ package com.example.funitureOnlineShop.Board;
 
 import com.example.funitureOnlineShop.BoardFile.BoardFile;
 import com.example.funitureOnlineShop.BoardFile.BoardFileRepository;
+import com.example.funitureOnlineShop.core.error.exception.Exception403;
 import com.example.funitureOnlineShop.core.error.exception.Exception500;
 import com.example.funitureOnlineShop.user.User;
 import com.example.funitureOnlineShop.user.UserRepository;
@@ -12,6 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -54,8 +56,13 @@ public class BoardService {
     }
 
     @Transactional
-    public void save(BoardDTO dto, MultipartFile[] files) throws IOException {
+    public void save(Long userId, BoardDTO dto,
+                     @RequestParam("file") MultipartFile[] files) throws IOException {
         dto.setCreateTime(LocalDateTime.now());
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if (optionalUser.isEmpty())
+            throw new Exception403("dksda");
+        User user = optionalUser.get();
 
         try {
             // ** 파일 정보 저장.
@@ -77,10 +84,12 @@ public class BoardService {
                 String path = filePath + uuid + originalFileName;
                 // ** 경로에 파일을 저장.  DB 아님
                 file.transferTo(new File(path));
-                // ** 게시글 DB에 저장 후 pk을 받아옴.
-                Long id = boardRepository.save(dto.toEntity()).getId();
-                Board board = boardRepository.findById(id).orElseThrow(() ->
-                        new Exception500("게시글을 찾을 수 없습니다."));
+
+                Board board1 = dto.toEntity();
+
+                Long id = boardRepository.save(board1).getId();
+                Board board = boardRepository.findById(id).get();
+                board.updateUser(user);
 
                 BoardFile boardFile = BoardFile.builder()
                         .filePath(filePath)
@@ -90,12 +99,13 @@ public class BoardService {
                         .fileSize(file.getSize())
                         .board(board)
                         .build();
-
                 boardFileRepository.save(boardFile);
             }
         } catch (Exception e) {
+
             Long id = boardRepository.save(dto.toEntity()).getId();
             Board board = boardRepository.findById(id).get();
+            log.info("확인" + board);
         }
     }
 
@@ -110,8 +120,8 @@ public class BoardService {
     }
 
     @Transactional
-    public void update(Long boardId, BoardDTO boardDTO, MultipartFile[] files) throws IOException {
-        Optional<Board> boardOptional = boardRepository.findById(boardId);
+    public void update(BoardDTO boardDTO, MultipartFile[] files) throws IOException {
+        Optional<Board> boardOptional = boardRepository.findById(boardDTO.getId());
 
         if (boardOptional.isPresent()) {
             Board board = boardOptional.get();
