@@ -106,7 +106,6 @@
 </footer>
 
 <script th:inline="javascript">
-    // 추가된 부분: 사용자 로그인 시 토큰 생성 및 설정
     const fileInput = document.querySelector("input[type='file']");
 
     function getCookie(name) {
@@ -121,7 +120,6 @@
         return null;
     }
 
-    // 추가된 부분: 버튼 클릭 시 실행되는 함수
     async function submitForm() {
         try {
             var tokenFromPreviousPage = getCookie('token');
