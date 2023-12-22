@@ -1,20 +1,20 @@
 package com.example.funitureOnlineShop.home;
 
-import com.example.funitureOnlineShop.Board.BoardDTO;
 import com.example.funitureOnlineShop.Board.BoardService;
 import com.example.funitureOnlineShop.category.CategoryResponse;
 import com.example.funitureOnlineShop.category.CategoryService;
+import com.example.funitureOnlineShop.fileProduct.FileProductResponse;
 import com.example.funitureOnlineShop.orderCheck.OrderCheckDto;
 import com.example.funitureOnlineShop.product.ProductResponse;
 import com.example.funitureOnlineShop.product.ProductService;
 import com.example.funitureOnlineShop.productComment.ProductCommentResponse;
 import com.example.funitureOnlineShop.productComment.ProductCommentService;
-import com.example.funitureOnlineShop.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
@@ -26,7 +26,6 @@ public class HomeController {
     private final ProductCommentService productCommentService;
     private final BoardService boardService;
     private final CategoryService categoryService;
-    private final UserService userService;
 
     // 메인 홈페이지
     @GetMapping(value = {"/", ""})
@@ -51,16 +50,33 @@ public class HomeController {
 
     // !!----------< 상품 관련 페이지 > -----------
 
-    // 전체 상품 확인
-    @GetMapping("/productAll")
-    public String showAllProduct()    {
-        return "allProductPage";
+    // 상품 상세 페이지
+    @GetMapping("/product/show/{id}")
+    public String showProduct(@PathVariable Long id, Model model) {
+        ProductResponse.FindByIdDTO findByIdDTO = productService.findById(id);
+        FileProductResponse fileProduct = fileProductService.findByProductId(id); // 상품 id에 따른 FileProduct를 찾는 코드
+        model.addAttribute("product", findByIdDTO);
+        return "productPage";
     }
 
     // 카테고리 클릭시 특정 카테고리 상품 확인
     @GetMapping("/category/show/{id}")
     public String showProductByCategory(@PathVariable Long id) {
         return "productCategoryPage";
+    }
+
+    // !< 관리자용 > 상품 신규 생성 페이지
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/product/add")
+    public String showProductCreate() {
+        return "productCreate";
+    }
+
+    // !< 관리자용 > 상품 신규 수정 페이지
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/product/update")
+    public String showProductUpdate() {
+        return "productUpdate";
     }
 
     // !!----------< 장바구니 관련 페이지 > -----------
@@ -71,14 +87,12 @@ public class HomeController {
         return "cartPage";
     }
 
-
     // !!----------< 결제 관련 페이지 > -----------
     // 결제 상세 페이지
     @GetMapping("/order")
     public String showOrder() {
         return "orderPage";
     }
-
 
     // !!----------< 유저 관련 페이지 > -----------
     // 각 유저의 마이페이지
@@ -101,17 +115,9 @@ public class HomeController {
         return "productReview";
     }
 
-
     @GetMapping("/login")
     public String showLogin() {
         return "login";
-    }
-
-    @GetMapping("/product/show/{id}")
-    public String showProduct(@PathVariable Long id, Model model) {
-        ProductResponse.FindByIdDTO findByIdDTO = productService.findById(id);
-        model.addAttribute("product", findByIdDTO);
-        return "productPage";
     }
 
     @GetMapping("/payments/cancel")
@@ -129,21 +135,13 @@ public class HomeController {
         return "payresponse";
     }
 
-
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @GetMapping("/product/add")
-    public String showProductCreate() {
-        return "productCreate";
-    }
-
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @GetMapping("/product/update")
-    public String showProductUpdate() {
-        return "productUpdate";
-    }
-
     @GetMapping("/join")
     public String joinForm() {
         return "join";
+    }
+
+    @GetMapping("/adminPage")
+    public String adminPage(){
+        return "/adminPage";
     }
 }

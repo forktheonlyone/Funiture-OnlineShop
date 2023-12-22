@@ -1,6 +1,7 @@
 package com.example.funitureOnlineShop.product;
 
 import com.example.funitureOnlineShop.category.Category;
+import com.example.funitureOnlineShop.fileProduct.FileProductResponse;
 import com.example.funitureOnlineShop.option.Option;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -84,10 +85,11 @@ public class ProductResponse {
 
         private Long categoryId;
 
-        List<OptionDTO> optionList;
+        private List<OptionDTO> optionList;
 
+        private FileProductResponse fileProduct;
 
-        public FindByIdDTO(Product product, List<Option> optionList) {
+        public FindByIdDTO(Product product, List<Option> optionList, FileProductResponse fileProduct) {
             this.id = product.getId();
             this.productName = product.getProductName();
             this.description = product.getDescription();
@@ -96,6 +98,7 @@ public class ProductResponse {
             this.categoryId = product.getCategory().getId();
             this.optionList = optionList.stream().map(OptionDTO::new)
                     .collect(Collectors.toList());
+            this.fileProduct = fileProduct;
         }
     }
 
