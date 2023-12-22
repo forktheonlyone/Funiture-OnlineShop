@@ -1,11 +1,10 @@
 package com.example.funitureOnlineShop.category;
 
 import com.example.funitureOnlineShop.core.utils.ApiUtils;
-import com.example.funitureOnlineShop.product.ProductResponse;
 import com.example.funitureOnlineShop.product.ProductService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -53,17 +52,8 @@ public class CategoryController {
         return ResponseEntity.ok(apiResult);
     }
 
-    // 카테고리별 상품 조회
-    @GetMapping("/{categoryId}/products")
-    public ResponseEntity<?> findProductsByCategory(@PathVariable Long categoryId,
-                                                    @RequestParam(defaultValue = "1") int page,
-                                                    @RequestParam(defaultValue = "10") int size) {
-        Page<ProductResponse.FindByIdDTO> productDTOS = productService.findProductsByCategory(categoryId, page, size);
-        ApiUtils.ApiResult<?> apiResult = ApiUtils.success(productDTOS);
-        return ResponseEntity.ok(apiResult);
-    }
-
     // 카테고리의 이름과 그 상위 카테고리 수정
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/update")
     public ResponseEntity<?> update(@ModelAttribute CategoryRequest.UpdateDto updateDto ) {
         categoryService.update(updateDto);
