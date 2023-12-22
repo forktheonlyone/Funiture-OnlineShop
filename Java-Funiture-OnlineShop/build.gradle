@@ -31,6 +31,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 
+	implementation 'org.modelmapper:modelmapper:2.3.8'
+
 	runtimeOnly 'mysql:mysql-connector-java'
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
@@ -40,6 +42,9 @@ dependencies {
 	implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
 	implementation group: 'com.auth0', name: 'java-jwt', version: '4.3.0'
 
+	// ** nurigo message
+	// ** nurigo -> 좌측 메뉴 -> 아래쪽 SDK 다운로드 -> Java용 SDK -> Github Repo에서 버전 확인
+	implementation 'net.nurigo:sdk:4.3.0'
 }
 
 
