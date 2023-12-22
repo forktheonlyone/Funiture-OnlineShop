@@ -1,6 +1,5 @@
 package com.example.funitureOnlineShop.home;
 
-import com.example.funitureOnlineShop.Board.BoardDTO;
 import com.example.funitureOnlineShop.Board.BoardService;
 import com.example.funitureOnlineShop.category.CategoryResponse;
 import com.example.funitureOnlineShop.category.CategoryService;
@@ -9,12 +8,11 @@ import com.example.funitureOnlineShop.product.ProductResponse;
 import com.example.funitureOnlineShop.product.ProductService;
 import com.example.funitureOnlineShop.productComment.ProductCommentResponse;
 import com.example.funitureOnlineShop.productComment.ProductCommentService;
-import com.example.funitureOnlineShop.user.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
@@ -26,7 +24,6 @@ public class HomeController {
     private final ProductCommentService productCommentService;
     private final BoardService boardService;
     private final CategoryService categoryService;
-    private final UserService userService;
 
     // 메인 홈페이지
     @GetMapping(value = {"/", ""})
@@ -71,14 +68,12 @@ public class HomeController {
         return "cartPage";
     }
 
-
     // !!----------< 결제 관련 페이지 > -----------
     // 결제 상세 페이지
     @GetMapping("/order")
     public String showOrder() {
         return "orderPage";
     }
-
 
     // !!----------< 유저 관련 페이지 > -----------
     // 각 유저의 마이페이지
@@ -100,7 +95,6 @@ public class HomeController {
         model.addAttribute("orderCheck", orderCheckDto);
         return "productReview";
     }
-
 
     @GetMapping("/login")
     public String showLogin() {
@@ -129,14 +123,11 @@ public class HomeController {
         return "payresponse";
     }
 
-
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/product/add")
     public String showProductCreate() {
         return "productCreate";
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/product/update")
     public String showProductUpdate() {
         return "productUpdate";
@@ -145,5 +136,10 @@ public class HomeController {
     @GetMapping("/join")
     public String joinForm() {
         return "join";
+    }
+
+    @GetMapping("/adminPage")
+    public String adminPage(){
+        return "/adminPage";
     }
 }
