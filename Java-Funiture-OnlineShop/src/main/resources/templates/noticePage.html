@@ -122,30 +122,32 @@
 <section>
     <div class="section">
         <h2>게시판 목록</h2>
-        <table>
+        <div th:if="${boardList == null or boardList.isEmpty()}">
+            <p>게시글이 없습니다.</p>
+        </div>
+        <!-- boardList가 존재하고 비어있지 않은 경우 -->
+        <table th:if="${boardList != null and not boardList.isEmpty()}">
             <tr>
                 <th>번호</th>
                 <th>제목</th>
-                <th>작성자</th>
                 <th>작성 시간</th>
             </tr>
             <tr th:each="board: ${boardList}">
                 <td th:text="${board.getId()}"></td>
-                <td><a th:href="@{${board.getId}|(page = ${boardList.number + 1})}" th:text="${board.getTitle()}"></a></td>
-                <td th:text="${board.getWriter()}"></td>
+                <td><a th:href="@{/board/{id}(id=${board.id}, page=${boardList.number + 1})}" th:text="${board.getTitle()}"></a></td>
                 <td th:text="*{#temporals.format(board.getCreateTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
             </tr>
         </table>
         <div class="paging-buttons">
             <a th:href="@{/board/paging(page=1)}">처음</a>
-            <a th:href="${boardList.first} ? '#' : @{/board/paging(page=${boardList.number})}">이전</a>
+            <a th:if="${boardList != null and not #lists.isEmpty(boardList)}" th:href="${boardList.first} ? '#' : @{/board/paging(page=${boardList.number})}">이전</a>
 
             <span th:each="page: ${#numbers.sequence(startPage, endPage)}">
-        <span th:if="${page == boardList.number + 1}" th:text="${page}"></span>
-        <span th:unless="${page == boardList.number + 1}">
-            <a th:href="@{/board/paging(page=${page})}" th:text="${page}"></a>
-        </span>
-    </span>
+                <span th:if="${page == boardList.number + 1}" th:text="${page}"></span>
+                <span th:unless="${page == boardList.number + 1}">
+                    <a th:href="@{/board/paging(page=${page})}" th:text="${page}"></a>
+                </span>
+            </span>
 
             <a th:href="${boardList.last} ? '#' : @{/board/paging(page=${boardList.number + 2})}">다음</a>
             <a th:href="@{/board/paging(page=${boardList.totalPages})}">마지막</a>

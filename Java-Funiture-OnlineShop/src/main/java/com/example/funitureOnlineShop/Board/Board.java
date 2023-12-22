@@ -49,4 +49,7 @@ public class Board {
         this.contents = boardDTO.getContents();
     }
 
+    public void updateUser(User user) {
+        this.user = user;
+    }
 }
