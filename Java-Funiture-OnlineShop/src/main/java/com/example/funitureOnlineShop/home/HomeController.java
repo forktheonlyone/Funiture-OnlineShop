@@ -67,7 +67,10 @@ public class HomeController {
     // !< 관리자용 > 상품 신규 생성 페이지
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/product/add")
-    public String showProductCreate() {
+    public String showProductCreate(Model model) {
+        List<CategoryResponse.FindAllDto> categories = categoryService.findAllSuper();
+        model.addAttribute("categories", categories);
+
         return "productCreate";
     }
 
