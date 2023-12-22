@@ -1,5 +1,6 @@
 package com.example.funitureOnlineShop.Board;
 
+import com.example.funitureOnlineShop.BoardFile.BoardFile;
 import com.example.funitureOnlineShop.category.Category;
 import com.example.funitureOnlineShop.user.User;
 import lombok.Builder;
@@ -9,6 +10,7 @@ import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Entity
@@ -34,8 +36,11 @@ public class Board {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BoardFile> boardFiles;
+
     @Builder
-    public Board(Long id, String title, String contents, LocalDateTime createTime, LocalDateTime updateTime,User user) {
+    public Board(Long id, String title, String contents, LocalDateTime createTime, LocalDateTime updateTime,User user, BoardFile boardFile) {
         this.id = id;
         this.title = title;
         this.contents = contents;
