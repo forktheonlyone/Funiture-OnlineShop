@@ -2,15 +2,12 @@ package com.example.funitureOnlineShop.product;
 
 import com.example.funitureOnlineShop.core.error.exception.Exception400;
 import com.example.funitureOnlineShop.core.error.exception.Exception404;
-import com.example.funitureOnlineShop.core.security.CustomUserDetails;
 import com.example.funitureOnlineShop.fileProduct.FileProduct;
 import com.example.funitureOnlineShop.fileProduct.FileProductRepository;
 import com.example.funitureOnlineShop.fileProduct.FileProductResponse;
 import com.example.funitureOnlineShop.option.Option;
 import com.example.funitureOnlineShop.option.OptionRepository;
-import lombok.CustomLog;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -32,10 +29,8 @@ import java.util.UUID;
 @Service
 public class ProductService {
     private final ProductRepository productRepository;
-    private final CategoryRepository categoryRepository;
     private final OptionRepository optionRepository;
     private final FileProductRepository fileProductRepository;
-    private final ModelMapper modelMapper;
 
     // ------------<파일경로>-------------
     // !!!!!!!!!! 꼭 반드시 테스트시 파일 경로 특히 사용자명 확인할것 !!!!!!!!!!
@@ -98,8 +93,16 @@ public class ProductService {
         // 수정된 제품에 해당하는 옵션 리스트를 가져옴
         List<Option> optionList = optionRepository.findByProductId(product.getId());
 
-        // 수정된 제품 정보를 FindByIdDTO 객체로 변환하여 반환
-        return new ProductResponse.FindByIdDTO(product, optionList);
+        // 상품 id에 따른 FileProduct를 찾는 코드
+        Optional<FileProduct> fileProductOpt = fileProductRepository.findByProductId(id);
+        FileProductResponse fileProductResponse = null; // 초기값을 null로 설정
+        if (fileProductOpt.isPresent()) {
+            FileProduct fileProduct = fileProductOpt.get();
+            fileProductResponse = new FileProductResponse();
+            fileProductResponse.setFilePath(fileProduct.getFilePath());
+            fileProductResponse.setFileName(fileProduct.getFileName());
+        }// 수정된 제품 정보를 FindByIdDTO 객체로 변환하여 반환
+        return new ProductResponse.FindByIdDTO(product, optionList, fileProductResponse);
     }
 
     // 삭제 서비스
@@ -109,11 +112,10 @@ public class ProductService {
         productRepository.deleteById(id);
     }
 
-    public Page<ProductResponse.FindByIdDTO> findProductsByCategory(Long categoryId, int page, int size) {
+    public Page<ProductResponse.FindByCategoryIdDTO> findProductsByCategory(Long categoryId, int page, int size) {
         Page<Product> productPage = productRepository.findByCategoryId(categoryId, PageRequest.of(page - 1, size));
-        return productPage.map(product -> modelMapper.map(product, ProductResponse.FindByIdDTO.class));
+        return productPage.map(ProductResponse.FindByCategoryIdDTO::new);
     }
-
 
     // 상품 전체 찾기 서비스
     public List<Product> findAll() {
