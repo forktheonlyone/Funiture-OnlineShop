@@ -11,17 +11,11 @@ import com.example.funitureOnlineShop.productComment.ProductCommentResponse;
 import com.example.funitureOnlineShop.productComment.ProductCommentService;
 import com.example.funitureOnlineShop.user.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -53,40 +47,6 @@ public class HomeController {
         model.addAttribute("categories", dtos);
 
         return "categoryUpdate";
-    }
-
-
-
-    // !!----------< 게시판 관련 페이지 > -----------
-    @GetMapping("/notice")
-    public String noticePaging(@PageableDefault(page = 1) Pageable pageable, Model model) {
-        Page<BoardDTO> boards = boardService.paging(pageable);
-
-        int blockLimit = 3;
-        int startPage = (int) Math.ceil((double) pageable.getPageNumber() / blockLimit - 1) * blockLimit + 1;
-        int endPage = (startPage + blockLimit - 1) < boards.getTotalPages() ? (startPage + blockLimit - 1) : boards.getTotalPages();
-
-        model.addAttribute("boardList", boards);
-        model.addAttribute("startPage", startPage);
-        model.addAttribute("endPage", endPage);
-
-        return "noticePage";
-    }
-
-    @PostMapping("/save")
-    @PreAuthorize("hasRole('ADMIN')")
-    public String save(@ModelAttribute BoardDTO boardDTO,
-                       @RequestParam MultipartFile[] files) throws IOException {
-        boardDTO.setCreateTime(LocalDateTime.now());
-        boardService.save(boardDTO, files);
-        System.out.println("○ 게시글 저장 ○");
-
-        return "redirect:/board/";
-    }
-
-    @GetMapping("/board/create")
-    public String boardCreateForm() {
-        return "createboard";
     }
 
     // !!----------< 상품 관련 페이지 > -----------

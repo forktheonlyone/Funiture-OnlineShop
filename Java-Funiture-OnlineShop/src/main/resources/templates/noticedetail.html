@@ -86,12 +86,10 @@
             <td colspan="2" th:text="${board.getTitle}"></td>
         </tr>
         <tr>
-            <th>Username</th>
-            <td th:text="${board.getWriter}"></td>
             <th>Date</th>
             <td th:text="${board.getCreateTime}"></td>
         </tr>
-        <tr th:if="${board.filePath}">
+        <tr th:if="${boardfilePath.}">
             <th>Attached Image</th>
             <td colspan="3">
                 <!-- 이미지 파일이면 이미지를 보여주는 부분 -->

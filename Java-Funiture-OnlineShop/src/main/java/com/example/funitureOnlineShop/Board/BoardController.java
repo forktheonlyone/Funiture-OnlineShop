@@ -2,6 +2,7 @@ package com.example.funitureOnlineShop.Board;
 
 import com.example.funitureOnlineShop.BoardFile.BoardFile;
 import com.example.funitureOnlineShop.core.error.exception.Exception500;
+import com.example.funitureOnlineShop.core.security.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -10,6 +11,9 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,83 +25,92 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j
-@RestController
+@Controller
 @RequiredArgsConstructor
 @RequestMapping("/board")
 public class BoardController {
     private final BoardService boardService;
 
+    @GetMapping("/create")
+    public String boardCreateForm() {
+        return "createboard";
+    }
+
     @PostMapping("/save")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> save(@RequestBody BoardDTO requestDTO,
-                                       @RequestParam MultipartFile[] files) throws IOException {
-
+    public String save(@AuthenticationPrincipal CustomUserDetails customUserDetails,
+                       @ModelAttribute BoardDTO requestDTO,
+                       @RequestParam MultipartFile[] files) throws IOException {
+        Long userId = customUserDetails.getUser().getId();
         requestDTO.setCreateTime(LocalDateTime.now());
-        boardService.save(requestDTO, files);
+        boardService.save(userId, requestDTO, files);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body("게시물이 성공적으로 저장되었습니다.");
+        return "noticePage";
     }
-
 
     @GetMapping(value = {"/paging", "/"})
-    public ResponseEntity<?> paging(@PageableDefault(page = 1) Pageable pageable){
-        Page<BoardDTO> page = boardService.paging(pageable);
+    public String paging(@PageableDefault(page = 1) Pageable pageable, Model model){
+
+        Page<BoardDTO> boards = boardService.paging(pageable);
 
         int blockLimit = 3;
-        int startPage = (int) (Math.ceil((double) pageable.getPageNumber() / blockLimit) - 1) * blockLimit + 1;
-        int endPage = ((startPage + blockLimit - 1) < page.getTotalPages()) ? (startPage + blockLimit - 1) : page.getTotalPages();
+        int startPage = (int)Math.ceil((double)pageable.getPageNumber() / blockLimit - 1) * blockLimit + 1;
+        int endPage = (startPage+ blockLimit - 1) < boards.getTotalPages() ? (startPage + blockLimit -1) : boards.getTotalPages();
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("boardList", page.getContent());
-        response.put("startPage", startPage);
-        response.put("endPage", endPage);
-
-        return ResponseEntity.ok(response);
+        model.addAttribute("boardList", boards);
+        model.addAttribute("startPage", startPage);
+        model.addAttribute("endPage", endPage);
+        return "noticePage";
     }
+    // CRUD update / "update" 템플릿을 렌더링하여 반환
+    @GetMapping("/update/{id}")
+    public String updateForm(@PathVariable Long id, Model model) {
 
+        BoardDTO boardDTO = boardService.findById(id);
+        List<BoardFile> existingFiles = boardService.findByBoardId(id); // 기존 파일 목록 조회
+        model.addAttribute("board", boardDTO);
+        model.addAttribute("existingFiles", existingFiles);
+
+        return "update";
+    }
+    // CRUD update / "/board/"로 리다이렉트
+    @PostMapping("/update")
+    @PreAuthorize("hasRole('ADMIN')")
+    public String update(@AuthenticationPrincipal CustomUserDetails customUserDetails,
+                         @ModelAttribute BoardDTO boardDTO,
+                         @RequestParam MultipartFile[] files) throws IOException {
+        Long userId = customUserDetails.getUser().getId();
+        boardService.update(boardDTO,files);
+        return "redirect:/board/";
+    }
+    // CRUD Read /"detail" 템플릿을 렌더링하여 반환
     @GetMapping("/{id}")
-    public ResponseEntity<?> findByid(@RequestBody Long id, @PageableDefault(page = 1) Pageable pageable){
+    public String paging(@PathVariable Long id, Model model,
+                         @PageableDefault(page = 1) Pageable pageable){
+
         BoardDTO dto = boardService.findById(id);
         List<BoardFile> files = boardService.findByBoardId(id);
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("board", dto);
-        response.put("page", pageable.getPageNumber());
-        response.put("files", files != null ? files : Collections.emptyList());
+        model.addAttribute("board", dto);
+        model.addAttribute("page", pageable.getPageNumber());
+        model.addAttribute("files", files != null ? files : Collections.emptyList());
 
-        return ResponseEntity.ok(response);
-    }
-    @PostMapping("/update/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<String> update( @PathVariable Long id,
-                                          @RequestBody BoardDTO boardDTO,
-                                          @RequestParam MultipartFile[] files) {
-        try {
-            boardService.update(id, boardDTO, files);
-            return ResponseEntity.ok("게시물이 성공적으로 업데이트되었습니다.");
-        } catch (Exception e) {
-            throw new Exception500("게시물 업데이트에 실패했습니다.");
-        }
+        return "noticedetail";
     }
 
-    @DeleteMapping("/files/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<String> deleteBoardFile(@PathVariable Long id) {
-        try {
-            boardService.deleteByBoardFile(id);
-            return ResponseEntity.ok("게시물 파일이 성공적으로 삭제되었습니다.");
-        } catch (Exception e) {
-            throw new Exception500("게시물 파일 삭제에 실패했습니다.");
-        }
+    // CRUD delete /  "/board/paging"으로 리다이렉트
+    @GetMapping("/delete/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public String delete(@PathVariable Long id) {
+        System.out.println(id);
+        boardService.deleteById(id);
+        return "redirect:/board/paging";
     }
-    @DeleteMapping("/delete/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<String> deleteById(@PathVariable Long id) {
-        try {
-            boardService.deleteById(id);
-            return ResponseEntity.ok("게시물이 성공적으로 삭제되었습니다.");
-        } catch (Exception e) {
-            throw new Exception500("게시물 삭제에 실패했습니다.");
-        }
+
+    @DeleteMapping("/deleteByBoardFile/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public void deleteByBoardFile(@PathVariable Long id) {
+        System.out.println(id);
+        boardService.deleteByBoardFile(id);
     }
 }
