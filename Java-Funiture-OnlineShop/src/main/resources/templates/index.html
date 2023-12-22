@@ -144,11 +144,49 @@
             return null;
         }
 
+        async function isAdmin() {
+            try {
+                const token = getCookie("token");
+                const response = await fetch('/user/info', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': token
+                    }
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    if (result.response.roles[0] === "ROLE_ADMIN") {
+                        showAdmin();
+                    }
+                }
+            } catch (error) {
+               console.error('Error:', error);
+            }
+        }
+
+        async function goAdmin() {
+            try {
+                const token = getCookie("token");
+                const response = await fetch('/admin/adminPage', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': token
+                    }
+                });
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
         const checkButtonVisibility = () => {
             var logined = getCookie("token");
             if (logined != null) {
                 // 버튼을 보여주는 로직 호출
                 showButtons();
+                isAdmin();
             }
         }
 
@@ -157,6 +195,12 @@
             var buttonsContainer = document.getElementById("loginButtons");
             buttonsContainer.style.display = "none";
             var buttonsContainer = document.getElementById("logoutButtons");
+            buttonsContainer.style.display = "block";
+        }
+
+        const showAdmin = () => {
+            // 버튼을 보여주는 로직 작성
+            var buttonsContainer = document.getElementById("adminButton");
             buttonsContainer.style.display = "block";
         }
     </script>
@@ -182,6 +226,9 @@
         <button class="btn" onclick="location.href='/productAll'">상품 페이지(준비중)</button>
         <button class="btn" onclick="location.href='/board/paging'">게시판</button>
     </nav>
+    <span id="adminButton" style="display: none;">
+        <button class="btn" onclick="location.href='/adminPage'">관리자 페이지</button>
+    </span>
 </section>
 
 <section>

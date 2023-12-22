@@ -58,7 +58,7 @@ public class CategoryController {
     public ResponseEntity<?> findProductsByCategory(@PathVariable Long categoryId,
                                                     @RequestParam(defaultValue = "1") int page,
                                                     @RequestParam(defaultValue = "10") int size) {
-        Page<ProductResponse.FindByCategoryIdDTO> productDTOS = productService.findProductsByCategory(categoryId, page, size);
+        Page<ProductResponse.FindByIdDTO> productDTOS = productService.findProductsByCategory(categoryId, page, size);
         ApiUtils.ApiResult<?> apiResult = ApiUtils.success(productDTOS);
         return ResponseEntity.ok(apiResult);
     }
