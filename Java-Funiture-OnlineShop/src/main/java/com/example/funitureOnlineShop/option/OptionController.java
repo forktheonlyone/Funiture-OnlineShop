@@ -2,12 +2,14 @@ package com.example.funitureOnlineShop.option;
 
 import com.example.funitureOnlineShop.core.utils.ApiUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/options")
@@ -15,10 +17,18 @@ public class OptionController {
     private final OptionService optionService;
     // ** 옵션 저장
     @PostMapping("/products/{productId}/save")
-    public ResponseEntity save(@RequestBody @Valid OptionResponse.FindByProductIdDTO requestDTO) {
+    public ResponseEntity<?> save(@PathVariable Long productId, @RequestBody @Valid OptionResponse.FindByProductIdDTO requestDTO) {
+        // URL 경로에서 추출한 productId를 DTO에 설정
+        requestDTO.setProductId(productId);
 
-        Option option = optionService.save(requestDTO);
-        return ResponseEntity.ok(option);
+        System.out.println(requestDTO.getOptionName());
+        System.out.println(requestDTO.getPrice());
+        System.out.println(requestDTO.getStockQuantity());
+
+        optionService.save(requestDTO);
+
+        ApiUtils.ApiResult<?> apiResult = ApiUtils.success(null);
+        return ResponseEntity.ok(apiResult);
     }
     // ** 개별 옵션 검색
     @GetMapping("/products/{id}")
