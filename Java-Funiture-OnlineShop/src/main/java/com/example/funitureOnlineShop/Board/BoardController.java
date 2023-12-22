@@ -70,7 +70,7 @@ public class BoardController {
         model.addAttribute("board", boardDTO);
         model.addAttribute("existingFiles", existingFiles);
 
-        return "update";
+        return "noticeupdate";
     }
     // CRUD update / "/board/"로 리다이렉트
     @PostMapping("/update")

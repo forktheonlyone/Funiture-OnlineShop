@@ -13,12 +13,19 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -100,7 +107,7 @@ public class SecurityConfig {
                         .authenticated()
                         .antMatchers("/product/save", "/admin/**").authenticated()
                         .antMatchers("/board/update", "/admin/**").authenticated()
-                        .antMatchers("/boarddelete/{id}", "/admin/**")
+                        .antMatchers("/board/delete/{id}", "/admin/**")
                         .access("hasRole('ROLE_ADMIN')")
                         .anyRequest().permitAll()
         );
@@ -123,6 +130,19 @@ public class SecurityConfig {
         // ** (/) 들어오는 모든 유형의 URL 패턴을 허용.
         urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", corsConfigurationSource);
         return urlBasedCorsConfigurationSource;
+    }
+
+    public static List<String> getRoles() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return Collections.emptyList();
+        }
+
+        return authentication.getAuthorities()
+                .stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList());
     }
 }
 

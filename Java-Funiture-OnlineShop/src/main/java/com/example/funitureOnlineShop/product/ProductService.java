@@ -2,12 +2,15 @@ package com.example.funitureOnlineShop.product;
 
 import com.example.funitureOnlineShop.core.error.exception.Exception400;
 import com.example.funitureOnlineShop.core.error.exception.Exception404;
+import com.example.funitureOnlineShop.core.security.CustomUserDetails;
 import com.example.funitureOnlineShop.fileProduct.FileProduct;
 import com.example.funitureOnlineShop.fileProduct.FileProductRepository;
 import com.example.funitureOnlineShop.fileProduct.FileProductResponse;
 import com.example.funitureOnlineShop.option.Option;
 import com.example.funitureOnlineShop.option.OptionRepository;
+import lombok.CustomLog;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -29,8 +32,10 @@ import java.util.UUID;
 @Service
 public class ProductService {
     private final ProductRepository productRepository;
+    private final CategoryRepository categoryRepository;
     private final OptionRepository optionRepository;
     private final FileProductRepository fileProductRepository;
+    private final ModelMapper modelMapper;
 
     // ------------<파일경로>-------------
     // !!!!!!!!!! 꼭 반드시 테스트시 파일 경로 특히 사용자명 확인할것 !!!!!!!!!!
@@ -104,10 +109,11 @@ public class ProductService {
         productRepository.deleteById(id);
     }
 
-    public Page<ProductResponse.FindByCategoryIdDTO> findProductsByCategory(Long categoryId, int page, int size) {
+    public Page<ProductResponse.FindByIdDTO> findProductsByCategory(Long categoryId, int page, int size) {
         Page<Product> productPage = productRepository.findByCategoryId(categoryId, PageRequest.of(page - 1, size));
-        return productPage.map(ProductResponse.FindByCategoryIdDTO::new);
+        return productPage.map(product -> modelMapper.map(product, ProductResponse.FindByIdDTO.class));
     }
+
 
     // 상품 전체 찾기 서비스
     public List<Product> findAll() {
