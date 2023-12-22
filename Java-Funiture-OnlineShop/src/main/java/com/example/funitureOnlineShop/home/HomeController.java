@@ -74,7 +74,6 @@ public class HomeController {
     }
 
     @PostMapping("/save")
-    @PreAuthorize("hasRole('ADMIN')")
     public String save(@ModelAttribute BoardDTO boardDTO,
                        @RequestParam MultipartFile[] files) throws IOException {
         boardDTO.setCreateTime(LocalDateTime.now());
@@ -169,15 +168,12 @@ public class HomeController {
         return "payresponse";
     }
 
-
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/product/add")
     public String showProductCreate() {
         return "productCreate";
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @GetMapping("/product/update")
+    @GetMapping("/admin/product/update")
     public String showProductUpdate() {
         return "productUpdate";
     }
@@ -185,5 +181,10 @@ public class HomeController {
     @GetMapping("/join")
     public String joinForm() {
         return "join";
+    }
+
+    @GetMapping("/adminPage")
+    public String adminPage(){
+        return "redirect:adminPage";
     }
 }

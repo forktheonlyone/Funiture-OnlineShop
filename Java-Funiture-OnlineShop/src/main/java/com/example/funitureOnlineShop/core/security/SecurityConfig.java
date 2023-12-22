@@ -99,7 +99,7 @@ public class SecurityConfig {
                         "/carts/**", "/options/**", "/orders/**")
                         .authenticated()
                         .antMatchers("/product/save", "/admin/**")
-                        .access("hasRole('ADMIN')")
+                        .access("hasRole('ROLE_ADMIN')")
                         .anyRequest().permitAll()
         );
 
