@@ -54,7 +54,6 @@ public class HomeController {
     @GetMapping("/product/show/{id}")
     public String showProduct(@PathVariable Long id, Model model) {
         ProductResponse.FindByIdDTO findByIdDTO = productService.findById(id);
-        FileProductResponse fileProduct = fileProductService.findByProductId(id); // 상품 id에 따른 FileProduct를 찾는 코드
         model.addAttribute("product", findByIdDTO);
         return "productPage";
     }
