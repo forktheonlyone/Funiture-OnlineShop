@@ -1,6 +1,5 @@
 package com.example.funitureOnlineShop.category;
 
-import com.example.funitureOnlineShop.Board.BoardDTO;
 import com.example.funitureOnlineShop.core.utils.ApiUtils;
 import com.example.funitureOnlineShop.product.ProductResponse;
 import com.example.funitureOnlineShop.product.ProductService;
@@ -9,7 +8,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -28,10 +26,19 @@ public class CategoryController {
         return ResponseEntity.ok(ApiUtils.success(null));
     }
 
-    // 등록된 카테고리 모두 조회
-    @GetMapping("/categories")
+    // 등록된 최상위 카테고리 모두 조회
+    @GetMapping("/super")
     public ResponseEntity<?> findAll() {
-        List<CategoryResponse.FindAllDto> categories = categoryService.findAll();
+        List<CategoryResponse.FindAllDto> categories = categoryService.findAllSuper();
+
+        ApiUtils.ApiResult<?> apiResult = ApiUtils.success(categories);
+        return ResponseEntity.ok(apiResult);
+    }
+
+    // 부른 카테고리의 하위 카테고리 모두 조회
+    @GetMapping("/son/{id}")
+    public ResponseEntity<?> findAllSons(@PathVariable Long id) {
+        List<CategoryResponse.FindAllDto> categories = categoryService.findAllSon(id);
 
         ApiUtils.ApiResult<?> apiResult = ApiUtils.success(categories);
         return ResponseEntity.ok(apiResult);
