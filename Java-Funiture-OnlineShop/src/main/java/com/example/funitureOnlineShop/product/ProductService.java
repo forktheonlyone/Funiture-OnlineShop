@@ -115,16 +115,8 @@ public class ProductService {
     public Page<ProductResponse.FindByIdDTO> findProductsByCategory(Long categoryId, int page, int size) {
         Page<Product> productPage = productRepository.findByCategoryId(categoryId, PageRequest.of(page - 1, size));
         return productPage.map(product -> {
-            ProductResponse.FindByIdDTO dto = new ProductResponse.FindByIdDTO();
-            dto.setId(product.getId());
-            dto.setProductName(product.getProductName());
-            dto.setDescription(product.getDescription());
-            dto.setPrice(product.getPrice());
-            dto.setDeliveryFee(product.getDeliveryFee());
-            dto.setCategoryId(product.getCategory().getId());
-            // files나 다른 연관 관계가 필요하다면 추가로 설정
-            // dto.setFiles(product.getFiles().stream().map(FileProductDTO::new).collect(Collectors.toList()));
-            return dto;
+            List<Option> options = optionRepository.findByProductId(product.getId());
+            return new ProductResponse.FindByIdDTO(product, options);
         });
     }
 
