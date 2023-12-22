@@ -1,10 +1,10 @@
 package com.example.funitureOnlineShop.product;
 
-import com.example.funitureOnlineShop.category.CategoryRepository;
 import com.example.funitureOnlineShop.core.error.exception.Exception400;
 import com.example.funitureOnlineShop.core.error.exception.Exception404;
 import com.example.funitureOnlineShop.fileProduct.FileProduct;
 import com.example.funitureOnlineShop.fileProduct.FileProductRepository;
+import com.example.funitureOnlineShop.fileProduct.FileProductResponse;
 import com.example.funitureOnlineShop.option.Option;
 import com.example.funitureOnlineShop.option.OptionRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +21,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -96,15 +97,6 @@ public class ProductService {
         return new ProductResponse.FindByIdDTO(product, optionList);
     }
 
-    // ID로 상품검색 서비스
-    public ProductResponse.FindByIdDTO findById(Long id) {
-        Product product = getProduct(id);
-
-        List<Option> optionList = optionRepository.findByProductId(product.getId());
-
-        return new ProductResponse.FindByIdDTO(product, optionList);
-    }
-
     // 삭제 서비스
     @Transactional
     public void delete(Long id) {
@@ -140,5 +132,22 @@ public class ProductService {
                         product.getProductName(),
                         product.getPrice()
                 ));
+    }
+
+    // ID로 상품검색 서비스
+    public ProductResponse.FindByIdDTO findById(Long id) {
+        Product product = getProduct(id);
+        List<Option> optionList = optionRepository.findByProductId(product.getId());
+
+        // 상품 id에 따른 FileProduct를 찾는 코드
+        Optional<FileProduct> fileProductOpt = fileProductRepository.findByProductId(id);
+        FileProductResponse fileProductResponse = null; // 초기값을 null로 설정
+        if (fileProductOpt.isPresent()) {
+            FileProduct fileProduct = fileProductOpt.get();
+            fileProductResponse = new FileProductResponse();
+            fileProductResponse.setFilePath(fileProduct.getFilePath());
+            fileProductResponse.setFileName(fileProduct.getFileName());
+        }
+            return new ProductResponse.FindByIdDTO(product, optionList, fileProductResponse);
     }
 }
