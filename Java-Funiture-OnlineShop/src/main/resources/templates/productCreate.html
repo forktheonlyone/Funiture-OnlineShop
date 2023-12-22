@@ -43,10 +43,11 @@
     <label for="deliveryFee">배송비:</label><br>
     <input type="number" id="deliveryFee" name="deliveryFee"required><br>
 
-    <button type="submit" onclick="sendProduct()">save</button>
+    <button type="button" id="newFormButton" onclick="resetProductForm()">추가 생성</button>
+    <button type="submit" id="saveButton" onclick="sendProduct(event)">save</button>
 </form>
 
-<form id="optionForm" style="display:none;">
+<form id="optionForm">
     <h2>상품 옵션 추가</h2>
 
     <label for="optionName">옵션명:</label><br>
@@ -81,6 +82,8 @@
     }
 
     async function sendProduct() {
+        event.preventDefault();
+
         const form = document.getElementById('productForm');
         const formData = new FormData(form);
         const token = getCookie("token");
@@ -124,11 +127,34 @@
     }
 
     const optionOn = () => {
-        var aaa = document.getElementById("productForm");
-        aaa.style.display = "none";
-        var bbb = document.getElementById("optionForm");
-        bbb.style.display = "block";
+        // 상품 등록 폼의 모든 입력 필드를 찾습니다.
+        var inputs = document.querySelectorAll('#productForm input, #productForm textarea');
+
+        // 각 입력 필드를 순회하면서 disabled 속성을 true로 설정하여 비활성화합니다.
+        inputs.forEach(function(input) {
+            input.disabled = true;
+        });
+        document.getElementById("saveButton").disabled = true;
+        document.getElementById("optionForm").style.display = "block";
     }
+
+    const resetProductForm = () => {
+    // 'save' 버튼의 disabled 상태를 해제합니다.
+    document.getElementById("saveButton").disabled = false;
+
+    // #productForm 안의 모든 input과 textarea 요소들의 disabled 상태를 해제합니다.
+    const inputs = document.querySelectorAll('#productForm input, #productForm textarea');
+    inputs.forEach(input => {
+        input.disabled = false;
+    });
+
+    // #productForm 안의 입력 필드를 초기화합니다.
+    document.getElementById("productForm").reset();
+
+    // 이미지 미리보기를 모두 제거합니다.
+    document.getElementById("selected-files").innerHTML = '';
+};
+
 </script>
 </body>
 </html>
