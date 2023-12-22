@@ -28,7 +28,7 @@ public class Option {
     private Product product;
 
     @Builder
-    public Option(Long id, String optionName, Long price, Long quantity, Long stockQuantity, Product product) {
+    public Option(Long id, String optionName, Long price, Long stockQuantity, Product product) {
         this.id = id;
         this.optionName = optionName;
         this.price = price;
