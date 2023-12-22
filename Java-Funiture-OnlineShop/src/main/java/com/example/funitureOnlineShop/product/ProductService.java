@@ -112,11 +112,10 @@ public class ProductService {
         productRepository.deleteById(id);
     }
 
-    public Page<ProductResponse.FindByIdDTO> findProductsByCategory(Long categoryId, int page, int size) {
+    public Page<ProductResponse.FindByCategoryIdDTO> findProductsByCategory(Long categoryId, int page, int size) {
         Page<Product> productPage = productRepository.findByCategoryId(categoryId, PageRequest.of(page - 1, size));
-        return productPage.map(product -> modelMapper.map(product, ProductResponse.FindByIdDTO.class));
+        return productPage.map(ProductResponse.FindByCategoryIdDTO::new);
     }
-
 
     // 상품 전체 찾기 서비스
     public List<Product> findAll() {
