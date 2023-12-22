@@ -8,7 +8,7 @@
 <div th:if="${product != null}">
     <!-- 상품 정보 섹션 -->
     <div>
-        <img th:src="@{${product.image}}" alt="상품 이미지">
+        <img th:src="@{${product.files[0].filePath}}" alt="상품 이미지">
     </div>
     <div>
         <h2 th:text="${product.productName}">상품 이름</h2>

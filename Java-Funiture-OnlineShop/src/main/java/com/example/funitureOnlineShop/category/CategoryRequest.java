@@ -25,8 +25,6 @@ public class CategoryRequest {
     public static class UpdateDto {
         // 카테고리 id
         private Long id;
-        // 상위 카테고리 id
-        private Long superCategory_id;
         // 카테고리 명
         private String categoryName;
         // 엔티티로 변경

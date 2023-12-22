@@ -75,24 +75,24 @@
 </head>
 <header> <h1>회원 정보</h1> </header>
 <body>
-    <table>
-        <tr>
-            <th>이름</th>
-            <td id="name"></td>
-        </tr>
-        <tr>
-            <th>아이디</th>
-            <td id="email"></td>
-        </tr>
-        <tr>
-            <th>전화번호</th>
-            <td id="phone"></td>
-        </tr>
-        <tr>
-            <th>주소</th>
-            <td id="address"></td>
-        </tr>
-    </table>
+<table>
+    <tr>
+        <th>이름</th>
+        <td id="name"></td>
+    </tr>
+    <tr>
+        <th>아이디</th>
+        <td id="email"></td>
+    </tr>
+    <tr>
+        <th>전화번호</th>
+        <td id="phone"></td>
+    </tr>
+    <tr>
+        <th>주소</th>
+        <td id="address"></td>
+    </tr>
+</table>
 </body>
 <footer>
     <p class="footword">&copy; 2023 My Website. All rights reserved.</p>
@@ -115,7 +115,7 @@
                 document.getElementById("email").textContent = result.response.email;
 
                 const phoneNumber = result.response.phoneNumber;
-                var formattedNum;
+                let formattedNum;
                 if (phoneNumber.length === 10) {
                     formattedNum = phoneNumber.replace(/(\d{2})(\d{4})(\d{4})/, '$1-$2-$3');
                 } else if (phoneNumber.length === 11) {
@@ -132,7 +132,7 @@
                 location.href = "/";
             }
         } catch (error) {
-           console.error('Error:', error);
+            console.error('Error:', error);
         }
     }
 

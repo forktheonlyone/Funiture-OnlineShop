@@ -21,7 +21,7 @@ public class ProductController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/product/save")
     public ResponseEntity<ApiUtils.ApiResult<Long>> save(ProductResponse.SaveByIdDTO productResponseFind,
-                                  @RequestParam MultipartFile[] files) throws IOException {
+                                                         @RequestParam MultipartFile[] files) throws IOException {
         // 상품 저장 후 생성된 Product 객체를 반환받습니다.
         Product product = productService.save(productResponseFind, files);
 
