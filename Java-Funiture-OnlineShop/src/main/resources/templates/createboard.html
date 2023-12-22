@@ -127,10 +127,19 @@
             var tokenFromPreviousPage = getCookie('token');
             console.log('Token from cookie:', tokenFromPreviousPage);
 
-            const formData = new FormData();
-            formData.append('title', document.getElementById('title').value);
-            formData.append('contents', document.getElementById('contents').value);
-            formData.append('files', fileInput.files[0]);  // Assuming only one file is selected
+
+        const title = document.getElementById('title').value;
+        const contents = document.getElementById('contents').value;
+        const selectedFile = fileInput.files[0];
+
+        // 파일이 없는 경우 빈 파일 생성
+        const emptyFile = new File([""], "empty_file.txt", { type: "text/plain" });
+
+        const formData = new FormData();
+        formData.append('title', title);
+        formData.append('contents', contents);
+        formData.append('files', selectedFile || emptyFile);
+
 
             const requestOptions = {
                 method: 'POST',

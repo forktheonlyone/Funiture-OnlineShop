@@ -102,8 +102,10 @@ public class BoardService {
                 boardFileRepository.save(boardFile);
             }
         } catch (Exception e) {
+
             Long id = boardRepository.save(dto.toEntity()).getId();
-            boardRepository.findById(id).get();
+            Board board = boardRepository.findById(id).get();
+            log.info("확인" + board);
         }
     }
 

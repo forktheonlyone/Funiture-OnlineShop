@@ -83,19 +83,23 @@
             <th>ID</th>
             <td th:text="${board.id}"></td>
             <th id="title-td">Title</th>
-            <td colspan="2" th:text="${board.getTitle}"></td>
+            <td colspan="2" th:text="${board.title}"></td>
         </tr>
         <tr>
             <th>Date</th>
-            <td th:text="${board.getCreateTime}"></td>
+            <td th:text="${board.createTime}"></td>
         </tr>
-        <tr th:if="${boardfilePath.}">
-            <th>Attached Image</th>
-            <td colspan="3">
-                <!-- 이미지 파일이면 이미지를 보여주는 부분 -->
-                <img th:src="${board.filePath}" alt="Attached Image" style="max-width: 100%;">
-            </td>
-        </tr>
+        <th>사진: </th>
+        <td>
+            <div th:if="${files != null}">
+                <ul>
+                    <li th:each="file : ${files}">
+                        <!-- 이미지 표시 -->
+                        <img th:src="@{|/download/${file.uuid}/${file.fileName}|}" alt="첨부 이미지">
+                    </li>
+                </ul>
+            </div>
+        </td>
     </table>
 
     <button class="btn btn-primary" onclick="listReq()">목록</button>
@@ -111,6 +115,17 @@
 
 </body>
 <script th:inline="javascript">
+    function getCookie(name) {
+        var cookieName = name + "=";
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            if (cookie.indexOf(cookieName) === 0) {
+                return cookie.substring(cookieName.length, cookie.length);
+            }
+        }
+        return null;
+    }
     const listReq = () => {
         console.log("목록 요청");
         const page = [[${page}]];
