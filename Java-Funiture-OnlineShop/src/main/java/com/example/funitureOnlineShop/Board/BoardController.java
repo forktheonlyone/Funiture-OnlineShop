@@ -37,7 +37,6 @@ public class BoardController {
     }
 
     @PostMapping("/save")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String save(@AuthenticationPrincipal CustomUserDetails customUserDetails,
                        @ModelAttribute BoardDTO requestDTO,
                        @RequestParam MultipartFile[] files) throws IOException {
@@ -63,7 +62,6 @@ public class BoardController {
     }
     // CRUD update / "update" 템플릿을 렌더링하여 반환
     @GetMapping("/update/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String updateForm(@PathVariable Long id, Model model) {
 
         BoardDTO boardDTO = boardService.findById(id);
@@ -100,7 +98,6 @@ public class BoardController {
 
     // CRUD delete /  "/board/paging"으로 리다이렉트
     @GetMapping("/delete/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     public String delete(@PathVariable Long id) {
         System.out.println(id);
         boardService.deleteById(id);
@@ -108,7 +105,6 @@ public class BoardController {
     }
 
     @DeleteMapping("/deleteByBoardFile/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public void deleteByBoardFile(@PathVariable Long id) {
         System.out.println(id);
         boardService.deleteByBoardFile(id);
