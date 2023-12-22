@@ -107,7 +107,7 @@ public class SecurityConfig {
                         .authenticated()
                         .antMatchers("/product/save", "/admin/**").authenticated()
                         .antMatchers("/board/update", "/admin/**").authenticated()
-                        .antMatchers("/board/create", "/admin/**").authenticated()
+                        .antMatchers("/board/save", "/admin/**").authenticated()
                         .antMatchers("/board/delete/{id}", "/admin/**")
                         .access("hasRole('ROLE_ADMIN')")
                         .anyRequest().permitAll()
