@@ -44,22 +44,22 @@
     <input type="number" id="deliveryFee" name="deliveryFee"required><br>
 
     <button type="button" id="newFormButton" onclick="resetProductForm()">추가 생성</button>
-    <button type="submit" id="saveButton" onclick="sendProduct(event)">save</button>
+    <button type="submit" id="saveProductButton" onclick="sendProduct(event)">상품 저장</button>
 </form>
 
 <form id="optionForm">
     <h2>상품 옵션 추가</h2>
 
     <label for="optionName">옵션명:</label><br>
-    <input type="text" id="optionName" name="optionName" required><br>
+    <input type="text" id="optionName" name="optionName" required disabled><br>
 
     <label for="optionPrice">옵션 가격:</label><br>
-    <input type="number" id="optionPrice" name="optionPrice" required><br>
+    <input type="number" id="optionPrice" name="optionPrice" required disabled><br>
 
     <label for="stockQuantity">재고 수량:</label><br>
-    <input type="number" id="stockQuantity" name="stockQuantity" required><br>
+    <input type="number" id="stockQuantity" name="stockQuantity" required disabled><br>
 
-    <input type="button" value="Add Option" id="addOption"><br>
+    <button type="submit" id="saveOptionButton" onclick="sendOption(event)" disabled>옵션 저장</button>
 </form>
 
 <script th:inline="javascript">
@@ -134,13 +134,24 @@
         inputs.forEach(function(input) {
             input.disabled = true;
         });
-        document.getElementById("saveButton").disabled = true;
-        document.getElementById("optionForm").style.display = "block";
+        // 'saveProductButton'의 상태를 disabled 합니다.
+        document.getElementById("saveProductButton").disabled = true;
+
+        // 'optionForm'의 input 필드를 찾습니다.
+        var optionInputs = document.querySelectorAll('#optionForm input');
+        optionInputs.forEach(function(input) {
+        // 'optionForm'의 input 필드의 disabled 상태를 해제합니다.
+        input.disabled = false;
+    });
+        // 'saveOptionButton`의 disabled 상태를 해제합니다.
+        document.getElementById("saveOptionButton").disabled = false;
     }
 
     const resetProductForm = () => {
-    // 'save' 버튼의 disabled 상태를 해제합니다.
-    document.getElementById("saveButton").disabled = false;
+    // 'saveProductButton' 버튼의 disabled 상태를 해제합니다.
+    document.getElementById("saveProductButton").disabled = false;
+    // 'saveOptionButton' 버튼을 disabled 합니다.
+    document.getElementById("saveOptionButton").disabled = true;
 
     // #productForm 안의 모든 input과 textarea 요소들의 disabled 상태를 해제합니다.
     const inputs = document.querySelectorAll('#productForm input, #productForm textarea');
@@ -148,8 +159,16 @@
         input.disabled = false;
     });
 
-    // #productForm 안의 입력 필드를 초기화합니다.
+    // #optionForm 안의 모든 input과 textarea 요소들의 disabled 합니다.
+    const optionInputs = document.querySelectorAll('#optionForm input');
+    optionInputs.forEach(input => {
+        input.disabled = true;
+    });
+
+
+    // #productForm, #optionForm 안의 입력 필드를 초기화합니다.
     document.getElementById("productForm").reset();
+    document.getElementById("optionForm").reset();
 
     // 이미지 미리보기를 모두 제거합니다.
     document.getElementById("selected-files").innerHTML = '';
