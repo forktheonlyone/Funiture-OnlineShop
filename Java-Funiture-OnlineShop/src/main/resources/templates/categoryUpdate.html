@@ -11,7 +11,7 @@
 <!-- 카테고리 목록 콤보 박스 -->
 <label for="selectedCategory1">대분류 카테고리 선택:</label>
 <select id="selectedCategory1" name="superCategory_id" onchange="callSons('selectedCategory1','selectedCategory2')" required>
-    <option value="0" disabled>없음</option>
+    <option value="0">없음</option>
     <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.categoryName}"></option>
 </select><br>
 
@@ -93,9 +93,13 @@
         if (selectedOption2 === "0") {
             categoryId = selectedOption1;
         }
+        if (categoryId === "0") {
+            alert("분류를 선택해 주십시오");
+            return 0;
+        }
 
         try {
-            const categoryName = document.getElementById("categoryName").value;
+            const categoryName = document.getElementById("selectedValueInput").value;
             const token = getCookie("token");
 
             $.ajax({
@@ -124,20 +128,26 @@
         }
     }
 
-    function updateCategory() {
-        const selectElement = document.getElementById('categorySelect');
-        const selectedOption = selectElement.options[selectElement.selectedIndex];
-        const categoryId = selectedOption.dataset.id;
-        const superCategoryId = selectedOption.dataset.superid;
-        const categoryName = document.getElementById("selectedValueInput").value;
-
-
-    }
-
     function deleteCategory() {
-        const selectElement = document.getElementById('categorySelect');
-        const selectedOption = selectElement.options[selectElement.selectedIndex];
-        const categoryId = selectedOption.value;
+        const option1 = document.getElementById("selectedCategory1");
+        const option2 = document.getElementById("selectedCategory2");
+        const option3 = document.getElementById("selectedCategory3");
+        const selectedOption1 = option1.value;
+        const selectedOption2 = option2.value;
+        const selectedOption3 = option3.value;
+
+        let categoryId = selectedOption3;
+
+        if (selectedOption3 === "0") {
+            categoryId = selectedOption2;
+        }
+        if (selectedOption2 === "0") {
+            categoryId = selectedOption1;
+        }
+        if (categoryId === "0") {
+            alert("분류를 선택해 주십시오");
+            return 0;
+        }
 
         $.ajax({
             // 요청방식: post, 요청주소: /category/delete/{id}
