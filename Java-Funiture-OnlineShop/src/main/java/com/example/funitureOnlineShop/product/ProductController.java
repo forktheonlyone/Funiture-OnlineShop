@@ -20,10 +20,18 @@ public class ProductController {
     // 상품 생성
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/product/save")
-    public ResponseEntity<?> save(ProductResponse.SaveByIdDTO productResponseFind,
-                                  @RequestParam MultipartFile[] files) throws IOException {
-        productService.save(productResponseFind, files);
-        ApiUtils.ApiResult<?> apiResult = ApiUtils.success(productResponseFind);
+    public ResponseEntity<ApiUtils.ApiResult<Long>> save(ProductResponse.SaveByIdDTO productResponseFind,
+                                                         @RequestParam MultipartFile[] files) throws IOException {
+        // 상품 저장 후 생성된 Product 객체를 반환받습니다.
+        Product product = productService.save(productResponseFind, files);
+
+        // Product 객체로부터 ID를 추출합니다.
+        Long productId = product.getId();
+
+        // ApiUtils의 success 메서드를 사용하여 성공 응답을 생성합니다.
+        ApiUtils.ApiResult<Long> apiResult = ApiUtils.success(productId);
+
+        // 생성된 응답을 클라이언트로 반환합니다.
         return ResponseEntity.ok(apiResult);
     }
 

@@ -110,7 +110,7 @@
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': token
+                        'Authorization': "Bearer " + token
                     }
                 });
                 const result = await response.json();
@@ -124,7 +124,7 @@
                     alert("로그아웃에 실패했습니다.\n잠시 후 다시 시도해주세요.");
                 }
             } catch (error) {
-               console.error('Error:', error);
+                console.error('Error:', error);
             }
         }
 
@@ -133,10 +133,10 @@
         });
 
         function getCookie(name) {
-            var cookieName = name + "=";
-            var cookies = document.cookie.split(';');
-            for (var i = 0; i < cookies.length; i++) {
-                var cookie = cookies[i].trim();
+            const cookieName = name + "=";
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
                 if (cookie.indexOf(cookieName) === 0) {
                     return cookie.substring(cookieName.length, cookie.length);
                 }
@@ -144,19 +144,48 @@
             return null;
         }
 
+        async function isAdmin() {
+            try {
+                const token = getCookie("token");
+                const response = await fetch('/user/info', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': token
+                    }
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    if (result.response.roles[0] === "ROLE_ADMIN") {
+                        showAdmin();
+                    }
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
         const checkButtonVisibility = () => {
-            var logined = getCookie("token");
+            const logined = getCookie("token");
             if (logined != null) {
                 // 버튼을 보여주는 로직 호출
                 showButtons();
+                isAdmin();
             }
         }
 
         const showButtons = () => {
             // 버튼을 보여주는 로직 작성
-            var buttonsContainer = document.getElementById("loginButtons");
+            let buttonsContainer = document.getElementById("loginButtons");
             buttonsContainer.style.display = "none";
-            var buttonsContainer = document.getElementById("logoutButtons");
+            buttonsContainer = document.getElementById("logoutButtons");
+            buttonsContainer.style.display = "block";
+        }
+
+        const showAdmin = () => {
+            // 버튼을 보여주는 로직 작성
+            const buttonsContainer = document.getElementById("adminButton");
             buttonsContainer.style.display = "block";
         }
     </script>
@@ -180,8 +209,11 @@
 <section>
     <nav>
         <button class="btn" onclick="location.href='/productAll'">상품 페이지(준비중)</button>
-        <button class="btn" onclick="location.href='/notice'">게시판</button>
+        <button class="btn" onclick="location.href='/board/'">게시판</button>
     </nav>
+    <span id="adminButton" style="display: none;">
+        <button class="btn" onclick="location.href='/adminPage'">관리자 페이지</button>
+    </span>
 </section>
 
 <section>

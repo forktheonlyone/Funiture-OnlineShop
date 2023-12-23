@@ -1,6 +1,5 @@
 package com.example.funitureOnlineShop.category;
 
-import com.example.funitureOnlineShop.fileProduct.FileProduct;
 import com.example.funitureOnlineShop.product.Product;
 import lombok.Builder;
 import lombok.Getter;
