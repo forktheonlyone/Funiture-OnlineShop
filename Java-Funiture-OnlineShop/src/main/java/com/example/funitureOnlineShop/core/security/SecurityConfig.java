@@ -95,8 +95,10 @@ public class SecurityConfig {
 
         // 10. 인증, 권한 필터 설정
         http.authorizeRequests(
-                authorize -> authorize.antMatchers("/carts/**", "/options/**", "/orders/**").authenticated()
-                        .antMatchers("/admin/**")
+                authorize -> authorize.antMatchers(
+                        "/carts/**", "/options/**", "/orders/**")
+                        .authenticated()
+                        .antMatchers("/product/save", "/admin/**")
                         .access("hasRole('ADMIN')")
                         .anyRequest().permitAll()
         );
