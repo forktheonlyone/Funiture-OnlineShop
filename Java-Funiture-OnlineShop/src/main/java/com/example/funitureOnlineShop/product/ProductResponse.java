@@ -116,15 +116,6 @@ public class ProductResponse {
         private Long deliveryFee;
 
         private Long categoryId;
-
-        public Product toEntity() {
-            return Product.builder()
-                    .productName(productName)
-                    .description(description)
-                    .price(price)
-                    .deliveryFee(deliveryFee)
-                    .build();
-        }
     }
 
     @Getter
