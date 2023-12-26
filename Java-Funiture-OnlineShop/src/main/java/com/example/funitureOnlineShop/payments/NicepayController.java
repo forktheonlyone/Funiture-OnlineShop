@@ -1,6 +1,15 @@
 package com.example.funitureOnlineShop.payments;
 
+import com.example.funitureOnlineShop.cart.Cart;
+import com.example.funitureOnlineShop.cart.CartService;
+import com.example.funitureOnlineShop.option.Option;
 import com.example.funitureOnlineShop.option.OptionService;
+import com.example.funitureOnlineShop.order.Order;
+import com.example.funitureOnlineShop.order.OrderRepository;
+import com.example.funitureOnlineShop.order.OrderService;
+import com.example.funitureOnlineShop.orderCheck.OrderCheck;
+import com.example.funitureOnlineShop.user.User;
+import com.example.funitureOnlineShop.user.UserService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +30,10 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class NicepayController {
     private final OptionService optionService;
+    private final OrderService orderService;
+    private final OrderRepository orderRepository;
+    private final UserService userService;
+    private final CartService cartService;
 
     private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -66,7 +79,13 @@ public class NicepayController {
         System.out.println(responseNode.toPrettyString());
 
         if (resultCode.equalsIgnoreCase("0000")) {
-            // 결제 성공시 결제 후 옵션서비스에서 재고 갱신 로직 - optionService
+
+            Order order = orderService.findOrderByTid(tid);
+            User user = order.getUser();
+            orderService.deductStockOnOrder(order);
+            // cartService.deleteCartList(,user);
+
+            // 결제 성공시 결제 후 옵션서비스에서 재고 갱신 로직 - optionService - 완료
             // 결제 성공시 오더체크에서 주문 정보 저장 로직 -OrderCheck
             // 결제 성공시 장바구니 비우기 - CartService
             // 기타 결제 성공 비즈니스 로직
