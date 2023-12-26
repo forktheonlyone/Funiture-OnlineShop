@@ -86,10 +86,6 @@ public class OrderService {
     }
 
     // ** 페이먼트 관련 기능 추가 ( 작업 : 이아현)
-    public Order findOrderByTid(String tid) {
-        return orderRepository.findByTid(tid);
-    }
-    // ** 페이먼트 관련 기능 추가 ( 작업 : 이아현)
     @Transactional
     public void deductStockOnOrder(Order order) {
         for (Item orderItem : order.getOrderItems()) {

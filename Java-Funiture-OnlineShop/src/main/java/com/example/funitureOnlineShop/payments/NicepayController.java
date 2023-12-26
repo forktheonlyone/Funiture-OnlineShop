@@ -7,6 +7,7 @@ import com.example.funitureOnlineShop.option.OptionService;
 import com.example.funitureOnlineShop.order.Order;
 import com.example.funitureOnlineShop.order.OrderRepository;
 import com.example.funitureOnlineShop.order.OrderService;
+import com.example.funitureOnlineShop.order.item.Item;
 import com.example.funitureOnlineShop.orderCheck.OrderCheck;
 import com.example.funitureOnlineShop.user.User;
 import com.example.funitureOnlineShop.user.UserService;
@@ -21,10 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Controller
 @RequiredArgsConstructor
@@ -38,8 +36,8 @@ public class NicepayController {
     private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    private final String CLIENT_ID = "S2_302df305816d49c2bbb1156e5a10527a";
-    private final String SECRET_KEY = "c88edc6691ae4acfaaf0ad7e739581da";
+    private final String CLIENT_ID = "1234567890";
+    private final String SECRET_KEY = "57e4b065ef904b56b9247eda037ef064";
 
     @RequestMapping("/")
     public String indexDemo(Model model){
@@ -79,10 +77,9 @@ public class NicepayController {
         System.out.println(responseNode.toPrettyString());
 
         if (resultCode.equalsIgnoreCase("0000")) {
-
-            Order order = orderService.findOrderByTid(tid);
-            User user = order.getUser();
-            orderService.deductStockOnOrder(order);
+            //Order order = orderService.findById(id);
+            //User user = order.getUser();
+            //orderService.deductStockOnOrder(order);
             // cartService.deleteCartList(,user);
 
             // 결제 성공시 결제 후 옵션서비스에서 재고 갱신 로직 - optionService - 완료
