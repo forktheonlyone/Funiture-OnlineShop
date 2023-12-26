@@ -1,8 +1,4 @@
 server:
-  servlet:
-    encoding:
-      charset: utf-8
-      force: true
   port: 8080
 
 spring:
@@ -13,9 +9,9 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3307/green?serverTimezone=Asia/Seoul&charatorEncoding=UTF-8
+    url: jdbc:mysql://localhost:3306/green?useSSL=false&serverTimezone=UTC&characterEncoding=UTF-8&allowPublicKeyRetrieval=true&useSSL=false
     username: root
-    password: 1234
+    password:
   thymeleaf:
     cache: false
   jpa:
@@ -30,9 +26,10 @@ spring:
           import_files: classpath:db/data.sql
         format_sql: true
       default_batch_fetch_size: 100
-  output:
-    ansi:
-      enabled: always
+    output:
+      ansi:
+        enabled: always
   h2:
     console:
       enabled: true
+
