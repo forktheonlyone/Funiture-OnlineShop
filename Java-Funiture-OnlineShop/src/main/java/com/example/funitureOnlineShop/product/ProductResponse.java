@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -89,9 +90,9 @@ public class ProductResponse {
 
         private List<OptionDTO> optionList;
 
-        private FileProductResponse fileProduct;
+        private List<FileProductResponse> fileProductList;
 
-        public FindByIdDTO(Product product, List<Option> optionList, FileProductResponse fileProduct) {
+        public FindByIdDTO(Product product, List<Option> optionList, List<FileProductResponse> fileProductList) {
             this.id = product.getId();
             this.productName = product.getProductName();
             this.description = product.getDescription();
@@ -100,7 +101,7 @@ public class ProductResponse {
             this.categoryId = product.getCategory().getId();
             this.optionList = optionList.stream().map(OptionDTO::new)
                     .collect(Collectors.toList());
-            this.fileProduct = fileProduct;
+            this.fileProductList = (fileProductList != null) ? fileProductList : new ArrayList<>();
         }
     }
 
