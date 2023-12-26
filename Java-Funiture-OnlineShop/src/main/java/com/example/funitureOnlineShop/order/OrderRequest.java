@@ -1,7 +1,13 @@
 package com.example.funitureOnlineShop.order;
 
+import com.example.funitureOnlineShop.Board.Board;
+import com.example.funitureOnlineShop.Board.BoardDTO;
+import com.example.funitureOnlineShop.category.Category;
+import com.example.funitureOnlineShop.order.item.Item;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
 
@@ -9,7 +15,12 @@ import java.util.List;
 @NoArgsConstructor
 public class OrderRequest {
 
+    private Long id;
+
     private Long userId;
+
+    private Long cartId;
+
     private List<OrderItemRequest> items;
 
     @Data
@@ -20,6 +31,22 @@ public class OrderRequest {
         public OrderItemRequest(Long optionId, Long quantity) {
             this.optionId = optionId;
             this.quantity = quantity;
+        }
+    }
+
+    @Getter
+    @Setter
+    public static class OrderDTO{
+        private Long id;
+
+        private Long userId;
+
+        private Long cartId;
+
+        public OrderDTO(Order order){
+            this.id = order.getId();
+            this.userId = order.getUser().getId();
+            this.cartId = order.getCart().getId();
         }
     }
 }
