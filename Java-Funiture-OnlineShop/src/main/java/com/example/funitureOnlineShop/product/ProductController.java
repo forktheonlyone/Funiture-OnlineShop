@@ -1,21 +1,31 @@
 package com.example.funitureOnlineShop.product;
 
 import com.example.funitureOnlineShop.core.utils.ApiUtils;
+import com.example.funitureOnlineShop.fileProduct.FileProduct;
+import com.example.funitureOnlineShop.fileProduct.FileProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
 
 @RequiredArgsConstructor
 @RestController
 public class ProductController {
 
     private final ProductService productService;
+    private final FileProductRepository fileProductRepository;
+    private final String filePath = "C:/Users/soone/Desktop/FunitureOnlineShopFiles/";
 
     // 상품 생성
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -53,6 +63,7 @@ public class ProductController {
         return ResponseEntity.ok(apiResult);
     }
 
+    /*
     // 상품 수정
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/product/{id}")
@@ -62,6 +73,8 @@ public class ProductController {
         return ResponseEntity.ok(apiResult);
     }
 
+     */
+
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/product/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id){
@@ -69,4 +82,27 @@ public class ProductController {
         ApiUtils.ApiResult<?> apiResult = ApiUtils.success(id);
         return ResponseEntity.ok(apiResult);
     }
+
+    @GetMapping("/product/{id}/image")
+    public ResponseEntity<byte[]> getImage(@PathVariable("id") Long id) throws IOException {
+        FileProduct fileProduct = fileProductRepository.findByProductId(id).get(0);
+
+        // UUID와 originalFileName을 결합하여 파일을 찾습니다.
+        String fileName = fileProduct.getUuid() + fileProduct.getFileName();
+        File imgFile = new File(filePath + fileName);
+
+        if (!imgFile.exists() || !imgFile.isFile()) {
+            throw new FileNotFoundException("File not found: " + imgFile.getAbsolutePath());
+        }
+
+        byte[] imageBytes = Files.readAllBytes(imgFile.toPath());
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.IMAGE_JPEG);
+        headers.setContentLength(imageBytes.length);
+
+        return new ResponseEntity<>(imageBytes, headers, HttpStatus.OK);
+    }
+
+
+
 }

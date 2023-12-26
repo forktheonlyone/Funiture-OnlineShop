@@ -6,3 +6,9 @@ insert into category (id, category_name, super_category_id) values (2, '책상',
 insert into category (id, category_name, super_category_id) values (3, '유리 책상', 2);
 insert into category (id, category_name, super_category_id) values (4, '참나무 책상', 2);
 insert into category (id, category_name, super_category_id) values (5, '등나무 책상', 2);
+
+insert into product (id, delivery_fee, description, price, product_name, category_id) values (1, 500, '이거슨 레스비 책상이여', 1000, '레쓰비 책상', 3)
+
+insert into option_tb (id, option_name, price, stock_quantity, product_id) values (1, '마일드커피', 1500, 60, 1)
+
+insert into file_product (id, file_name, file_path, file_size, file_type, uuid, product_id) values (1, '레쓰비.jpg', 'C:/Users/soone/Desktop/FunitureOnlineShopFiles/', 52144, '.jpg', 'e491486f-66ea-4a74-8c74-84b52f38e2c9', 1)

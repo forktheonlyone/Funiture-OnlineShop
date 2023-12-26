@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,13 +19,15 @@ public class ProductResponse {
         private Long id;
         private String optionName;
         private Long price;
-        private Long quantity;
+        private Long stockQuantity;
+        private Long productId;
 
         public OptionDTO(Option option) {
             this.id = option.getId();
             this.optionName = option.getOptionName();
             this.price = option.getPrice();
-            this.quantity = option.getStockQuantity();
+            this.stockQuantity = option.getStockQuantity();
+            this.productId = option.getProduct().getId();
         }
     }
 
@@ -87,9 +90,9 @@ public class ProductResponse {
 
         private List<OptionDTO> optionList;
 
-        private FileProductResponse fileProduct;
+        private List<FileProductResponse> fileProductList;
 
-        public FindByIdDTO(Product product, List<Option> optionList, FileProductResponse fileProduct) {
+        public FindByIdDTO(Product product, List<Option> optionList, List<FileProductResponse> fileProductList) {
             this.id = product.getId();
             this.productName = product.getProductName();
             this.description = product.getDescription();
@@ -98,7 +101,7 @@ public class ProductResponse {
             this.categoryId = product.getCategory().getId();
             this.optionList = optionList.stream().map(OptionDTO::new)
                     .collect(Collectors.toList());
-            this.fileProduct = fileProduct;
+            this.fileProductList = (fileProductList != null) ? fileProductList : new ArrayList<>();
         }
     }
 
@@ -116,15 +119,6 @@ public class ProductResponse {
         private Long deliveryFee;
 
         private Long categoryId;
-
-        public Product toEntity() {
-            return Product.builder()
-                    .productName(productName)
-                    .description(description)
-                    .price(price)
-                    .deliveryFee(deliveryFee)
-                    .build();
-        }
     }
 
     @Getter

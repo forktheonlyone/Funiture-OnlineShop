@@ -2,6 +2,7 @@ package com.example.funitureOnlineShop.product;
 
 import com.example.funitureOnlineShop.category.Category;
 import com.example.funitureOnlineShop.fileProduct.FileProduct;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,6 +36,7 @@ public class Product {
     private Category category;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<FileProduct> files =  new ArrayList<>();
 
     @Builder

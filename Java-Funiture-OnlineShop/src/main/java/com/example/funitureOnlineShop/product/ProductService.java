@@ -1,5 +1,7 @@
 package com.example.funitureOnlineShop.product;
 
+import com.example.funitureOnlineShop.category.Category;
+import com.example.funitureOnlineShop.category.CategoryRepository;
 import com.example.funitureOnlineShop.core.error.exception.Exception400;
 import com.example.funitureOnlineShop.core.error.exception.Exception404;
 import com.example.funitureOnlineShop.fileProduct.FileProduct;
@@ -14,12 +16,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -31,6 +35,7 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final OptionRepository optionRepository;
     private final FileProductRepository fileProductRepository;
+    private final CategoryRepository categoryRepository;
 
     // ------------<파일경로>-------------
     // !!!!!!!!!! 꼭 반드시 테스트시 파일 경로 특히 사용자명 확인할것 !!!!!!!!!!
@@ -38,8 +43,19 @@ public class ProductService {
 
     @Transactional
     public Product save(ProductResponse.SaveByIdDTO saveByIdDTO, MultipartFile[] files) throws IOException {
+        // categoryId를 사용하여 Category 엔티티를 찾음
+        Category category = categoryRepository.findById(saveByIdDTO.getCategoryId())
+                .orElseThrow( () -> new Exception404("해당 카테고리가 존재하지 않습니다."));
+
+
         // 상품 엔티티 생성 및 카테고리 할당
-        Product productEntity = saveByIdDTO.toEntity();
+        Product productEntity = Product.builder()
+                .productName(saveByIdDTO.getProductName())
+                .description(saveByIdDTO.getDescription())
+                .price(saveByIdDTO.getPrice())
+                .deliveryFee(saveByIdDTO.getDeliveryFee())
+                .category(category) // 찾은 Category 설정
+                .build();
 
         // 상품 엔티티 저장
         Product savedProduct = productRepository.save(productEntity);
@@ -62,11 +78,12 @@ public class ProductService {
                     Files.createDirectories(uploadPath);
                 }
 
-                String path = filePath + uuid + originalFileName;
-                file.transferTo(new File(path));
+                String savedFileName = uuid + originalFileName;
+                String savedFilePath = Paths.get(filePath, savedFileName).toString();
+                file.transferTo(new File(savedFilePath));
 
                 FileProduct fileProduct = FileProduct.builder()
-                        .filePath(filePath)
+                        .filePath(savedFilePath)
                         .fileName(originalFileName)
                         .uuid(uuid)
                         .fileType(formatType)
@@ -81,6 +98,7 @@ public class ProductService {
         return savedProduct;
     }
 
+    /*
     // 상품 수정 서비스
     @Transactional
     public ProductResponse.FindByIdDTO update(Long id, ProductResponse.FindByIdDTO findByIdDTO) {
@@ -94,7 +112,7 @@ public class ProductService {
         List<Option> optionList = optionRepository.findByProductId(product.getId());
 
         // 상품 id에 따른 FileProduct를 찾는 코드
-        Optional<FileProduct> fileProductOpt = fileProductRepository.findByProductId(id);
+        List<FileProduct> fileProductOpt = fileProductRepository.findByProductId(id);
         FileProductResponse fileProductResponse = null; // 초기값을 null로 설정
         if (fileProductOpt.isPresent()) {
             FileProduct fileProduct = fileProductOpt.get();
@@ -104,6 +122,8 @@ public class ProductService {
         }// 수정된 제품 정보를 FindByIdDTO 객체로 변환하여 반환
         return new ProductResponse.FindByIdDTO(product, optionList, fileProductResponse);
     }
+
+     */
 
     // 삭제 서비스
     @Transactional
@@ -142,20 +162,30 @@ public class ProductService {
                 ));
     }
 
-    // ID로 상품검색 서비스
+
+    @Transactional
     public ProductResponse.FindByIdDTO findById(Long id) {
         Product product = getProduct(id);
         List<Option> optionList = optionRepository.findByProductId(product.getId());
 
-        // 상품 id에 따른 FileProduct를 찾는 코드
-        Optional<FileProduct> fileProductOpt = fileProductRepository.findByProductId(id);
-        FileProductResponse fileProductResponse = null; // 초기값을 null로 설정
-        if (fileProductOpt.isPresent()) {
-            FileProduct fileProduct = fileProductOpt.get();
-            fileProductResponse = new FileProductResponse();
-            fileProductResponse.setFilePath(fileProduct.getFilePath());
+        // 상품 id에 따른 FileProduct들을 찾는 코드
+        List<FileProduct> fileProductList = fileProductRepository.findByProductId(id);
+        List<FileProductResponse> fileProductResponseList = new ArrayList<>(); // 리스트 초기화
+
+        // 각 FileProduct에 대해 FileProductResponse를 생성하고 리스트에 추가합니다.
+        for (FileProduct fileProduct : fileProductList) {
+            FileProductResponse fileProductResponse = new FileProductResponse();
+            String fullFilePath = ServletUriComponentsBuilder.fromCurrentContextPath()
+                    .path("/product/")
+                    .path(fileProduct.getProduct().getId().toString())
+                    .path("/image")
+                    .toUriString();
+            fileProductResponse.setFilePath(fullFilePath);
             fileProductResponse.setFileName(fileProduct.getFileName());
+
+            fileProductResponseList.add(fileProductResponse); // 리스트에 추가
         }
-            return new ProductResponse.FindByIdDTO(product, optionList, fileProductResponse);
+
+        return new ProductResponse.FindByIdDTO(product, optionList, fileProductResponseList);
     }
 }
