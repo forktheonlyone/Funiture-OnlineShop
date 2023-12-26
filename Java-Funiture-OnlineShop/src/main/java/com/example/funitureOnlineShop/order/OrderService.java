@@ -4,6 +4,7 @@ import com.example.funitureOnlineShop.cart.Cart;
 import com.example.funitureOnlineShop.cart.CartRepository;
 import com.example.funitureOnlineShop.core.error.exception.Exception404;
 import com.example.funitureOnlineShop.core.error.exception.Exception500;
+import com.example.funitureOnlineShop.option.OptionService;
 import com.example.funitureOnlineShop.user.User;
 import com.example.funitureOnlineShop.order.item.Item;
 import com.example.funitureOnlineShop.order.item.ItemRepository;
@@ -21,6 +22,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final CartRepository cartRepository;
     private final ItemRepository itemRepository;
+    private final OptionService optionService;
     // 결제 시도시 작동
     @Transactional
     public OrderResponse.FindByIdDTO save(User user) {
@@ -82,4 +84,18 @@ public class OrderService {
             throw new Exception500("주문 및 주문 항목 삭제 중 오류가 발생했습니다: " + e.getMessage());
         }
     }
+
+    // ** 페이먼트 관련 기능 추가 ( 작업 : 이아현)
+    public Order findOrderByTid(String tid) {
+        return orderRepository.findByTid(tid);
+    }
+    // ** 페이먼트 관련 기능 추가 ( 작업 : 이아현)
+    @Transactional
+    public void deductStockOnOrder(Order order) {
+        for (Item orderItem : order.getOrderItems()) {
+            Long optionId = orderItem.getOption().getId();
+            optionService.deductStock(optionId, orderItem);
+        }
+    }
+
 }

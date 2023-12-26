@@ -105,10 +105,7 @@ public class SecurityConfig {
                 authorize -> authorize.antMatchers(
                         "/carts/**", "/options/**", "/orders/**")
                         .authenticated()
-                        .antMatchers("/product/save", "/admin/**")//.authenticated()
-                        //.antMatchers("/board/update", "/admin/**").authenticated()
-                        //.antMatchers("/board/save", "/admin/**").authenticated()
-                        //.antMatchers("/board/delete/{id}", "/admin/**")
+                        .antMatchers("/product/save", "/admin/**")
                         .access("hasRole('ROLE_ADMIN')")
                         .anyRequest().permitAll()
         );
