@@ -2,11 +2,13 @@ package com.example.funitureOnlineShop.orderCheck;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 public class OrderCheckDto {
     // PK
     private Long id;
@@ -18,6 +20,8 @@ public class OrderCheckDto {
     private String productName;
     // 옵션명
     private String optionName;
+    // 가격
+    private Long price;
     // 옵션 id
     private Long optionId;
     // 회원 id
@@ -29,7 +33,15 @@ public class OrderCheckDto {
                 orderCheck.getQuantity(),
                 orderCheck.getOption().getProduct().getProductName(),
                 orderCheck.getOption().getOptionName(),
+                orderCheck.getOption().getPrice(),
                 orderCheck.getOption().getId(),
                 orderCheck.getUser().getId());
+    }
+    public OrderCheck toEntity(){
+        return OrderCheck.builder()
+                .tid(tid)
+                .quantity(quantity)
+                .price(price)
+                .build();
     }
 }
