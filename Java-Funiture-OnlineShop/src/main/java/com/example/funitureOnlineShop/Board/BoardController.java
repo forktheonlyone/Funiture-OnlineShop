@@ -78,7 +78,7 @@ public class BoardController {
                          @ModelAttribute BoardDTO boardDTO,
                          @RequestParam MultipartFile[] files) throws IOException {
         Long userId = customUserDetails.getUser().getId();
-        boardService.update(boardDTO,files);
+        boardService.update(userId, boardDTO,files);
         return "redirect:/board/";
     }
     // CRUD Read /"detail" 템플릿을 렌더링하여 반환

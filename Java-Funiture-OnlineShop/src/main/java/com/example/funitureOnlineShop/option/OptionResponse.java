@@ -14,7 +14,7 @@ public class OptionResponse {
 
     private String optionName;
 
-    private Long Price;
+    private Long price;
 
     private Long stockQuantity;
 
@@ -28,7 +28,7 @@ public class OptionResponse {
 
         private String optionName;
 
-        private Long Price;
+        private Long price;
 
         private Long stockQuantity;
 
@@ -36,14 +36,14 @@ public class OptionResponse {
             this.id = option.getId();
             this.productId = option.getProduct().getId();
             this.optionName = option.getOptionName();
-            this.Price = option.getPrice();
+            this.price = option.getPrice();
             this.stockQuantity = option.getStockQuantity();
         }
 
         public Option toEntity() {
             return Option.builder()
                     .optionName(optionName)
-                    .price(Price)
+                    .price(price)
                     .stockQuantity(stockQuantity)
                     .build();
         }
@@ -58,7 +58,7 @@ public class OptionResponse {
 
         private String optionName;
 
-        private Long Price;
+        private Long price;
 
         private Long stockQuantity;
 
@@ -66,14 +66,14 @@ public class OptionResponse {
             this.id = option.getId();
             this.productId = option.getProduct().getId();
             this.optionName = option.getOptionName();
-            this.Price = option.getPrice();
+            this.price = option.getPrice();
             this.stockQuantity = option.getStockQuantity();
         }
 
         public Option toEntity(){
             return Option.builder()
                     .optionName(optionName)
-                    .price(Price)
+                    .price(price)
                     .stockQuantity(stockQuantity)
                     .build();
         }
