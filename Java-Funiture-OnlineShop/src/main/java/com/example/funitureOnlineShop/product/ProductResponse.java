@@ -18,13 +18,15 @@ public class ProductResponse {
         private Long id;
         private String optionName;
         private Long price;
-        private Long quantity;
+        private Long stockQuantity;
+        private Long productId;
 
         public OptionDTO(Option option) {
             this.id = option.getId();
             this.optionName = option.getOptionName();
             this.price = option.getPrice();
-            this.quantity = option.getStockQuantity();
+            this.stockQuantity = option.getStockQuantity();
+            this.productId = option.getProduct().getId();
         }
     }
 
