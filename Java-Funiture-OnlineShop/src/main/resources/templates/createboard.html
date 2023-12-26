@@ -44,9 +44,7 @@
             margin-bottom: 5px;
         }
 
-        input[type="text"],
-        textarea,
-        select {
+        input[type="text"], textarea, select {
             width: 100%;
             padding: 10px;
             border: 1px solid #ccc;
@@ -74,11 +72,6 @@
         input[type="submit"]:hover {
             background-color: #3367d6;
         }
-
-        .message {
-            margin-top: 10px;
-            color: green;
-        }
     </style>
 </head>
 <body>
@@ -87,32 +80,63 @@
     <h1>Board Form</h1>
 </header>
 
-<label for="title">Title:</label>
-<input type="text" name="title" id="title" required>
-
-<label for="contents">Contents:</label>
-<textarea name="contents" id="contents" cols="30" rows="5" required></textarea>
-
-<!-- 추가된 부분: 파일 업로드 input -->
-<label for="fileInput">Attach File:</label>
-<input type="file" name="files" id="fileInput" multiple>
-
-<button onclick="submitForm()">Submit</button>
-
-<div class="message" id="message"></div>
+<form id="boardForm" enctype="multipart/form-data">
+    <h2>게시글 작성</h2>
+    <div class="form-group">
+        <div class="title_area">
+            <label>제목</label>
+        </div>
+        <div class="option_area">
+            <input type="text" id="title" name="title" required>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="title_area">
+            <label>내용</label>
+        </div>
+        <div class="option_area">
+            <textarea name="contents" id="contents" cols="30" rows="10"></textarea>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="title_area">
+            <label>첨부 파일</label>
+        </div>
+        <div class="option_area">
+            <label class="button_upload">
+                <span class="blind"></span>
+                <input class="blind" type="file" id="files" name="files" multiple onchange="updateSelectedFiles(event)">
+            </label>
+            <div id="selected-files"></div>
+        </div>
+    </div>
+    <button type="button" class="file-upload" onclick="submitForm()">글 작성</button>
+</form>
 
 <footer>
     <p>&copy; 2023 Your Website</p>
 </footer>
 
-<script th:inline="javascript">
-    const fileInput = document.querySelector("input[type='file']");
+<script>
+    function updateSelectedFiles(event) {
+        const files = event.target.files;
+        const selectedFilesContainer = document.getElementById('selected-files');
+        selectedFilesContainer.innerHTML = '';
+
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const fileName = file.name;
+            const fileItem = document.createElement('div');
+            fileItem.textContent = fileName;
+            selectedFilesContainer.appendChild(fileItem);
+        }
+    }
 
     function getCookie(name) {
-        var cookieName = name + "=";
-        var cookies = document.cookie.split(';');
-        for (var i = 0; i < cookies.length; i++) {
-            var cookie = cookies[i].trim();
+        const cookieName = name + "=";
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
             if (cookie.indexOf(cookieName) === 0) {
                 return cookie.substring(cookieName.length, cookie.length);
             }
@@ -121,43 +145,35 @@
     }
 
     async function submitForm() {
+        const form = document.getElementById('boardForm');
+        const formData = new FormData(form);
+        const token = getCookie('token');
+
+        for (let entry of formData.entries()) {
+            console.log(entry[0] + ': ' + entry[1]);
+        }
+
         try {
-            var tokenFromPreviousPage = getCookie('token');
-            console.log('Token from cookie:', tokenFromPreviousPage);
-
-
-        const title = document.getElementById('title').value;
-        const contents = document.getElementById('contents').value;
-        const selectedFile = fileInput.files[0];
-
-        // 파일이 없는 경우 빈 파일 생성
-        const emptyFile = new File([""], "empty_file.txt", { type: "text/plain" });
-
-        const formData = new FormData();
-        formData.append('title', title);
-        formData.append('contents', contents);
-        formData.append('files', selectedFile || emptyFile);
-
-
-            const requestOptions = {
+            const response = await fetch('/board/save',{
                 method: 'POST',
                 body: formData,
                 headers: {
-                    'Authorization': tokenFromPreviousPage
+                    'Authorization': 'Bearer ' + token
                 }
-            };
+            });
 
-            const response = await fetch('/board/save', requestOptions);
-            const result = await response.json();
-
+            const result = response.json();
             console.log(result);
-
-                alert("게시물이 성공적으로 생성되었습니다!");
-                location.href = '/board/';
-
+            if (result.success) {
+                console.log(result);
+                alert("게시글이 성공적으로 저장되었습니다.");
+                location.href="/boardPage";
+            } else {
+                console.log(result.error);
+                alert("게시물 생성 중 오류가 발생했습니다.\n잠시 후 다시 시도해주세요.");
+            }
         } catch (error) {
             console.error('Error:', error);
-            alert("게시물 생성 중 오류가 발생했습니다.\n잠시 후 다시 시도해주세요.");
         }
     }
 </script>
