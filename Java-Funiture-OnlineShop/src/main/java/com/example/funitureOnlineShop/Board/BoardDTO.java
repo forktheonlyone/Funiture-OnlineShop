@@ -25,7 +25,6 @@ public class BoardDTO {
     private LocalDateTime updateTime;
 
 
-
     public Board toEntity(){
         return Board.builder()
                 .id(id)

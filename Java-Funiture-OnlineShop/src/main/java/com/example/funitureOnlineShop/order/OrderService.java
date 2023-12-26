@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -62,6 +63,7 @@ public class OrderService {
     }
 
 
+
     public OrderResponse.FindByIdDTO findById(Long id) {
         Order order = orderRepository.findById(id).orElseThrow(
             () -> new Exception404("해당주문 내역을 찾을 수 없습니다."+ id));
@@ -92,6 +94,18 @@ public class OrderService {
             Long optionId = orderItem.getOption().getId();
             optionService.deductStock(optionId, orderItem);
         }
+    }
+    @Transactional
+    public void restoreStockOnOrderCancel(Order order) {
+        for (Item orderItem : order.getOrderItems()) {
+            Long optionId = orderItem.getOption().getId();
+            optionService.restoreStock(optionId, orderItem);
+        }
+    }
+
+    public Order findByOrderId(Long id){
+        return orderRepository.findById(id)
+                .orElseThrow(() -> new Exception500("주문 ID를 찾을 수 없습니다: " + id));
     }
 
 }

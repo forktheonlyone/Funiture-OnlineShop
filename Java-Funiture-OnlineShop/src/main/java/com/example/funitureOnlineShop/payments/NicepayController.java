@@ -1,16 +1,13 @@
 package com.example.funitureOnlineShop.payments;
 
-import com.example.funitureOnlineShop.cart.Cart;
-import com.example.funitureOnlineShop.cart.CartService;
-import com.example.funitureOnlineShop.option.Option;
-import com.example.funitureOnlineShop.option.OptionService;
+import com.example.funitureOnlineShop.core.error.exception.Exception500;
 import com.example.funitureOnlineShop.order.Order;
-import com.example.funitureOnlineShop.order.OrderRepository;
+import com.example.funitureOnlineShop.order.OrderRequest;
 import com.example.funitureOnlineShop.order.OrderService;
-import com.example.funitureOnlineShop.order.item.Item;
 import com.example.funitureOnlineShop.orderCheck.OrderCheck;
+import com.example.funitureOnlineShop.orderCheck.OrderCheckDto;
+import com.example.funitureOnlineShop.orderCheck.OrderCheckRepository;
 import com.example.funitureOnlineShop.user.User;
-import com.example.funitureOnlineShop.user.UserService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -27,11 +24,8 @@ import java.util.*;
 @Controller
 @RequiredArgsConstructor
 public class NicepayController {
-    private final OptionService optionService;
     private final OrderService orderService;
-    private final OrderRepository orderRepository;
-    private final UserService userService;
-    private final CartService cartService;
+    private final OrderCheckRepository orderCheckRepository;
 
     private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -54,6 +48,7 @@ public class NicepayController {
 
     @RequestMapping("/serverAuth")
     public String requestPayment(
+            @RequestParam OrderRequest.OrderDTO orderDTO,
             @RequestParam String tid,
             @RequestParam Long amount,
             Model model) throws Exception {
@@ -77,29 +72,28 @@ public class NicepayController {
         System.out.println(responseNode.toPrettyString());
 
         if (resultCode.equalsIgnoreCase("0000")) {
-            //Order order = orderService.findById(id);
-            //User user = order.getUser();
-            //orderService.deductStockOnOrder(order);
-            // cartService.deleteCartList(,user);
-
-            // 결제 성공시 결제 후 옵션서비스에서 재고 갱신 로직 - optionService - 완료
-            // 결제 성공시 오더체크에서 주문 정보 저장 로직 -OrderCheck
-            // 결제 성공시 장바구니 비우기 - CartService
+            Order order = orderService.findByOrderId(orderDTO.getId());
+            orderService.deductStockOnOrder(order);
+            orderService.delete(order.getId());
+            // cartService.deleteCartList(order.getCart());
+            OrderCheckDto orderCheck = new OrderCheckDto();
+            orderCheck.setTid(tid);
+            orderCheck.setPrice(amount);
+            orderCheckRepository.save(orderCheck.toEntity());
             // 기타 결제 성공 비즈니스 로직
             // (예시: 성공한 결제에 대한 로그 기록 등)
             // 결제 성공 시 오더 생성
         } else {
-            // 실패한 결제에 대한 로그 기록
-            // 기타 결제 실패 비즈니스 로직
-            // 고객알림? - User에서 작업할 것인지
+            throw new Exception500("잘못된 계산정보입니다");
         }
         return "/payresponse";
     }
 
     @RequestMapping("/cancelAuth")
     public String requestCancel(
+            @RequestParam OrderRequest.OrderDTO orderDTO,
             @RequestParam String tid,
-            @RequestParam String amount,
+            @RequestParam Long amount,
             Model model) throws Exception {
 
         HttpHeaders headers = new HttpHeaders();
@@ -123,13 +117,15 @@ public class NicepayController {
         System.out.println(responseNode.toPrettyString());
 
         if (resultCode.equalsIgnoreCase("0000")) {
-            // 취소 성공 비즈니스 로직 구현
-            // 취소된 주문 정보 갱신 - OrderCheck
-            // 결제 성공 시 오더 취소
+            Order order = orderService.findByOrderId(orderDTO.getId());
+            orderService.restoreStockOnOrderCancel(order);
+            OrderCheckDto orderCheck = new OrderCheckDto();
+            orderCheck.setTid(tid);
+            orderCheck.setPrice(amount);
+            orderCheckRepository.save(orderCheck.toEntity());
         } else {
             // 취소 실패 비즈니스 로직 구현
             // 고객알림? - User에서 작업할 것인지
-            // 재고복구 - Option서비스
         }
         return "/payresponse";
     }
