@@ -16,6 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -144,5 +145,25 @@ public class HomeController {
     @GetMapping("/adminPage")
     public String adminPage(){
         return "/adminPage";
+    }
+
+    @GetMapping("/menu")
+    public String menu(Model model) {
+        List<CategoryResponse.FindAllDto> categories = categoryService.findAllSuper();
+        model.addAttribute("categories", categories);
+
+        List<CategoryResponse.FindAllDto> parents = new ArrayList<>();
+        for (CategoryResponse.FindAllDto dto : categories) {
+            parents.addAll(categoryService.findAllSon(dto.getId()));
+        }
+        model.addAttribute("parents", parents);
+
+        List<CategoryResponse.FindAllDto> sons = new ArrayList<>();
+        for (CategoryResponse.FindAllDto dto : parents) {
+            sons.addAll(categoryService.findAllSon(dto.getId()));
+        }
+        model.addAttribute("sons", sons);
+
+        return "menu";
     }
 }

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>카테고리 메뉴바</title>
+    <style>
+        /* CSS 스타일 */
+        .menu-container {
+            display: flex; /* Flexbox 설정 */
+            flex-direction: row;
+            justify-content: space-around;
+        }
+
+        .menu {
+            position: relative;
+            display: inline-block;
+        }
+
+        .menu-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+        }
+
+        .menu:hover .menu-content {
+            display: block;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sub-menu-content {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 100%;
+            min-width: 160px;
+            background-color: #f9f9f9;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+        }
+
+        .sub-menu:hover .sub-menu-content {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+<!-- HTML 메뉴 -->
+<div class="menu-container">
+<div class="menu" th:each="category: ${categories}">
+    <div class="menu-btn" th:text="${category.getCategoryName()}"></div>
+    <div class="menu-content">
+    <div class="sub-menu" th:each="parent: ${parents}" th:if="${parent.getSuperCategory_id() == category.getId()}">
+        <div th:text="${parent.getCategoryName()}"></div>
+        <div class="sub-menu-content">
+        <div th:each="son: ${sons}" th:if="${son.getSuperCategory_id() == parent.getId()}">
+            <div th:text="${son.getCategoryName()}"></div>
+        </div>
+        </div>
+    </div>
+    </div>
+</div>
+</div>
+
+</body>
+
+</html>
