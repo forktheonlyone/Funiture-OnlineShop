@@ -80,12 +80,11 @@ public class BoardController {
     }
     // CRUD update / "/board/"로 리다이렉트
     @PostMapping("/update")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public String update(@AuthenticationPrincipal CustomUserDetails customUserDetails,
+    public String update(
                          @ModelAttribute BoardDTO boardDTO,
                          @RequestParam MultipartFile[] files) throws IOException {
-        Long userId = customUserDetails.getUser().getId();
-        boardService.update(userId, boardDTO,files);
+
+        boardService.update(boardDTO,files);
         return "redirect:/board/";
     }
     // CRUD Read /"detail" 템플릿을 렌더링하여 반환

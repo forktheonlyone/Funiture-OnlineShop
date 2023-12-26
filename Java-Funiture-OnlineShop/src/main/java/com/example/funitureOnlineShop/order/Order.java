@@ -34,12 +34,9 @@ public class Order {
 
     private LocalDateTime orderDate;
 
-    // ** 작업자 : 아현 (Tid, cart 추가)
+    // ** 작업자 : 아현 (cart 추가)
     @OneToOne
     private Cart cart;
-
-    private String tid;
-
 
     @Builder
     public Order(Long id, User user, List<Item> orderItems, LocalDateTime orderDate) {
