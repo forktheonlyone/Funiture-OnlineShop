@@ -170,24 +170,4 @@ public class HomeController {
 
         return "menu";
     }
-
-    @GetMapping("/boardPage")
-    public String paging(@PageableDefault(page = 1) Pageable pageable, Model model){
-        Page<BoardDTO> boards = boardService.paging(pageable);
-
-        int blockLimit = 3;
-        int startPage = (int)(Math.ceil((double)pageable.getPageNumber() / blockLimit) - 1) * blockLimit + 1;
-        int endPage = ((startPage + blockLimit - 1) < boards.getTotalPages()) ? (startPage + blockLimit - 1): boards.getTotalPages();
-
-        model.addAttribute("boardList", boards);
-        model.addAttribute("startPage", startPage);
-        model.addAttribute("endPage", endPage);
-
-        return "noticePage";
-    }
-
-    @GetMapping("/boardCreate")
-    public String boardCreateForm() {
-        return "createboard";
-    }
 }

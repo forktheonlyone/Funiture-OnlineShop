@@ -26,13 +26,16 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j
-@RestController
+@Controller
 @RequiredArgsConstructor
 @RequestMapping("/board")
 public class BoardController {
     private final BoardService boardService;
 
-
+    @GetMapping("/create")
+    public String boardCreateForm() {
+        return "createboard";
+    }
 
     @PostMapping("/save")
     public ResponseEntity<?> save(@AuthenticationPrincipal CustomUserDetails customUserDetails,
@@ -51,7 +54,20 @@ public class BoardController {
         }
     }
 
+    @GetMapping(value = {"/paging","/"})
+    public String paging(@PageableDefault(page = 1) Pageable pageable, Model model){
+        Page<BoardDTO> boards = boardService.paging(pageable);
 
+        int blockLimit = 3;
+        int startPage = (int)(Math.ceil((double)pageable.getPageNumber() / blockLimit) - 1) * blockLimit + 1;
+        int endPage = ((startPage + blockLimit - 1) < boards.getTotalPages()) ? (startPage + blockLimit - 1): boards.getTotalPages();
+
+        model.addAttribute("boardList", boards);
+        model.addAttribute("startPage", startPage);
+        model.addAttribute("endPage", endPage);
+
+        return "noticePage";
+    }
 
     // CRUD update / "update" 템플릿을 렌더링하여 반환
     @GetMapping("/update/{id}")
