@@ -25,8 +25,9 @@
                         th:value="${option.id}"
                         th:text="${option.optionName}"
                         th:data-price="${option.price}"
-                        th:data-stock="${option.stockQuantity}">
-                옵션 명
+                        th:data-stock="${option.stockQuantity}"
+                        th:data-product-id="${option.productId}"> <!-- productId 데이터 속성 추가 -->
+                    옵션 명
                 </option>
             </select>
         </div>
@@ -45,6 +46,7 @@
         var optionSelect = document.getElementById('optionSelect');
         var selectedOption = optionSelect.options[optionSelect.selectedIndex];
         var optionPrice = selectedOption.getAttribute('data-price');
+        var productId = selectedOption.getAttribute('data-product-id'); // 상품 ID 가져오기
         var basePrice = document.getElementById('basePrice').textContent; // 상품 기본 가격을 HTML에서 가져옵니다.
         var totalPrice = parseInt(basePrice, 10) + parseInt(optionPrice, 10);
 
