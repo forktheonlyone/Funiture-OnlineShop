@@ -120,12 +120,8 @@ public class BoardService {
     }
 
     @Transactional
-    public void update(Long userId, BoardDTO boardDTO, MultipartFile[] files) throws IOException {
+    public void update(BoardDTO boardDTO, MultipartFile[] files) throws IOException {
         Optional<Board> boardOptional = boardRepository.findById(boardDTO.getId());
-        Optional<User> optionalUser = userRepository.findById(userId);
-        if (optionalUser.isEmpty())
-            throw new Exception403("dksda");
-        User user = optionalUser.get();
 
         if (boardOptional.isPresent()) {
             Board board = boardOptional.get();

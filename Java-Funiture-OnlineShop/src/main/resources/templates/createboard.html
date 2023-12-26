@@ -152,14 +152,9 @@
 
             console.log(result);
 
-            if (result.success) {
                 alert("게시물이 성공적으로 생성되었습니다!");
-                location.href = '/noticePage';
-            } else {
-                console.error(result);
-                alert("게시물 생성에 실패했습니다.\n잠시 후 다시 시도해주세요.");
-                location.href = '/noticePage';
-            }
+                location.href = '/board/';
+
         } catch (error) {
             console.error('Error:', error);
             alert("게시물 생성 중 오류가 발생했습니다.\n잠시 후 다시 시도해주세요.");

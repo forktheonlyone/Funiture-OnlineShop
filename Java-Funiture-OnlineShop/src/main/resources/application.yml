@@ -32,4 +32,8 @@ spring:
   h2:
     console:
       enabled: true
-
+  resources:
+    static-locations: file:///C:/Users/soone/Desktop/FunitureOnlineShopFiles/ # 정적 리소스 위치 설정
+  web:
+    mvc:
+      static-path-pattern: /files/** # 정적 리소스 제공 패턴 설정

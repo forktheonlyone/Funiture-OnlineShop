@@ -15,7 +15,10 @@
         <p>배송비: <span th:text="${product.deliveryFee}">배송비</span>원</p>
         <div>
             <h3>상품 이미지</h3>
-            <img th:src="@{${product.fileProduct.filePath}}" alt="상품 이미지" th:if="${product.fileProduct != null}">
+            <!-- Thymeleaf를 사용하여 이미지 URL 구성 -->
+            <div th:each="fileProduct : ${product.fileProductList}">
+                <img id="productImage" th:src="${fileProduct.filePath}" alt="Product image">
+            </div>
         </div>
         <!-- 옵션 선택 섹션 -->
         <div th:if="${product.optionList != null}">
@@ -25,8 +28,9 @@
                         th:value="${option.id}"
                         th:text="${option.optionName}"
                         th:data-price="${option.price}"
-                        th:data-stock="${option.stockQuantity}">
-                옵션 명
+                        th:data-stock="${option.stockQuantity}"
+                        th:data-product-id="${option.productId}"> <!-- productId 데이터 속성 추가 -->
+                    옵션 명
                 </option>
             </select>
         </div>
@@ -45,6 +49,7 @@
         var optionSelect = document.getElementById('optionSelect');
         var selectedOption = optionSelect.options[optionSelect.selectedIndex];
         var optionPrice = selectedOption.getAttribute('data-price');
+        var productId = selectedOption.getAttribute('data-product-id'); // 상품 ID 가져오기
         var basePrice = document.getElementById('basePrice').textContent; // 상품 기본 가격을 HTML에서 가져옵니다.
         var totalPrice = parseInt(basePrice, 10) + parseInt(optionPrice, 10);
 

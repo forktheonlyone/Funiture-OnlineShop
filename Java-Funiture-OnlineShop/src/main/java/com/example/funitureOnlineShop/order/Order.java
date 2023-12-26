@@ -1,5 +1,6 @@
 package com.example.funitureOnlineShop.order;
 
+import com.example.funitureOnlineShop.cart.Cart;
 import com.example.funitureOnlineShop.order.item.Item;
 import com.example.funitureOnlineShop.user.User;
 import lombok.Builder;
@@ -33,6 +34,9 @@ public class Order {
 
     private LocalDateTime orderDate;
 
+    // ** 작업자 : 아현 (cart 추가)
+    @OneToOne
+    private Cart cart;
 
     @Builder
     public Order(Long id, User user, List<Item> orderItems, LocalDateTime orderDate) {
