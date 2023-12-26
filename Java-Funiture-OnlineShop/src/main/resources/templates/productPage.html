@@ -15,7 +15,10 @@
         <p>배송비: <span th:text="${product.deliveryFee}">배송비</span>원</p>
         <div>
             <h3>상품 이미지</h3>
-            <img th:src="@{${product.fileProduct.filePath}}" alt="상품 이미지" th:if="${product.fileProduct != null}">
+            <!-- Thymeleaf를 사용하여 이미지 URL 구성 -->
+            <div th:each="fileProduct : ${product.fileProductList}">
+                <img id="productImage" th:src="${fileProduct.filePath}" alt="Product image">
+            </div>
         </div>
         <!-- 옵션 선택 섹션 -->
         <div th:if="${product.optionList != null}">
