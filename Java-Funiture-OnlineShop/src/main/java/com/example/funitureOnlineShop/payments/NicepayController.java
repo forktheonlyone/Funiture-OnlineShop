@@ -1,6 +1,7 @@
 package com.example.funitureOnlineShop.payments;
 
 import com.example.funitureOnlineShop.core.error.exception.Exception500;
+import com.example.funitureOnlineShop.core.security.CustomUserDetails;
 import com.example.funitureOnlineShop.order.Order;
 import com.example.funitureOnlineShop.order.OrderRequest;
 import com.example.funitureOnlineShop.order.OrderService;
@@ -11,7 +12,9 @@ import com.example.funitureOnlineShop.user.User;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,7 +25,9 @@ import org.springframework.web.client.RestTemplate;
 import java.util.*;
 
 @Controller
+@RequestMapping("/v1")
 @RequiredArgsConstructor
+@Slf4j
 public class NicepayController {
     private final OrderService orderService;
     private final OrderCheckRepository orderCheckRepository;
@@ -30,8 +35,8 @@ public class NicepayController {
     private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    private final String CLIENT_ID = "1234567890";
-    private final String SECRET_KEY = "57e4b065ef904b56b9247eda037ef064";
+    private final String CLIENT_ID = "S2_dfb77b9e65454834a591d9866b77a273";
+    private final String SECRET_KEY = "cdcb051f99f1495fa46d1499ed294be6";
 
     @RequestMapping("/")
     public String indexDemo(Model model){
@@ -48,10 +53,15 @@ public class NicepayController {
 
     @RequestMapping("/serverAuth")
     public String requestPayment(
-            @RequestParam OrderRequest.OrderDTO orderDTO,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
             @RequestParam String tid,
             @RequestParam Long amount,
             Model model) throws Exception {
+        Long userId = customUserDetails.getUser().getId();
+        OrderRequest.OrderDTO orderDTO = new OrderRequest.OrderDTO();
+        Order order = orderService.findByOrderId(orderDTO.getId());
+        amount = order.getCart().getPrice();
+
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Basic " + Base64.getEncoder().encodeToString((CLIENT_ID + ":" + SECRET_KEY).getBytes()));
@@ -59,7 +69,7 @@ public class NicepayController {
 
         Map<String, Object> AuthenticationMap = new HashMap<>();
         AuthenticationMap.put("amount", String.valueOf(amount));
-
+        System.out.println("Order Amount: " + amount);
         HttpEntity<String> request = new HttpEntity<>(objectMapper.writeValueAsString(AuthenticationMap), headers);
 
         ResponseEntity<JsonNode> responseEntity = restTemplate.postForEntity(
@@ -68,11 +78,10 @@ public class NicepayController {
         JsonNode responseNode = responseEntity.getBody();
         String resultCode = responseNode.get("resultCode").asText();
         model.addAttribute("resultMsg", responseNode.get("resultMsg").asText());
-
+        model.addAttribute("orderAmount", amount);
         System.out.println(responseNode.toPrettyString());
 
         if (resultCode.equalsIgnoreCase("0000")) {
-            Order order = orderService.findByOrderId(orderDTO.getId());
             orderService.deductStockOnOrder(order);
             orderService.delete(order.getId());
             // cartService.deleteCartList(order.getCart());
