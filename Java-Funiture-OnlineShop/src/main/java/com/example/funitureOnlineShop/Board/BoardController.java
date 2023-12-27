@@ -3,6 +3,7 @@ package com.example.funitureOnlineShop.Board;
 import com.example.funitureOnlineShop.BoardFile.BoardFile;
 import com.example.funitureOnlineShop.core.error.exception.Exception500;
 import com.example.funitureOnlineShop.core.security.CustomUserDetails;
+import com.example.funitureOnlineShop.core.utils.ApiUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -37,23 +38,23 @@ public class BoardController {
     }
 
     @PostMapping("/save")
-    public String save(@AuthenticationPrincipal CustomUserDetails customUserDetails,
+    public ResponseEntity<?> save(@AuthenticationPrincipal CustomUserDetails customUserDetails,
                        @ModelAttribute BoardDTO requestDTO,
                        @RequestParam MultipartFile[] files) throws IOException {
         try {
             Long userId = customUserDetails.getUser().getId();
             requestDTO.setCreateTime(LocalDateTime.now());
             boardService.save(userId, requestDTO, files);
-            return "noticePage";
+            return ResponseEntity.ok(ApiUtils.success(null));
         } catch (Exception e) {
             // 예외가 발생하면 로그에 기록하고 적절한 처리를 수행하세요.
             e.printStackTrace();
             // 예외를 다시 던져도 되고, 에러 페이지로 리다이렉트하거나 다른 적절한 조치를 취할 수 있습니다.
-            throw new RuntimeException("글 저장 중 오류가 발생했습니다.");
+            throw new Exception500("글 저장 중 오류가 발생했습니다.");
         }
     }
 
-    @GetMapping(value = {"/paging", "/"})
+    @GetMapping(value = {"/paging","/"})
     public String paging(@PageableDefault(page = 1) Pageable pageable, Model model){
         Page<BoardDTO> boards = boardService.paging(pageable);
 
@@ -67,6 +68,7 @@ public class BoardController {
 
         return "noticePage";
     }
+
     // CRUD update / "update" 템플릿을 렌더링하여 반환
     @GetMapping("/update/{id}")
     public String updateForm(@PathVariable Long id, Model model) {
