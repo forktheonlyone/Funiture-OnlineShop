@@ -2,72 +2,76 @@ package com.example.funitureOnlineShop.cart;
 
 import com.example.funitureOnlineShop.option.Option;
 import com.example.funitureOnlineShop.product.Product;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class CartResponse {
 
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
+    @Setter
+    @Getter
     @ToString
-    public static class FindAllDTO{
-        private List<ProductDTO> products;
-        private Long totalPrice;
+    public static class FindAllDto {
+        List<ProductDto> products;
 
-        public FindAllDTO(List<Cart> cartList){
+        private Long totalPricing;
+
+        public FindAllDto(List<Cart> cartList) {
             this.products = cartList.stream()
                     .map(cart -> cart.getOption().getProduct()).distinct()
-                    .map(product -> new ProductDTO(cartList,product)).collect(Collectors.toList());
-            this.totalPrice = cartList.stream()
+                    .map(product -> new ProductDto(product, cartList)).collect(Collectors.toList());
+
+
+            this.totalPricing = cartList.stream()
                     .mapToLong(cart -> cart.getOption().getPrice() * cart.getQuantity())
                     .sum();
         }
-    }
 
-    @Data
-    public static class ProductDTO{
-        private Long id;
-        private String productName;
-        List<CartDTO> cartDTOS;
-
-        public ProductDTO(List<Cart> cartList, Product product) {
-            this.id = product.getId();
-            this.productName = product.getProductName();
-            this.cartDTOS = cartList.stream()
-                    .filter(cart -> cart.getOption().getProduct().getId() == product.getId())
-                    .map(CartDTO::new).collect(Collectors.toList());
-        }
-
-        @Data
-        public class CartDTO{
+        @Setter
+        @Getter
+        public class ProductDto {
             private Long id;
-            private OptionDTO optionDTO;
-            private Long price;
-            private Long quantity;
-            public CartDTO(Cart cart) {
-                this.id = cart.getId();
-                this.optionDTO = new OptionDTO(cart.getOption());
-                this.quantity = cart.getQuantity();
-                this.price = cart.getPrice();
+
+            private String productName;
+
+            List<CartDto> cartDtos;
+
+            public ProductDto(Product product, List<Cart> cartList){
+                this.id = product.getId();
+                this.productName = product.getProductName();
+                this.cartDtos = cartList.stream()
+                        .filter(cart -> cart.getOption().getProduct().getId() == product.getId())
+                        .map(CartDto::new).collect(Collectors.toList());
             }
 
-            @Data
-            public class OptionDTO{
-
+            @Setter
+            @Getter
+            public class CartDto {
                 private Long id;
-                private String optionName;
+
+                private OptionDto optionDto;
+
                 private Long price;
 
-                public OptionDTO(Option option) {
-                    this.id = option.getId();
-                    this.optionName = option.getOptionName();
-                    this.price = option.getPrice();
+                public CartDto(Cart cart) {
+                    this.id = cart.getId();
+                    this.optionDto = new OptionDto(cart.getOption());
+                    this.price = cart.getPrice();
+                }
+
+                @Setter
+                @Getter
+                public class OptionDto {
+                    private Long id;
+                    private String optionName;
+                    private Long price;
+
+                    public OptionDto(Option option) {
+                        this.id = option.getId();
+                        this.optionName = option.getOptionName();
+                        this.price = option.getPrice();
+                    }
                 }
             }
         }

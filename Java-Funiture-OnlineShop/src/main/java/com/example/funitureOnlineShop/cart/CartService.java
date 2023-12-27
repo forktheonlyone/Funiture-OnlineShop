@@ -3,7 +3,6 @@ import com.example.funitureOnlineShop.core.error.exception.Exception400;
 import com.example.funitureOnlineShop.core.error.exception.Exception401;
 import com.example.funitureOnlineShop.core.error.exception.Exception404;
 import com.example.funitureOnlineShop.core.error.exception.Exception500;
-import com.example.funitureOnlineShop.core.security.CustomUserDetails;
 import com.example.funitureOnlineShop.option.Option;
 import com.example.funitureOnlineShop.option.OptionRepository;
 
@@ -11,20 +10,22 @@ import com.example.funitureOnlineShop.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class CartService {
     private final CartRepository cartRepository;
     private final OptionRepository optionRepository;
 
-    public CartResponse.FindAllDTO findAll() {
+    public CartResponse.FindAllDto findAll() {
         List<Cart> cartList = cartRepository.findAll();
-        return new CartResponse.FindAllDTO(cartList);
+        return new CartResponse.FindAllDto(cartList);
     }
 
 
@@ -143,5 +144,10 @@ public class CartService {
             cartRepository.deleteByUserIdAndId(userId, cartId);
         }
 
+    }
+
+    public CartResponse.FindAllDto findAllByUserId(Long id) {
+        List<Cart> cartList = cartRepository.findAllByUserId(id);
+        return new CartResponse.FindAllDto(cartList);
     }
 }
