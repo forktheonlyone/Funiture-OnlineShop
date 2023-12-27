@@ -22,6 +22,8 @@ public class OrderCheck {
 
     private Long quantity;
 
+    private Long price;
+
     @ManyToOne(fetch = FetchType.LAZY)
     private Option option;
 
@@ -29,10 +31,11 @@ public class OrderCheck {
     private User user;
 
     @Builder
-    public OrderCheck(Long id, String tid, Long quantity, Option option, User user) {
+    public OrderCheck(Long id, String tid, Long quantity, Long price, Option option, User user) {
         this.id = id;
         this.tid = tid;
         this.quantity = quantity;
+        this.price = price;
         this.option = option;
         this.user = user;
     }
