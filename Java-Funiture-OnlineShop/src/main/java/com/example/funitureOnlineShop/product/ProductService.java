@@ -152,17 +152,19 @@ public class ProductService {
                 .orElseThrow(() -> new Exception404("해당 상품을 찾을 수 없습니다."));
     }
 
-
-    public Page<ProductResponse.FindAllDTO> findAll(Pageable pageable) {
+/*
+    public Page<ProductResponse.findByCategoryForAllDTOS> findAll(Pageable pageable) {
         return productRepository.findAll(pageable)
-                .map(product -> new ProductResponse.FindAllDTO(
+                .map(product -> new ProductResponse.findByCategoryForAllDTOS(
                         product.getId(),
                         product.getProductName(),
                         product.getPrice()
                 ));
     }
 
+ */
 
+    // ID로 특정 상품 하나 찾기
     @Transactional
     public ProductResponse.FindByIdDTO findById(Long id) {
         Product product = getProduct(id);
@@ -188,4 +190,31 @@ public class ProductService {
 
         return new ProductResponse.FindByIdDTO(product, optionList, fileProductResponseList);
     }
+
+    public Page<ProductResponse.findByCategoryForAllDTOS> findByCategoryId(Long categoryId, PageRequest pageRequest) {
+        // 해당 카테고리에 속한 상품들을 조회
+        Page<Product> products = productRepository.findByCategoryId(categoryId, pageRequest);
+
+        // 상품 엔티티를 DTO로 변환
+        Page<ProductResponse.findByCategoryForAllDTOS> findByCategoryForAllDTOS = products.map(product -> {
+            List<FileProduct> fileProducts = fileProductRepository.findByProductId(product.getId());
+
+            List<FileProductResponse> files = new ArrayList<>();
+            if (!fileProducts.isEmpty()) {
+                // FileProduct를 FileProductResponse로 변환
+                FileProductResponse fileProductResponse = new FileProductResponse(fileProducts.get(0));
+                files.add(fileProductResponse);
+            }
+
+            return new ProductResponse.findByCategoryForAllDTOS(
+                    product.getId(),
+                    product.getProductName(),
+                    product.getPrice(),
+                    files
+            );
+        });
+
+        return findByCategoryForAllDTOS;
+    }
+
 }
