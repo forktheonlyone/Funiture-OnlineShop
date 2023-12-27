@@ -39,8 +39,14 @@ public class NicepayController {
     private final String SECRET_KEY = "cdcb051f99f1495fa46d1499ed294be6";
 
     @RequestMapping("/")
-    public String indexDemo(Model model){
+    public String indexDemo(Model model,
+                            @RequestParam OrderRequest.OrderDTO orderDTO){
         UUID id = UUID.randomUUID();
+        Order order = orderService.findByOrderId(orderDTO.getId());
+        Long amount = order.getCart().getPrice();
+        String goodsName = order.getCart().getOption().getProduct().getProductName();
+        model.addAttribute("orderAmount", amount);
+        model.addAttribute("goodsName", goodsName);
         model.addAttribute("orderId", id);
         model.addAttribute("clientId", CLIENT_ID);
         return "/payindex";
@@ -53,15 +59,11 @@ public class NicepayController {
 
     @RequestMapping("/serverAuth")
     public String requestPayment(
-            @AuthenticationPrincipal CustomUserDetails customUserDetails,
             @RequestParam String tid,
             @RequestParam Long amount,
             Model model) throws Exception {
-        Long userId = customUserDetails.getUser().getId();
         OrderRequest.OrderDTO orderDTO = new OrderRequest.OrderDTO();
         Order order = orderService.findByOrderId(orderDTO.getId());
-        amount = order.getCart().getPrice();
-
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Basic " + Base64.getEncoder().encodeToString((CLIENT_ID + ":" + SECRET_KEY).getBytes()));
@@ -78,7 +80,7 @@ public class NicepayController {
         JsonNode responseNode = responseEntity.getBody();
         String resultCode = responseNode.get("resultCode").asText();
         model.addAttribute("resultMsg", responseNode.get("resultMsg").asText());
-        model.addAttribute("orderAmount", amount);
+
         System.out.println(responseNode.toPrettyString());
 
         if (resultCode.equalsIgnoreCase("0000")) {
