@@ -5,6 +5,7 @@ import com.example.funitureOnlineShop.core.utils.ApiUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -29,7 +30,7 @@ public class CartController {
     @GetMapping("/carts")
     public ResponseEntity<?> carts(@AuthenticationPrincipal CustomUserDetails customUserDetails,
                                    Error error){
-        CartResponse.FindAllDTO findAllDTO = cartService.findAll();
+        CartResponse.FindAllDto findAllDTO = cartService.findAll();
         ApiUtils.ApiResult<?> apiResult= ApiUtils.success(findAllDTO);
         return ResponseEntity.ok(apiResult);
     }
@@ -42,7 +43,6 @@ public class CartController {
         return ResponseEntity.ok(response);
     }
 
-
     @DeleteMapping
     public ResponseEntity<?> deleteCartList(
             @RequestBody @Valid List<CartResponse.DeleteDTO> deleteDTO,
@@ -51,6 +51,14 @@ public class CartController {
         cartService.deleteCartList(deleteDTO, customUserDetails.getUser());
 
         ApiUtils.ApiResult<?> apiResult = ApiUtils.success(null);
+        return ResponseEntity.ok(apiResult);
+    }
+
+    @GetMapping("/cart/myCart")
+    public ResponseEntity<?> showCart(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        CartResponse.FindAllDto dto = cartService.findAllByUserId(customUserDetails.getUser().getId());
+
+        ApiUtils.ApiResult<?> apiResult = ApiUtils.success(dto);
         return ResponseEntity.ok(apiResult);
     }
 }
