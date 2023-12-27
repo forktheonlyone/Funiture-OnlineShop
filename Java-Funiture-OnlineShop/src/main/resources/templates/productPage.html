@@ -23,7 +23,7 @@
         <!-- 옵션 선택 섹션 -->
         <div th:if="${product.optionList != null}">
             <h3>옵션 선택</h3>
-            <select id="optionSelect" name="optionSelect" onchange="updateTotalPrice()">
+            <select id="optionSelect" name="csoptionSelect" onchange="updateTotalPrice()">
                 <option selected value="">옵션 선택</option> <!-- 기본 옵션 추가 -->
                 <option th:each="option : ${product.optionList}"
                         th:value="${option.id}"
