@@ -11,30 +11,33 @@
 <body>
 <div class="container">
     <h1 class="text-center">장바구니</h1>
-    <table class="table table-striped" id="cartTable">
-        <thead>
-        <tr>
-            <th scope="col">#</th>
-            <th scope="col">옵션명</th>
-            <th scope="col">가격</th>
-            <th scope="col">수량</th>
-            <th scope="col">합계</th>
-            <th scope="col">작업</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="item, stat : ${cart.items}">
-            <th scope="row" th:text="${stat.count}"></th>
-            <td th:text="${item.option.name}"></td>
-            <td th:text="${item.option.price}"></td>
-            <td th:text="${item.quantity}"></td>
-            <td th:text="${item.option.price * item.quantity}"></td>
-            <td>
-                <a th:href="@{/cart/remove/{id}(id=${item.option.id})}" class="btn btn-danger">삭제</a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+    <div id="cart-list">
+
+    </div>
+<!--    <table class="table table-striped" id="cartTable">-->
+<!--        <thead>-->
+<!--        <tr>-->
+<!--            <th scope="col">#</th>-->
+<!--            <th scope="col">옵션명</th>-->
+<!--            <th scope="col">가격</th>-->
+<!--            <th scope="col">수량</th>-->
+<!--            <th scope="col">합계</th>-->
+<!--            <th scope="col">작업</th>-->
+<!--        </tr>-->
+<!--        </thead>-->
+<!--        <tbody>-->
+<!--        <tr th:each="item, stat : ${carts.getProducts()}">-->
+<!--            <th scope="row" th:text="${stat.count}"></th>-->
+<!--            <td th:text="${item.getCartDtos().name}"></td>-->
+<!--            <td th:text="${item.option.price}"></td>-->
+<!--            <td th:text="${item.quantity}"></td>-->
+<!--            <td th:text="${item.option.price * item.quantity}"></td>-->
+<!--            <td>-->
+<!--                <a th:href="@{/cart/remove/{id}(id=${item.option.id})}" class="btn btn-danger">삭제</a>-->
+<!--            </td>-->
+<!--        </tr>-->
+<!--        </tbody>-->
+<!--    </table>-->
     <div class="text-right">
         <h5>총 금액: <span id="totalPrice"></span></h5>
     </div>
@@ -42,6 +45,50 @@
         <button id="checkoutButton" class="btn btn-primary">결제하기</button>
     </div>
 </div>
-<script src="/js/custom.js"></script>
+<script src="/js/custom.js">
+
+    window.addEventListener('DOMContentLoaded', function() {
+        const token = getCookie("token");
+        $.ajax({
+            type: "get",
+            url: "/cart/myCart",
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': token
+            },
+            success: function (res) {
+                console.log(res);
+                let output = "";
+                if (res.length > 0) {
+                    output += "<div>";
+                    output += "<table class='table table-striped' id='cartTable'>";
+                    output += "<th scope='col'>#</th>";
+                    output += "<th scope='col'>옵션명</th>";
+                    output += "<th scope='col'>가격</th>";
+                    output += "<th scope='col'>수량</th>";
+                    output += "<th scope='col'>합계</th>";
+                    output += "<th scope='col'>작업</th>";
+                }
+            },
+            error: function (err) {
+                console.log("화면 이동 실패", err);
+                console.log(location.href);
+                location.href = "/";
+            }
+        });
+    });
+
+    function getCookie(name) {
+        const cookieName = name + "=";
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.indexOf(cookieName) === 0) {
+                return cookie.substring(cookieName.length, cookie.length);
+            }
+        }
+        return null;
+    }
+</script>
 </body>
 </html>

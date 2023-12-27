@@ -68,28 +68,52 @@
     });
 
     // 장바구니 추가 함수
-    function addCart() {
-        var optionSelect = document.getElementById('optionSelect');
-        var selectedOption = optionSelect.options[optionSelect.selectedIndex];
-        var optionId = selectedOption.value; // 선택된 옵션의 ID를 가져옵니다.
-        var quantity = document.getElementById('quantitySelect').value; // 선택된 수량을 가져옵니다.
+    async function addCart() {
+        const optionSelect = document.getElementById('optionSelect');
+        const optionId = (optionSelect.options[optionSelect.selectedIndex]).value; // 선택된 옵션의 ID를 가져옵니다.
+        const quantity = document.getElementById('quantitySelect').value; // 선택된 수량을 가져옵니다.
+
+        const reqData = [{
+            optionId: optionId,
+            quantity: quantity // 선택된 수량을 서버에 전달합니다.
+        }];
+        const reqBody = JSON.stringify(reqData);
 
         // 서버에 장바구니 추가 요청을 보냅니다.
-        $.ajax({
-            url: '/cart/add',
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify([{
-                optionId: optionId,
-                quantity: quantity // 선택된 수량을 서버에 전달합니다.
-            }]),
-            success: function(response) {
+        try {
+            const token = getCookie("token");
+            const response = await fetch('/cart/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': "Bearer " + token
+                },
+                body: reqBody
+            });
+            const result = await response.json();
+
+            if (result.success) {
+                console.log(result);
                 alert('장바구니에 상품이 추가되었습니다.'); // 성공 메시지를 보여줍니다.
-            },
-            error: function(request, status, error) {
+            } else {
+                console.log(result);
                 alert('장바구니 추가에 실패했습니다. 다시 시도해주세요.'); // 실패 메시지를 보여줍니다.
             }
-        });
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
+    function getCookie(name) {
+        const cookieName = name + "=";
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.indexOf(cookieName) === 0) {
+                return cookie.substring(cookieName.length, cookie.length);
+            }
+        }
+        return null;
     }
 </script>
 
