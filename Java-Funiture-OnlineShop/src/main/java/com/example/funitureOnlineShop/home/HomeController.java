@@ -2,8 +2,11 @@ package com.example.funitureOnlineShop.home;
 
 import com.example.funitureOnlineShop.Board.BoardDTO;
 import com.example.funitureOnlineShop.Board.BoardService;
+import com.example.funitureOnlineShop.cart.CartResponse;
+import com.example.funitureOnlineShop.cart.CartService;
 import com.example.funitureOnlineShop.category.CategoryResponse;
 import com.example.funitureOnlineShop.category.CategoryService;
+import com.example.funitureOnlineShop.core.security.CustomUserDetails;
 import com.example.funitureOnlineShop.fileProduct.FileProductResponse;
 import com.example.funitureOnlineShop.orderCheck.OrderCheckDto;
 import com.example.funitureOnlineShop.product.ProductResponse;
@@ -15,11 +18,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,6 +36,7 @@ public class HomeController {
     private final ProductCommentService productCommentService;
     private final BoardService boardService;
     private final CategoryService categoryService;
+    private final CartService cartService;
 
     // 메인 홈페이지
     @GetMapping(value = {"/", ""})
