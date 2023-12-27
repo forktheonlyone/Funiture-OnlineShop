@@ -1,6 +1,7 @@
 package com.example.funitureOnlineShop.user;
 
 import com.example.funitureOnlineShop.Board.Board;
+import com.example.funitureOnlineShop.cart.Cart;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -46,8 +47,11 @@ public class User {
     @Convert(converter = StringArrayConverter.class)
     private List<String> roles = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Board> boards = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Cart> carts = new ArrayList<>();
 
     // 갱신 토큰
     @Column
@@ -58,7 +62,7 @@ public class User {
     }
 
     @Builder
-    public User(Long id, String email, String password, String username, String phoneNumber, String address, List<String> roles, String refreshToken) {
+    public User(Long id, String email, String password, String username, String phoneNumber, String address, List<String> roles, List<Board> boards, List<Cart> carts, String refreshToken) {
         this.id = id;
         this.email = email;
         this.password = password;
@@ -66,6 +70,8 @@ public class User {
         this.phoneNumber = phoneNumber;
         this.address = address;
         this.roles = roles;
+        this.boards = boards;
+        this.carts = carts;
         this.refreshToken = refreshToken;
     }
 
