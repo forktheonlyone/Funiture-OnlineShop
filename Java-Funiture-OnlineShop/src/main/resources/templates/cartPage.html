@@ -3,10 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>장바구니 페이지</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
 </head>
 <body>
 <div class="container">
@@ -19,7 +16,7 @@
         <h5>총 금액: <div id="totalPrice"></div></h5>
     </div>
     <div class="text-right">
-        <button id="checkoutButton" class="btn btn-primary">결제하기</button>
+        <button id="checkoutButton" class="btn btn-primary" onclick="l">결제하기</button>
     </div>
 </div>
 <script th:inline="javascript">
@@ -63,7 +60,7 @@
                             output += "<td>" + carts[j].optionDto.optionName + "</td>";
 
                             output += "<td>" + carts[j].quantity;
-                            output += "<input type='number' class='new-quantity' id='cart" + carts[j].id + "' style='display: none;'>";
+                            output += "<input type='number' min='1' value='" + carts[j].quantity + "' class='new-quantity' id='cart" + carts[j].id + "' style='display: none;'>";
                             output += "<button class='quantity-update-button' onclick='updateCart(" + carts[j].id + ")' style='display: none;'>수량수정</button>";
                             output += "</td>";
 
@@ -86,7 +83,6 @@
                 }
                 document.getElementById('cart-list').innerHTML = output;
                 document.getElementById('totalPrice').textContent = totalPrice.toString();
-                console.log(totalPrice);
 
                 const showUpdateBox = document.querySelectorAll('.update');
                 const deleteButton = document.querySelectorAll('.delete');
@@ -100,7 +96,7 @@
 
                        const updateInput = selectCell.querySelector('.new-quantity');
                        const updateButton = selectCell.querySelector('.quantity-update-button');
-                       if (updateInput.style.display == 'none') {
+                       if (updateInput.style.display === 'none') {
                            updateInput.style.display = 'block';
                            updateButton.style.display = 'block';
                        } else {
@@ -141,16 +137,18 @@
     const deleteCart = (id, quantity) => {
         const token = getCookie('token');
         const reqData = [{
-            cartId: id,
-            quantity: quantity
+            cartId: parseInt(id),
+            quantity: parseInt(quantity)
         }];
+        console.log(JSON.stringify(reqData));
         $.ajax({
             type: "post",
             url: "/cart/delete",
             headers: {
+                'Content-Type': 'application/json',
                 'Authorization': token
             },
-            body: JSON.stringify(reqData),
+            data: JSON.stringify(reqData),
             success: function (res) {
                 console.log("요청성공", res);
                 cartList();
@@ -172,11 +170,12 @@
         $.ajax({
             // 요청방식: post, 요청주소: /comment/update, 요청데이터: 작성자, 작성내용, 게시글번호
             type: "post",
-            url: "/cart/add",
+            url: "/cart/update",
             headers: {
+                'Content-Type': 'application/json',
                 'Authorization': token
             },
-            body: JSON.stringify(reqData),
+            data: JSON.stringify(reqData),
             success: function (res) {
                 console.log("요청승인", res);
                 cartList();

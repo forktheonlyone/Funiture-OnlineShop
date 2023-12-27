@@ -49,7 +49,7 @@ public class CartController {
             @RequestBody @Valid List<CartResponse.DeleteDTO> deleteDTO,
             @AuthenticationPrincipal CustomUserDetails customUserDetails, // 유저 정보확인
             Error error) { // 인증받은 애들만 메소드에 접근할 수 있음
-        cartService.deleteCartList(deleteDTO, customUserDetails.getUser());
+        cartService.deleteCartList(deleteDTO, customUserDetails.getUser().getId());
 
         ApiUtils.ApiResult<?> apiResult = ApiUtils.success(null);
         return ResponseEntity.ok(apiResult);
