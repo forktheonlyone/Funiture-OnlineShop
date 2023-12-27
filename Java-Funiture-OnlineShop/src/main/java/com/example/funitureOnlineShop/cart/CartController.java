@@ -13,11 +13,12 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/cart")
 public class CartController {
 
     private final CartService cartService;
 
-    @PostMapping("/cart/add")
+    @PostMapping("/add")
     public ResponseEntity<?> addCart(@AuthenticationPrincipal CustomUserDetails customUserDetails,
                                      @RequestBody @Valid List<CartRequest.SaveDTO> saveDTOS,
                                      Error error){
@@ -35,7 +36,7 @@ public class CartController {
         return ResponseEntity.ok(apiResult);
     }
 
-    @PutMapping
+    @PostMapping("/update")
     public ResponseEntity<?> updateCart(
             @RequestBody @Valid List<CartRequest.UpdateDTO> requestDTOS,
             @AuthenticationPrincipal CustomUserDetails customUserDetails) {
@@ -43,7 +44,7 @@ public class CartController {
         return ResponseEntity.ok(response);
     }
 
-    @DeleteMapping
+    @PostMapping("/delete")
     public ResponseEntity<?> deleteCartList(
             @RequestBody @Valid List<CartResponse.DeleteDTO> deleteDTO,
             @AuthenticationPrincipal CustomUserDetails customUserDetails, // 유저 정보확인
@@ -54,7 +55,7 @@ public class CartController {
         return ResponseEntity.ok(apiResult);
     }
 
-    @GetMapping("/cart/myCart")
+    @GetMapping("/myCart")
     public ResponseEntity<?> showCart(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
         CartResponse.FindAllDto dto = cartService.findAllByUserId(customUserDetails.getUser().getId());
 

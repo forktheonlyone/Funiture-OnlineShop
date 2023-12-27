@@ -23,7 +23,7 @@
         <!-- 옵션 선택 섹션 -->
         <div th:if="${product.optionList != null}">
             <h3>옵션 선택</h3>
-            <select id="optionSelect" name="csoptionSelect" onchange="updateTotalPrice()">
+            <select id="optionSelect" name="optionSelect" onchange="updateTotalPrice()">
                 <option selected value="">옵션 선택</option> <!-- 기본 옵션 추가 -->
                 <option th:each="option : ${product.optionList}"
                         th:value="${option.id}"
@@ -77,7 +77,6 @@
             optionId: optionId,
             quantity: quantity // 선택된 수량을 서버에 전달합니다.
         }];
-        const reqBody = JSON.stringify(reqData);
 
         // 서버에 장바구니 추가 요청을 보냅니다.
         try {
@@ -88,7 +87,7 @@
                     'Content-Type': 'application/json',
                     'Authorization': "Bearer " + token
                 },
-                body: reqBody
+                body: JSON.stringify(reqData)
             });
             const result = await response.json();
 

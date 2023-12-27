@@ -17,7 +17,7 @@ public class CartRequest {
                     .option(option)
                     .user(user)
                     .quantity(quantity)
-                    .price(option.getPrice() * quantity)
+                    .price((option.getProduct().getPrice() + option.getPrice()) * quantity)
                     .build();
         }
     }
