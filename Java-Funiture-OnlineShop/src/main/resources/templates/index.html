@@ -188,7 +188,22 @@
             const buttonsContainer = document.getElementById("adminButton");
             buttonsContainer.style.display = "block";
         }
+
+        window.addEventListener('DOMContentLoaded', function() {
+            var uiMenu = document.querySelector('.ui-menu');
+            fetch('/menu')
+                .then(function(response) {
+                    return response.text();
+                })
+                .then(function(html) {
+                    uiMenu.innerHTML = html;
+                })
+                .catch(function(error) {
+                    console.log('뷰를 가져오는 동안 오류가 발생했습니다:', error);
+                });
+        });
     </script>
+
 </head>
 <body>
 <header>
@@ -204,8 +219,9 @@
             <button onclick="location.href='/myPage'">내 정보</button>
         </span>
     </div>
-</header>
 
+</header>
+<div class="ui-menu"></div>
 <section>
     <nav>
         <button class="btn" onclick="location.href='/productAll'">상품 페이지(준비중)</button>
