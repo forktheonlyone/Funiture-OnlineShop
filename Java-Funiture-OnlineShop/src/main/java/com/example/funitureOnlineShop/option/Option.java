@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -31,11 +33,11 @@ public class Option {
     @ManyToOne(fetch = FetchType.LAZY)
     private Product product;
 
-    @OneToOne(mappedBy = "option", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
-    private Cart cart;
+    @OneToMany(mappedBy = "option", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Cart> cart = new ArrayList<>();
 
     @Builder
-    public Option(Long id, String optionName, Long price, Long stockQuantity, Product product, Cart cart) {
+    public Option(Long id, String optionName, Long price, Long stockQuantity, Product product, List<Cart> cart) {
         this.id = id;
         this.optionName = optionName;
         this.price = price;
