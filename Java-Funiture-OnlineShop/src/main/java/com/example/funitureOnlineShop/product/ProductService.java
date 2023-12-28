@@ -192,25 +192,23 @@ public class ProductService {
     }
 
     public Page<ProductResponse.findByCategoryForAllDTOS> findByCategoryId(Long categoryId, PageRequest pageRequest) {
-        // 해당 카테고리에 속한 상품들을 조회
         Page<Product> products = productRepository.findByCategoryId(categoryId, pageRequest);
 
-        // 상품 엔티티를 DTO로 변환
         Page<ProductResponse.findByCategoryForAllDTOS> findByCategoryForAllDTOS = products.map(product -> {
             List<FileProduct> fileProducts = fileProductRepository.findByProductId(product.getId());
 
-            List<FileProductResponse> files = new ArrayList<>();
+            FileProductResponse file = null;
             if (!fileProducts.isEmpty()) {
-                // FileProduct를 FileProductResponse로 변환
-                FileProductResponse fileProductResponse = new FileProductResponse(fileProducts.get(0));
-                files.add(fileProductResponse);
+                // 첫 번째 파일 프로덕트만 가져와서 DTO에 설정
+                file = new FileProductResponse(fileProducts.get(0));
             }
 
+            // DTO 생성자에 파일을 단일 객체로 전달
             return new ProductResponse.findByCategoryForAllDTOS(
                     product.getId(),
                     product.getProductName(),
                     product.getPrice(),
-                    files
+                    file  // 변경된 부분: 리스트 대신 단일 객체
             );
         });
 

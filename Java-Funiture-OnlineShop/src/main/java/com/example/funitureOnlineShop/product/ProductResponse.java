@@ -129,13 +129,13 @@ public class ProductResponse {
         private Long id;
         private String productName;
         private Long price;
-        private List<FileProductResponse> files;
+        private FileProductResponse file;
 
-        public findByCategoryForAllDTOS(Long id, String productName, Long price, List<FileProductResponse> files) {
+        public findByCategoryForAllDTOS(Long id, String productName, Long price, FileProductResponse file) {
             this.id = id;
             this.productName = productName;
             this.price = price;
-            this.files = (files != null) ? files : new ArrayList<>();
+            this.file = file;
         }
     }
 
