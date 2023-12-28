@@ -9,40 +9,45 @@
 
 <body>
 <h1>NICEPAY TEST</h1>
-<button onclick="serverAuth()">serverAuth 결제하기</button>
 
 <script src="https://pay.nicepay.co.kr/v1/js/"></script>
 
 <script>
   function getCookie(name) {
-            const cookieName = name + "=";
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.indexOf(cookieName) === 0) {
-                    return cookie.substring(cookieName.length, cookie.length);
-                }
-            }
-            return null;
-        }
-  function serverAuth() {
-  const orderId = '{{orderId}}';
-
-  AUTHNICE.requestPay({
-    clientId: 'S2_dfb77b9e65454834a591d9866b77a273',
-    method: 'card',
-    orderId: orderId,
-    amount: 1004,
-    goodsName: '{{goodsName}}',
-    returnUrl: 'http://localhost:8080/v1/serverAuth' ,
-    fnError: function (result) {
-      alert('개발자확인용 : ' + result.errorMsg + '');
+    const cookieName = name + "=";
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.indexOf(cookieName) === 0) {
+        return cookie.substring(cookieName.length, cookie.length);
+      }
     }
-  });
-}
+    return null;
+  }
+
+  function serverAuth() {
+    const orderId = '{{orderId}}';
+
+    AUTHNICE.requestPay({
+      clientId: 'S2_dfb77b9e65454834a591d9866b77a273',
+      method: 'card',
+      orderId: orderId,
+      amount: 1004,
+      goodsName: '{{goodsName}}',
+      returnUrl: 'http://localhost:8080/v1/serverAuth',
+      fnError: function (result) {
+        alert('개발자확인용 : ' + result.errorMsg + '');
+      }
+    });
+  }
 
   const random = (length = 8) => {
     return Math.random().toString(16).substr(2, length);
+  };
+
+  // 페이지 로드 시 자동으로 serverAuth() 함수 실행
+  window.onload = function () {
+    serverAuth();
   };
 </script>
 </body>
