@@ -1,8 +1,5 @@
 package com.example.funitureOnlineShop.cart;
-import com.example.funitureOnlineShop.core.error.exception.Exception400;
-import com.example.funitureOnlineShop.core.error.exception.Exception401;
-import com.example.funitureOnlineShop.core.error.exception.Exception404;
-import com.example.funitureOnlineShop.core.error.exception.Exception500;
+import com.example.funitureOnlineShop.core.error.exception.*;
 import com.example.funitureOnlineShop.option.Option;
 import com.example.funitureOnlineShop.option.OptionRepository;
 
@@ -13,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -112,38 +110,21 @@ public class CartService {
 
 
     @Transactional
-    public void deleteCartList(List<CartResponse.DeleteDTO> deleteDTO, User user) {
-        // 사용자의 id를 기반으로 카트에서 상품을 조회
-        List<Cart> cartList = cartRepository.findAllByUserId(user.getId());
-
-        // 카트에 있는 상품들의 id를 리스트로 추출함
-        List<Long> cartIds = cartList.stream().map(cart -> cart.getId()).collect(Collectors.toList());
-
-        // 삭제 요청으로부터 삭제할 카트 상품들의 id를 추출함
-        List<Long> requestIds = deleteDTO.stream().map(dto -> dto.getCartId()).collect(Collectors.toList());
-
-
-        // 카트의 상품이 없을 경우
-        if (cartIds.size() == 0) { // 자료가 없음
-            throw new Exception404("카트에 상품이 없습니다.");
-        }
-
-        // 카트에 담긴 아이디 비교해봄
-        // 삭제 요청된 각 상품의 id가 카트에 있는지 확인 하고, 없다면 404 예외처리
-        for (Long requestId : requestIds) {
-            if (!cartIds.contains(requestId)) {
-                throw new Exception400("카트에 없는 상품은 삭제 할 수 없습니다." + requestId);
-            }
-        }
-
-        Long userId = user.getId();
-
-        // 각 삭제 요청에 대한 사용자의 카트에서 해당 상품을 삭제함
+    public void deleteCartList(List<CartResponse.DeleteDTO> deleteDTO, Long userId) {
+        Set<Long> ids = new HashSet<>();
         for (CartResponse.DeleteDTO dto : deleteDTO) {
-            Long cartId = dto.getCartId();
-            cartRepository.deleteByUserIdAndId(userId, cartId);
+            Optional<Cart> optionalCart = cartRepository.findById(dto.getCartId());
+            if (optionalCart.isEmpty())
+                throw new Exception404("장바구니에 담겨있는 상품이 아닙니다." + dto.getCartId());
+            Cart cart = optionalCart.get();
+            if (!cart.getUser().getId().equals(userId))
+                throw new Exception403("회원님의 장바구니에 존재하는 상품이 아닙니다." + dto.getCartId());
+            ids.add(cart.getId());
         }
 
+        for (Long id : ids) {
+            cartRepository.deleteById(id);
+        }
     }
 
     public CartResponse.FindAllDto findAllByUserId(Long id) {

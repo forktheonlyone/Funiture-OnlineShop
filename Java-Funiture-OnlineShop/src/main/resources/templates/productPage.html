@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>상품 상세 페이지</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
 </head>
 <body>
 <div th:if="${product != null}">
@@ -23,7 +23,7 @@
         <!-- 옵션 선택 섹션 -->
         <div th:if="${product.optionList != null}">
             <h3>옵션 선택</h3>
-            <select id="optionSelect" name="csoptionSelect" onchange="updateTotalPrice()">
+            <select id="optionSelect" name="optionSelect" onchange="updateTotalPrice()">
                 <option selected value="">옵션 선택</option> <!-- 기본 옵션 추가 -->
                 <option th:each="option : ${product.optionList}"
                         th:value="${option.id}"
@@ -38,7 +38,7 @@
         <!-- 수량 선택 섹션 -->
         <div>
             <h3>수량 선택</h3>
-            <input type="number" id="quantitySelect" name="quantitySelect" min="1" max="99" value="1" onchange="updateTotalPrice()">
+            <input type="number" id="quantitySelect" name="quantitySelect" min="1" max="" value="1" onchange="updateTotalPrice()">
         </div>
         <div id="totalPriceSection">
             <h3>총 가격: <span id="totalPrice"></span>원</h3>
@@ -48,7 +48,7 @@
         </div>
     </div>
 </div>
-<script>
+<script th:inline="javascript">
     // 가격 업데이트 함수 (옵션 및 수량 선택에 따라 총 가격을 계산)
     function updateTotalPrice() {
         var optionSelect = document.getElementById('optionSelect');
@@ -58,8 +58,12 @@
         var quantity = document.getElementById('quantitySelect').value; // 선택된 수량을 가져옵니다.
 
         var totalPrice = (parseInt(basePrice, 10) + parseInt(optionPrice || 0, 10)) * parseInt(quantity, 10);
-
         document.getElementById('totalPrice').innerText = totalPrice; // '원' 텍스트는 HTML에 있으므로 여기에는 추가하지 않음
+
+        var optionStock = selectedOption.getAttribute('data-stock');
+        let maxValue = Math.min(99, stock); // 두 임의의 값 중 작은 값 선택
+        var inputElement = document.getElementById("quantitySelect");
+        inputElement.setAttribute("max", maxValue.toString());
     }
 
     // 문서 로드 후 총 가격을 초기화
@@ -77,7 +81,6 @@
             optionId: optionId,
             quantity: quantity // 선택된 수량을 서버에 전달합니다.
         }];
-        const reqBody = JSON.stringify(reqData);
 
         // 서버에 장바구니 추가 요청을 보냅니다.
         try {
@@ -88,7 +91,7 @@
                     'Content-Type': 'application/json',
                     'Authorization': "Bearer " + token
                 },
-                body: reqBody
+                body: JSON.stringify(reqData)
             });
             const result = await response.json();
 

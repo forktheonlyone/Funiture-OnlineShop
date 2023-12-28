@@ -24,7 +24,7 @@ public class CartResponse {
 
 
             this.totalPricing = cartList.stream()
-                    .mapToLong(cart -> cart.getOption().getPrice() * cart.getQuantity())
+                    .mapToLong(cart -> (cart.getOption().getProduct().getPrice() + cart.getOption().getPrice()) * cart.getQuantity())
                     .sum();
         }
 
@@ -35,11 +35,14 @@ public class CartResponse {
 
             private String productName;
 
+            private Long deliveryFee;
+
             List<CartDto> cartDtos;
 
             public ProductDto(Product product, List<Cart> cartList){
                 this.id = product.getId();
                 this.productName = product.getProductName();
+                this.deliveryFee = product.getDeliveryFee();
                 this.cartDtos = cartList.stream()
                         .filter(cart -> cart.getOption().getProduct().getId() == product.getId())
                         .map(CartDto::new).collect(Collectors.toList());
@@ -54,10 +57,13 @@ public class CartResponse {
 
                 private Long price;
 
+                private Long quantity;
+
                 public CartDto(Cart cart) {
                     this.id = cart.getId();
                     this.optionDto = new OptionDto(cart.getOption());
                     this.price = cart.getPrice();
+                    this.quantity = cart.getQuantity();
                 }
 
                 @Setter
