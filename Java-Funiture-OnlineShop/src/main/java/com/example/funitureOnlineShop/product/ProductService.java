@@ -4,21 +4,16 @@ import com.example.funitureOnlineShop.category.Category;
 import com.example.funitureOnlineShop.category.CategoryRepository;
 import com.example.funitureOnlineShop.core.error.exception.Exception400;
 import com.example.funitureOnlineShop.core.error.exception.Exception404;
-import com.example.funitureOnlineShop.core.error.exception.Exception500;
-import com.example.funitureOnlineShop.core.utils.ApiUtils;
 import com.example.funitureOnlineShop.fileProduct.FileProduct;
 import com.example.funitureOnlineShop.fileProduct.FileProductRepository;
 import com.example.funitureOnlineShop.fileProduct.FileProductResponse;
 import com.example.funitureOnlineShop.option.Option;
 import com.example.funitureOnlineShop.option.OptionRepository;
+import com.example.funitureOnlineShop.productComment.ProductCommentResponse;
+import com.example.funitureOnlineShop.productComment.ProductCommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,7 +26,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -42,6 +36,7 @@ public class ProductService {
     private final OptionRepository optionRepository;
     private final FileProductRepository fileProductRepository;
     private final CategoryRepository categoryRepository;
+    private final ProductCommentService productCommentService;
 
     // ------------<파일경로>-------------
     // !!!!!!!!!! 꼭 반드시 테스트시 파일 경로 특히 사용자명 확인할것 !!!!!!!!!!
@@ -154,6 +149,33 @@ public class ProductService {
                 .orElseThrow(() -> new Exception404("해당 상품을 찾을 수 없습니다."));
     }
 
+    // ID로 특정 상품 하나와 리뷰 찾기
+    @Transactional
+    public ProductResponse.FindByIdAndReviewDTO findByIdAndReview(Long id) {
+        Product product = getProduct(id);
+        List<Option> optionList = optionRepository.findByProductId(product.getId());
+
+        // 상품 id에 따른 FileProduct들을 찾는 코드
+        List<FileProduct> fileProductList = fileProductRepository.findByProductId(id);
+        List<FileProductResponse> fileProductResponseList = new ArrayList<>(); // 리스트 초기화
+
+        // 각 FileProduct에 대해 FileProductResponse를 생성하고 리스트에 추가합니다.
+        for (FileProduct fileProduct : fileProductList) {
+            FileProductResponse fileProductResponse = new FileProductResponse();
+            String fullFilePath = ServletUriComponentsBuilder.fromCurrentContextPath()
+                    .path("/product/")
+                    .path(fileProduct.getProduct().getId().toString())
+                    .path("/image")
+                    .toUriString();
+            fileProductResponse.setFilePath(fullFilePath);
+            fileProductResponse.setFileName(fileProduct.getFileName());
+
+            fileProductResponseList.add(fileProductResponse); // 리스트에 추가
+        }
+        List<ProductCommentResponse.CommentDto> reviewList = productCommentService.commentList(id);
+        return new ProductResponse.FindByIdAndReviewDTO(product, optionList, fileProductResponseList, reviewList);
+    }
+
     // ID로 특정 상품 하나 찾기
     @Transactional
     public ProductResponse.FindByIdDTO findById(Long id) {
@@ -205,4 +227,3 @@ public class ProductService {
         return findByCategoryForAllDTOS;
     }
 }
-
