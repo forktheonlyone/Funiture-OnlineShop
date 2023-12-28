@@ -4,6 +4,8 @@ import com.example.funitureOnlineShop.category.Category;
 import com.example.funitureOnlineShop.category.CategoryRepository;
 import com.example.funitureOnlineShop.core.error.exception.Exception400;
 import com.example.funitureOnlineShop.core.error.exception.Exception404;
+import com.example.funitureOnlineShop.core.error.exception.Exception500;
+import com.example.funitureOnlineShop.core.utils.ApiUtils;
 import com.example.funitureOnlineShop.fileProduct.FileProduct;
 import com.example.funitureOnlineShop.fileProduct.FileProductRepository;
 import com.example.funitureOnlineShop.fileProduct.FileProductResponse;
@@ -13,6 +15,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -191,6 +197,7 @@ public class ProductService {
         return new ProductResponse.FindByIdDTO(product, optionList, fileProductResponseList);
     }
 
+    @Transactional
     public Page<ProductResponse.findByCategoryForAllDTOS> findByCategoryId(Long categoryId, PageRequest pageRequest) {
         Page<Product> products = productRepository.findByCategoryId(categoryId, pageRequest);
 
@@ -214,5 +221,5 @@ public class ProductService {
 
         return findByCategoryForAllDTOS;
     }
-
 }
+
