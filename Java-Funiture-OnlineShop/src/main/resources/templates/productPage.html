@@ -51,6 +51,24 @@
         </div>
     </div>
 </div>
+<!-- 리뷰 섹션 -->
+<div th:if="${product.reviewList != null}">
+    <h2>상품 리뷰 (총 리뷰 수: <span id="reviewCount" th:text="${product.reviewList.size()}">0</span>, 평균 별점: <span id="averageRating">0.0</span>)</h2>
+    <div th:each="review, iterStat : ${product.reviewList}">
+        <!-- 리뷰 별점 -->
+        <div>
+            <span class="review-rating" th:text="${review.star}">0</span> / 5
+        </div>
+        <!-- 리뷰 내용 -->
+        <div th:text="${review.content}">
+            리뷰 내용
+        </div>
+        <!-- 리뷰 작성자 -->
+        <div th:text="${review.writer}">
+            작성자
+        </div>
+    </div>
+</div>
 <script th:inline="javascript">
 // 총 가격 업데이트 함수 (옵션, 수량, 그리고 배송비 선택에 따라 총 가격을 계산)
 function updateTotalPrice() {
@@ -74,6 +92,7 @@ function updateTotalPrice() {
 // 문서 로드 후 총 가격을 초기화
 document.addEventListener('DOMContentLoaded', function() {
     updateTotalPrice();
+    calculateAverageRating();
 });
 // 장바구니 추가 함수
 async function addCart() {
@@ -117,6 +136,23 @@ function getCookie(name) {
         }
     }
     return null;
+}
+
+function calculateAverageRating() {
+    var reviews = document.querySelectorAll('.review-rating'); // 리뷰 별점 요소들을 선택합니다.
+    var totalRating = 0;
+
+    if (reviews.length === 0) {
+        document.getElementById('averageRating').innerText = '0.0';
+        return; // 리뷰가 없는 경우 함수를 종료합니다.
+    }
+
+    for (var i = 0; i < reviews.length; i++) {
+        totalRating += parseInt(reviews[i].innerText, 10);
+    }
+
+    var averageRating = (totalRating / reviews.length).toFixed(1);
+    document.getElementById('averageRating').innerText = averageRating;
 }
 </script>
 

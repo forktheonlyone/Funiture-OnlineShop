@@ -193,7 +193,6 @@ public class ProductService {
 
             fileProductResponseList.add(fileProductResponse); // 리스트에 추가
         }
-
         return new ProductResponse.FindByIdDTO(product, optionList, fileProductResponseList);
     }
 
