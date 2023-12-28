@@ -16,7 +16,7 @@
         <h5>총 금액: <div id="totalPrice"></div></h5>
     </div>
     <div class="text-right">
-        <button id="checkoutButton" class="btn btn-primary" onclick="l">결제하기</button>
+        <button id="checkoutButton" class="btn btn-primary">결제하기</button>
     </div>
 </div>
 <script th:inline="javascript">
@@ -186,6 +186,29 @@
             }
         });
     }
+    // 주문하기 버튼 클릭 시 주문 생성 요청 보내기 (주문 생성 성공 시 장바구니 비우기)
+    $('#checkoutButton').click(function () {
+        const token = getCookie('token');
+        $.ajax({
+            type: "post",
+            url: "/orders/save",
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': token
+            },
+            success: function (res) {
+                console.log("요청성공", res);
+                alert("주문생성이 완료되었습니다.");
+                window.location.href = "/order";
+            },
+            error: function (err) {
+                console.log("요청실패", err);
+                alert("주문생성 실패");
+            }
+        });
+    });
+
+
 </script>
 </body>
 </html>
