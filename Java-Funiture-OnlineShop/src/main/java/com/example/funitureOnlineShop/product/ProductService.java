@@ -53,7 +53,6 @@ public class ProductService {
         Category category = categoryRepository.findById(saveByIdDTO.getCategoryId())
                 .orElseThrow( () -> new Exception404("해당 카테고리가 존재하지 않습니다."));
 
-
         // 상품 엔티티 생성 및 카테고리 할당
         Product productEntity = Product.builder()
                 .productName(saveByIdDTO.getProductName())
@@ -104,13 +103,13 @@ public class ProductService {
         return savedProduct;
     }
 
-    /*
+
     // 상품 수정 서비스
     @Transactional
-    public ProductResponse.FindByIdDTO update(Long id, ProductResponse.FindByIdDTO findByIdDTO) {
+    public ProductResponse.FindByIdDTO update(Long id, ProductResponse.UpdateDTO updateDTO) {
         Product product = getProduct(id);
 
-        product.update(findByIdDTO);
+        product.update(updateDTO);
 
         productRepository.save(product);
 
@@ -118,29 +117,26 @@ public class ProductService {
         List<Option> optionList = optionRepository.findByProductId(product.getId());
 
         // 상품 id에 따른 FileProduct를 찾는 코드
-        List<FileProduct> fileProductOpt = fileProductRepository.findByProductId(id);
-        FileProductResponse fileProductResponse = null; // 초기값을 null로 설정
-        if (fileProductOpt.isPresent()) {
-            FileProduct fileProduct = fileProductOpt.get();
-            fileProductResponse = new FileProductResponse();
+        List<FileProduct> fileProductList = fileProductRepository.findByProductId(id);
+        List<FileProductResponse> fileProductResponseList = new ArrayList<>(); // FileProductResponse 리스트 생성
+        for (FileProduct fileProduct : fileProductList) {
+            FileProductResponse fileProductResponse = new FileProductResponse();
             fileProductResponse.setFilePath(fileProduct.getFilePath());
             fileProductResponse.setFileName(fileProduct.getFileName());
-        }// 수정된 제품 정보를 FindByIdDTO 객체로 변환하여 반환
-        return new ProductResponse.FindByIdDTO(product, optionList, fileProductResponse);
+            fileProductResponseList.add(fileProductResponse);
+        }
+
+        // 수정된 제품 정보를 FindByIdDTO 객체로 변환하여 반환
+        return new ProductResponse.FindByIdDTO(product, optionList, fileProductResponseList);
     }
 
-     */
+
 
     // 삭제 서비스
     @Transactional
     public void delete(Long id) {
         getProduct(id);
         productRepository.deleteById(id);
-    }
-
-    public Page<ProductResponse.FindByCategoryIdDTO> findProductsByCategory(Long categoryId, int page, int size) {
-        Page<Product> productPage = productRepository.findByCategoryId(categoryId, PageRequest.of(page - 1, size));
-        return productPage.map(ProductResponse.FindByCategoryIdDTO::new);
     }
 
     // 상품 전체 찾기 서비스
@@ -157,18 +153,6 @@ public class ProductService {
         return productRepository.findById(id)
                 .orElseThrow(() -> new Exception404("해당 상품을 찾을 수 없습니다."));
     }
-
-/*
-    public Page<ProductResponse.findByCategoryForAllDTOS> findAll(Pageable pageable) {
-        return productRepository.findAll(pageable)
-                .map(product -> new ProductResponse.findByCategoryForAllDTOS(
-                        product.getId(),
-                        product.getProductName(),
-                        product.getPrice()
-                ));
-    }
-
- */
 
     // ID로 특정 상품 하나 찾기
     @Transactional
@@ -197,10 +181,10 @@ public class ProductService {
     }
 
     @Transactional
-    public Page<ProductResponse.findByCategoryForAllDTOS> findByCategoryId(Long categoryId, PageRequest pageRequest) {
+    public Page<ProductResponse.FindByCategoryForAllDTOS> findByCategoryId(Long categoryId, PageRequest pageRequest) {
         Page<Product> products = productRepository.findByCategoryId(categoryId, pageRequest);
 
-        Page<ProductResponse.findByCategoryForAllDTOS> findByCategoryForAllDTOS = products.map(product -> {
+        Page<ProductResponse.FindByCategoryForAllDTOS> findByCategoryForAllDTOS = products.map(product -> {
             List<FileProduct> fileProducts = fileProductRepository.findByProductId(product.getId());
 
             FileProductResponse file = null;
@@ -210,7 +194,7 @@ public class ProductService {
             }
 
             // DTO 생성자에 파일을 단일 객체로 전달
-            return new ProductResponse.findByCategoryForAllDTOS(
+            return new ProductResponse.FindByCategoryForAllDTOS(
                     product.getId(),
                     product.getProductName(),
                     product.getPrice(),

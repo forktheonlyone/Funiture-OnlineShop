@@ -73,8 +73,8 @@ public class ProductController {
     public ResponseEntity<?> findByCategoryId(@PathVariable Long categoryId,
                                               @RequestParam(required = false, defaultValue = "0") int page,
                                               @RequestParam(required = false, defaultValue = "10") int size) {
-        Page<ProductResponse.findByCategoryForAllDTOS> products = productService.findByCategoryId(categoryId, PageRequest.of(page, size));
-        ApiUtils.ApiResult<Page<ProductResponse.findByCategoryForAllDTOS>> apiResult = ApiUtils.success(products);
+        Page<ProductResponse.FindByCategoryForAllDTOS> products = productService.findByCategoryId(categoryId, PageRequest.of(page, size));
+        ApiUtils.ApiResult<Page<ProductResponse.FindByCategoryForAllDTOS>> apiResult = ApiUtils.success(products);
         return ResponseEntity.ok(apiResult);
     }
 
@@ -131,16 +131,15 @@ public class ProductController {
                 .body(imageBytes);
     }
 
-    /*
+
     // 상품 수정
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/product/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, ProductResponse.FindByIdDTO findByIdDTO) {
-        ProductResponse.FindByIdDTO updatedProduct = productService.update(id, findByIdDTO);
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody ProductResponse.UpdateDTO updateDTO) {
+        ProductResponse.FindByIdDTO updatedProduct = productService.update(id, updateDTO);
         ApiUtils.ApiResult<?> apiResult = ApiUtils.success(updatedProduct);
         return ResponseEntity.ok(apiResult);
     }
-     */
 
     // 상품 삭제
     @PreAuthorize("hasRole('ROLE_ADMIN')")

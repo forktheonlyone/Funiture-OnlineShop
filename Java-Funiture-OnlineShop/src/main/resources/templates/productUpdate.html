@@ -1,178 +1,246 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>상품 수정</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 <body>
-<h2>상품 수정</h2>
+<form id="loadPruduct">
+    <h3>수정할 상품 선택</h3>
+    <label for="selectedCategoryProduct1">대분류 카테고리 선택:</label>
+    <select id="selectedCategoryProduct1" name="selectedProduct" onchange="loadProductsByCategory()">
+        <option value="0">없음</option>
+        <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.categoryName}"></option>
+    </select><br>
 
-<form id="updateProductForm">
+    <!-- 카테고리 목록 콤보 박스 -->
+    <label for="selectedCategoryProduct2">중분류 카테고리 선택:</label>
+    <select id="selectedCategoryProduct2" name="selectedProduct" onchange="callSons('selectedCategoryProduct2','selectedCategoryProduct3')" required>
+        <option value="0">없음</option>
+    </select><br>
+
+    <!-- 카테고리 목록 콤보 박스 -->
+    <label for="selectedCategoryProduct3">소분류 카테고리 선택:</label>
+    <select id="selectedCategoryProduct3" name="selectedProduct" onchange="setOutValue()" required>
+        <option value="0">없음</option>
+    </select><br>
+
+    <input type="hidden" id="productCategoryId" name="productCategoryId" required>
+
+    <div th:if="${product != null}">
+        <h3>상품 선택</h3>
+        <select id="productSelect" name="productSelect" onchange="loadProductsByCategory()">
+            <option selected value="">상품 선택</option> <!-- 기본 옵션 추가 -->
+            <option th:each="product : ${product.optionList}"
+                    th:text="${product.productName + ' - ' + product.description}"
+                    th:data-price="${product.price}"
+                    th:data-delivery-fee="${product.deliveryFee}">
+                상품 명
+            </option>
+        </select>
+    </div>
+</form>
+
+<form id="productForm">
+    <h2>상품 수정</h2>
+
+    <label for="selectedCategory1">대분류 카테고리 선택:</label>
+    <select id="selectedCategory1" name="superCategory_id" onchange="callSons('selectedCategory1','selectedCategory2')" required>
+        <option value="0">없음</option>
+        <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.categoryName}"></option>
+    </select><br>
+
+    <!-- 카테고리 목록 콤보 박스 -->
+    <label for="selectedCategory2">중분류 카테고리 선택:</label>
+    <select id="selectedCategory2" name="superCategory_id" onchange="callSons('selectedCategory2','selectedCategory3')" required>
+        <option value="0">없음</option>
+    </select><br>
+
+    <!-- 카테고리 목록 콤보 박스 -->
+    <label for="selectedCategory3">소분류 카테고리 선택:</label>
+    <select id="selectedCategory3" name="superCategory_id" onchange="setInputValue()" required>
+        <option value="0">없음</option>
+    </select><br>
+
+    <input type="hidden" id="categoryId" name="categoryId" required>
+
     <label for="productName">상품명:</label><br>
-    <input type="text" id="productName" name="productName"><br>
+    <input type="text" id="productName" name="productName" required><br>
+
+    <div class="form-group">
+        <div class="title_area">
+            <label>첨부 파일</label>
+        </div>
+        <div class="option_area">
+            <label class="button_upload">
+                <span class="blind"></span>
+                <input class="blind" type="file" id="files" name="files" accept="image/*" multiple onchange="updateSelectedFiles(event)">
+            </label>
+            <div id="selected-files">
+                <!--사진 나옴-->
+            </div>
+        </div>
+    </div>
+
     <label for="productDescription">상품 설명:</label><br>
-    <textarea id="productDescription" name="productDescription"></textarea><br>
-    <label for="productImage">상품 이미지:</label><br>
-    <input type="text" id="productImage" name="productImage"><br>
+    <textarea id="productDescription" name="description" required></textarea><br>
+
     <label for="productPrice">상품 가격:</label><br>
-    <input type="number" id="productPrice" name="productPrice"><br>
-    <input type="button" value="Update" id="updateProduct">
+    <input type="number" id="productPrice" name="price" required><br>
+
+    <label for="deliveryFee">배송비:</label><br>
+    <input type="number" id="deliveryFee" name="deliveryFee"required><br>
+
+    <button type="button" id="newFormButton" onclick="resetProductForm()">추가 생성</button>
+    <button type="submit" id="saveProductButton" onclick="sendProduct(event)">상품 저장</button>
 </form>
 
-<input type="button" value="Delete Product" id="deleteProduct">
+<form id="optionForm">
+    <h2>상품 옵션 추가</h2>
 
-<h2>옵션 수정</h2>
-
-<ul id="optionList">
-    <!-- 옵션 리스트는 여기에 표시됩니다 -->
-</ul>
-
-<form id="updateOptionForm">
     <label for="optionName">옵션명:</label><br>
-    <input type="text" id="optionName" name="optionName" ><br>
-    <label for="optionPrice">옵션 가격:</label><br>
-    <input type="number" id="optionPrice" name="optionPrice" ><br>
+    <input type="text" id="optionName" name="optionName" required disabled><br>
+
+    <label for="optionPrice">옵션 추가 가격:</label><br>
+    <input type="number" id="optionPrice" name="optionPrice" required disabled><br>
+
     <label for="stockQuantity">재고 수량:</label><br>
-    <input type="number" id="stockQuantity" name="stockQuantity" ><br>
-    <input type="button" value="Update Option" id="updateOption" >
-    <input type="button" value="Delete Option" id="deleteOption">
+    <input type="number" id="stockQuantity" name="stockQuantity" required disabled><br>
+
+    <button type="submit" id="saveOptionButton" onclick="sendOption(event)" disabled>옵션 저장</button>
 </form>
-
-<input type="button" value="New Option" id="createOption">
-
 <script>
-    $(document).ready(function() {
-        var productId = /* 서버로부터 받아온 상품 ID */;
-        var optionId;
-
-        // 상품 정보를 불러오는 함수
-        function loadProductData(productId) {
-            $.ajax({
-                url: "/product/" + productId,
-                type: "GET",
-                success: function(response) {
-                    $("#productName").val(response.data.productName);
-                    $("#productDescription").val(response.data.description);
-                    $("#productImage").val(response.data.image);
-                    $("#productPrice").val(response.data.price);
-                },
-                error: function(xhr, status, error) {
-                    alert("상품 정보 로딩에 실패하였습니다: " + error);
-                }
-            });
+    function getCookie(name) {
+    var cookieName = name + "=";
+    var cookies = document.cookie.split(';');
+    for (var i = 0; i < cookies.length; i++) {
+        var cookie = cookies[i].trim();
+        if (cookie.indexOf(cookieName) === 0) {
+            return cookie.substring(cookieName.length, cookie.length);
         }
+    }
+    return null;
+}
 
-        // 옵션 정보를 불러오는 함수
-        function loadOptionData(productId) {
-            $.ajax({
-                url: "/products/" + productId,
-                type: "GET",
-                success: function(response) {
-                    var options = response.data;
-                    options.forEach(function(option) {
-                        var optionItem = $("<li>").text(option.optionName).click(function() {
-                            $("#optionName").val(option.optionName);
-                            $("#optionPrice").val(option.price);
-                            $("#stockQuantity").val(option.stockQuantity);
-                            optionId = option.id;
-                        });
-                        $("#optionList").append(optionItem);
-                    });
-                },
-                error: function(xhr, status, error) {
-                    alert("옵션 정보 로딩에 실패하였습니다: " + error);
-                }
+
+//-------------------수정할 상품 선택 카테고리-----------------//
+function setOutValue() {
+    const selectElement = document.getElementById("selectedCategoryProduct3");
+    let selectedName = selectElement.options[selectElement.selectedIndex].value;
+    if (selectedName === "없음") {selectedName = ""}
+    document.getElementById("categoryId").value = selectedName;
+}
+
+async function callSons(tag1, tag2) {
+    const option1 = document.getElementById(tag1);
+    const option2 = document.getElementById(tag2);
+    const selectedOption = option1.value;
+
+    if (selectedOption !== "0") {
+        // AJAX 요청 보내기
+        try{
+            const response = await fetch('/category/son/' + selectedOption, {
+                method: 'GET'
             });
+            const result = await response.json();
+
+            if (result.success) {
+                console.log(result.response);
+                option2.innerHTML = '<option value="0">없음</option>';
+                const sons = result.response;
+                for (const par in sons) {
+                    const sub = sons[par];
+                    console.log(sub);
+                    option2.innerHTML += '<option value="' + sub.id + '">' + sub.categoryName + '</option>';
+                }
+            } else {
+                console.log(result);
+                alert("없는 카테고리를 선택");
+            }
+        } catch (error) {
+            console.error('Error:', error);
         }
+    } else {
+        setInputValue(tag1);
+        document.getElementById("selectedCategory3").innerHTML = '<option value="0">없음</option>';
+        if (tag1 === "selectedCategory1") {
+            document.getElementById("selectedCategory2").innerHTML = '<option value="0">없음</option>';
+        }
+    }
+}
 
-        // 상품 정보 수정 로직
-        $("#updateProduct").click(function() {
-            var productData = {
-                "productName": $("#productName").val(),
-                "description": $("#productDescription").val(),
-                "image": $("#productImage").val(),
-                "price": $("#productPrice").val()
-            };
+function loadProductsByCategory() {
+    // 선택된 카테고리 ID 가져오기
+    var categoryId = $("#selectedCategoryProduct3").val();
 
-            $.ajax({
-                url: "/product/" + productId,
-                type: "PUT",
-                data: JSON.stringify(productData),
-                contentType: "application/json",
-                success: function(response) {
-                    alert("상품 정보가 성공적으로 수정되었습니다.");
-                },
-                error: function(xhr, status, error) {
-                    alert("상품 정보 수정에 실패하였습니다: " + error);
-                }
+    // Ajax를 이용해 백엔드에 상품 목록 요청
+    $.ajax({
+        url: '/products/' + categoryId,  // 백엔드에서 상품 목록을 제공하는 API URL
+        type: 'GET',
+        data: { page: 0, size: 10 }, // 페이지 번호와 사이즈를 요청에 포함
+        success: function(apiResult) { // 요청 성공 시
+            // 상품 선택 select 박스 초기화
+            $('#productSelect').empty().append('<option selected value="">상품 선택</option>');
+
+            // 받아온 상품 목록을 select 박스에 추가
+            $.each(apiResult.data.content, function(i, product) {
+                $('#productSelect').append(
+                    $('<option>').val(product.productId).text(product.productName).data('price', product.price).data('deliveryFee', product.deliveryFee)
+                );
             });
-        });
-
-        // 상품 삭제 로직
-        $("#deleteProduct").click(function() {
-            $.ajax({
-                url: "/product/" + productId,
-                type: "DELETE",
-                success: function(response) {
-                    alert("상품이 성공적으로 삭제되었습니다.");
-                    window.location.href = "/products";  // 삭제 후 상품 목록 페이지로 이동
-                },
-                error: function(xhr, status, error) {
-                    alert("상품 삭제에 실패하였습니다: " + error);
-                }
-            });
-        });
-
-        // 옵션 정보 수정 로직
-        $("#updateOption").click(function() {
-            var optionData = {
-                "optionName": $("#optionName").val(),
-                "price": $("#optionPrice").val(),
-                "stockQuantity": $("#stockQuantity").val()
-            };
-
-            $.ajax({
-                url: "/update/" + optionId,
-                type: "POST",
-                data: JSON.stringify(optionData),
-                contentType: "application/json",
-                success: function(response) {
-                    alert("옵션 정보가 성공적으로 수정되었습니다.");
-                },
-                error: function(xhr, status, error) {
-                    alert("옵션 정보 수정에 실패하였습니다: " + error);
-                }
-            });
-        });
-
-        // 옵션 삭제 로직
-        $("#deleteOption").click(function() {
-            $.ajax({
-                url: "/option/delete/" + optionId,
-                type: "POST",
-                success: function(response) {
-                    alert("옵션이 성공적으로 삭제되었습니다.");
-                    loadOptionData(productId);  // 삭제 후 옵션 목록을 다시 불러옴
-                },
-                error: function(xhr, status, error) {
-                    alert("옵션 삭제에 실패하였습니다: " + error);
-                }
-            });
-        });
-
-        // 새 옵션 생성 로직
-        $("#createOption").click(function() {
-            $("#optionName").val('');
-            $("#optionPrice").val('');
-            $("#stockQuantity").val('');
-            optionId = null;
-        });
-
-        loadProductData(productId);
-        loadOptionData(productId);
+        },
+        error: function(request, status, error) { // 요청 실패 시
+            alert("상품을 불러오는데 실패하였습니다.");
+        }
     });
-</script>
+}
 
+//-------------------상품 수정 카테고리-----------------//
+function setInputValue() {
+    const selectElement = document.getElementById("selectedCategory3");
+    let selectedName = selectElement.options[selectElement.selectedIndex].value;
+    if (selectedName === "없음") {selectedName = ""}
+    document.getElementById("categoryId").value = selectedName;
+}
+
+async function callSons(tag1, tag2) {
+    const option1 = document.getElementById(tag1);
+    const option2 = document.getElementById(tag2);
+    const selectedOption = option1.value;
+
+    if (selectedOption !== "0") {
+        // AJAX 요청 보내기
+        try{
+            const response = await fetch('/category/son/' + selectedOption, {
+                method: 'GET'
+            });
+            const result = await response.json();
+
+            if (result.success) {
+                console.log(result.response);
+                option2.innerHTML = '<option value="0">없음</option>';
+                const sons = result.response;
+                for (const par in sons) {
+                    const sub = sons[par];
+                    console.log(sub);
+                    option2.innerHTML += '<option value="' + sub.id + '">' + sub.categoryName + '</option>';
+                }
+            } else {
+                console.log(result);
+                alert("없는 카테고리를 선택");
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    } else {
+        setInputValue(tag1);
+        document.getElementById("selectedCategory3").innerHTML = '<option value="0">없음</option>';
+        if (tag1 === "selectedCategory1") {
+            document.getElementById("selectedCategory2").innerHTML = '<option value="0">없음</option>';
+        }
+    }
+}
+</script>
 </body>
 </html>
