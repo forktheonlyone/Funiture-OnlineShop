@@ -60,10 +60,10 @@ public class ProductController {
 
  */
 
-    // 상품 찾기
+    // 상품과 해당 상품의 리뷰 찾기
     @GetMapping("/product/{id}")
     public ResponseEntity<?> findById(@PathVariable Long id) {
-        ProductResponse.FindByIdDTO productDTOS = productService.findById(id);
+        ProductResponse.FindByIdAndReviewDTO productDTOS = productService.findByIdAndReview(id);
         ApiUtils.ApiResult<?> apiResult = ApiUtils.success(productDTOS);
         return ResponseEntity.ok(apiResult);
     }

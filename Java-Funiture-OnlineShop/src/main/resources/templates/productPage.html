@@ -10,7 +10,6 @@
     <!-- 상품 정보 섹션 -->
     <div>
         <h1 th:text="${product.productName}">상품명</h1>
-        <p th:text="${product.description}">상품 설명</p>
         <p>가격: <span id="basePrice" th:text="${product.price}">상품 가격</span>원</p>
         <p>배송비: <span id="deliveryFee" th:text="${product.deliveryFee}">배송비</span>원</p>
 
@@ -49,6 +48,7 @@
         <div>
             <button type="submit" id="addCartButton" onclick="addCart()">장바구니 추가</button>
         </div>
+        <p th:text="${product.description}">상품 설명</p> <!-- 상품 설명을 장바구니 추가 버튼 밑으로 옮김 -->
     </div>
 </div>
 <!-- 리뷰 섹션 -->

@@ -66,8 +66,8 @@ public class HomeController {
     // 상품 상세 페이지
     @GetMapping("/product/show/{id}")
     public String showProduct(@PathVariable Long id, Model model) {
-        ProductResponse.FindByIdDTO findByIdDTO = productService.findById(id);
-        model.addAttribute("product", findByIdDTO);
+        ProductResponse.FindByIdAndReviewDTO findByIdAndReviewDTO = productService.findByIdAndReview(id);
+        model.addAttribute("product", findByIdAndReviewDTO);
         return "productPage";
     }
 
