@@ -70,7 +70,7 @@ public class ProductCommentService {
     }
 
     @Transactional
-    private void saveFiles(MultipartFile[] files, ProductComment productComment) throws IOException {
+    public void saveFiles(MultipartFile[] files, ProductComment productComment) throws IOException {
         if (!files[0].isEmpty()) {
             Path uploadPath = Paths.get(filePath);
 
@@ -204,14 +204,33 @@ public class ProductCommentService {
         return ProductCommentResponse.CommentDto.toDto(optionalProductComment.get());
     }
 
+    // 주문 내역 단체 탐색
+    public List<OrderCheckDto> findOrderChecks(Long userId) {
+        List<OrderCheck> orderCheckList = orderCheckRepository.findAllByUserId(userId);
+        if (orderCheckList.isEmpty())
+            return null;
+        OrderCheck.sortByCreateDate(orderCheckList);
+
+        List<OrderCheckDto> orderCheckDtos = new ArrayList<>();
+        for (OrderCheck orderCheck : orderCheckList) {
+            Optional<ProductComment> optionalComment = productCommentRepository.findByOrderCheckId(orderCheck.getId());
+            if (orderCheck.getOrderDate().plusYears(3L).isAfter(LocalDateTime.now())) {
+                if (optionalComment.isEmpty())
+                    orderCheckDtos.add(OrderCheckDto.toOrderCheckDto(orderCheck, null));
+                else
+                    orderCheckDtos.add(OrderCheckDto.toOrderCheckDto(orderCheck, optionalComment.get().getId()));
+            }
+        }
+
+        return orderCheckDtos;
+    }
+
     // 주문 내역 단일 탐색
     public OrderCheckDto findOrderCheck(Long id) {
-        // 주문 내역 존재?
-        Optional<OrderCheck> optionalOrderCheck =
-                orderCheckRepository.findById(id);
+        Optional<OrderCheck> optionalOrderCheck = orderCheckRepository.findById(id);
         if (optionalOrderCheck.isEmpty())
-            throw new Exception404("해당 주문 내역을 찾을 수 없습니다. : " + id);
+            throw new Exception404("해당 주문 내역을 찾을 수 없습니다.");
 
-        return OrderCheckDto.toOrderCheckDto(optionalOrderCheck.get());
+        return OrderCheckDto.toOrderCheckDto(optionalOrderCheck.get(), null);
     }
 }

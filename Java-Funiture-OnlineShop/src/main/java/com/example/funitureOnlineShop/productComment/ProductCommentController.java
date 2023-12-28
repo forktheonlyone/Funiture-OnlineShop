@@ -2,9 +2,11 @@ package com.example.funitureOnlineShop.productComment;
 
 import com.example.funitureOnlineShop.core.security.CustomUserDetails;
 import com.example.funitureOnlineShop.core.utils.ApiUtils;
+import com.example.funitureOnlineShop.orderCheck.OrderCheckDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -60,5 +62,13 @@ public class ProductCommentController {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @GetMapping("/orderCheck")
+    public ResponseEntity<?> orderCheck(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+         List<OrderCheckDto> orderCheckDtos = productCommentService.findOrderChecks(customUserDetails.getUser().getId());
+
+         ApiUtils.ApiResult apiResult = ApiUtils.success(orderCheckDtos);
+         return ResponseEntity.ok(apiResult);
     }
 }

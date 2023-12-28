@@ -133,8 +133,8 @@ public class HomeController {
 
     @GetMapping("/product_comment/save/{id}")
     public String writeComment(@PathVariable Long id, Model model){
-        OrderCheckDto orderCheckDto = productCommentService.findOrderCheck(id);
-        model.addAttribute("orderCheck", orderCheckDto);
+        OrderCheckDto dto = productCommentService.findOrderCheck(id);
+        model.addAttribute("orderCheck", dto);
         return "productReview";
     }
 
@@ -186,5 +186,10 @@ public class HomeController {
         model.addAttribute("sons", sons);
 
         return "menu";
+    }
+
+    @GetMapping("/orderDetail")
+    public String orderDetail() {
+        return "orderdetail";
     }
 }
