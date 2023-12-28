@@ -61,11 +61,11 @@ public class Product {
         return product;
     }
 
-    public void update(ProductResponse.FindByIdDTO findByIdDTO) {
-        this.productName = findByIdDTO.getProductName();
-        this.description = findByIdDTO.getDescription();
-        this.price = findByIdDTO.getPrice();
-        this.deliveryFee = findByIdDTO.getDeliveryFee();
+    public void update(ProductResponse.UpdateDTO updateDTO) {
+        this.productName = updateDTO.getProductName();
+        this.description = updateDTO.getDescription();
+        this.price = updateDTO.getPrice();
+        this.deliveryFee = updateDTO.getDeliveryFee();
     }
 
 }
