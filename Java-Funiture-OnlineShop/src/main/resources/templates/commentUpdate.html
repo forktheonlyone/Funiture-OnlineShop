@@ -131,8 +131,14 @@
             flex-direction: row;
             align-items: center;
         }
+
         .rating-stars input[type="radio"] {
             margin-right: 5px;
+        }
+
+        .max-size-image {
+            max-width: 300px; /* 최대 가로 크기 */
+            max-height: 300px; /* 최대 세로 크기 */
         }
     </style>
 </head>
@@ -146,15 +152,15 @@
         </div>
         <div class="option_area">
             <div class="rating-stars">
-                <input type="radio" id="star1" name="rating" value="1" /> 1
+                <input type="radio" id="star1" name="star" value="1" /> 1
                 <label for="star1" title="1점"></label>
-                <input type="radio" id="star2" name="rating" value="2" /> 2
+                <input type="radio" id="star2" name="star" value="2" /> 2
                 <label for="star2" title="2점"></label>
-                <input type="radio" id="star3" name="rating" value="3" /> 3
+                <input type="radio" id="star3" name="star" value="3" /> 3
                 <label for="star3" title="3점"></label>
-                <input type="radio" id="star4" name="rating" value="4" /> 4
+                <input type="radio" id="star4" name="star" value="4" /> 4
                 <label for="star4" title="4점"></label>
-                <input type="radio" id="star5" name="rating" value="5" checked/> 5
+                <input type="radio" id="star5" name="star" value="5" checked/> 5
                 <label for="star5" title="5점"></label>
             </div>
         </div>
@@ -179,20 +185,24 @@
             <div id="selected-files"></div>
         </div>
     </div>
-    <button class="button_upload" onclick="handleForm()">수정</button>
+    <button type="button" class="button_upload" onclick="submitForm()">수정</button>
 </form>
 <script>
     function updateSelectedFiles(event) {
-        const files = event.target.files;
-        const selectedFilesContainer = document.getElementById('selected-files');
-        selectedFilesContainer.innerHTML = '';
+        var selectedFilesContainer = document.querySelector("#selected-files");
+        selectedFilesContainer.innerHTML = "";
+        for (var image of event.target.files) {
+            var reader = new FileReader();
 
-        for (let i = 0; i < files.length; i++) {
-            const file = files[i];
-            const fileName = file.name;
-            const fileItem = document.createElement('div');
-            fileItem.textContent = fileName;
-            selectedFilesContainer.appendChild(fileItem);
+            reader.onload = function(event) {
+                var img = document.createElement("img");
+                img.setAttribute("src", event.target.result);
+                img.classList.add("max-size-image");
+
+                document.querySelector("#selected-files").appendChild(img);
+            };
+
+            reader.readAsDataURL(image);
         }
     }
 
@@ -200,36 +210,42 @@
     ratingStars.forEach(function(star) {
         star.addEventListener("change", function() {
             const selectedRating = this.value;
-            console.log("별점 선택:", selectedRating);
         });
     });
 
-    function handleForm() {
+    async function submitForm() {
         const form = document.getElementById('updateForm');
         const formData = new FormData(form);
-        const token = getCookie("token");
+        const token = getCookie('token');
 
-        try {
-            fetch('/product_comment/update', {
-                method: 'POST',
-                headers: {
-                    'Authorization': 'Bearer ' + token
-                },
-                body: formData
-            });
-            const result = await response.json();
-
-            if (result.success) {
-                alert("상품 후기 수정 완료");
-                console.log(location.href);
-                location.href = '/product/show/' + [[${comment.productId}]];
-            } else {
-                console.log(result);
-                alert("상품 후기 수정 실패");
-            }
-        } catch (error) {
-            console.error('Error:', error);
+        for (let entry of formData.entries()) {
+            console.log(entry[0] + ': ' + entry[1]);
         }
+
+        await fetch('/product_comment/update',{
+            method: 'POST',
+            body: formData,
+            headers: {
+                'Authorization': 'Bearer ' + token
+            }
+        }).then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error("서버 오류");
+            }
+        }).then(data => {
+            if (data.success) {
+                console.log(data);
+                alert("상품 후기가 성공적으로 수정되었습니다.");
+                location.href="/";
+            } else {
+                console.log(data.error);
+                alert("상품 후기 수정 중 오류가 발생했습니다.\n잠시 후 다시 시도해주세요.");
+            }
+        }).catch(error => {
+            console.error(error);
+        });
     }
 
     function getCookie(name) {

@@ -149,33 +149,6 @@ public class ProductService {
                 .orElseThrow(() -> new Exception404("해당 상품을 찾을 수 없습니다."));
     }
 
-    // ID로 특정 상품 하나와 리뷰 찾기
-    @Transactional
-    public ProductResponse.FindByIdAndReviewDTO findByIdAndReview(Long id) {
-        Product product = getProduct(id);
-        List<Option> optionList = optionRepository.findByProductId(product.getId());
-
-        // 상품 id에 따른 FileProduct들을 찾는 코드
-        List<FileProduct> fileProductList = fileProductRepository.findByProductId(id);
-        List<FileProductResponse> fileProductResponseList = new ArrayList<>(); // 리스트 초기화
-
-        // 각 FileProduct에 대해 FileProductResponse를 생성하고 리스트에 추가합니다.
-        for (FileProduct fileProduct : fileProductList) {
-            FileProductResponse fileProductResponse = new FileProductResponse();
-            String fullFilePath = ServletUriComponentsBuilder.fromCurrentContextPath()
-                    .path("/product/")
-                    .path(fileProduct.getProduct().getId().toString())
-                    .path("/image")
-                    .toUriString();
-            fileProductResponse.setFilePath(fullFilePath);
-            fileProductResponse.setFileName(fileProduct.getFileName());
-
-            fileProductResponseList.add(fileProductResponse); // 리스트에 추가
-        }
-        List<ProductCommentResponse.CommentDto> reviewList = productCommentService.commentList(id);
-        return new ProductResponse.FindByIdAndReviewDTO(product, optionList, fileProductResponseList, reviewList);
-    }
-
     // ID로 특정 상품 하나 찾기
     @Transactional
     public ProductResponse.FindByIdDTO findById(Long id) {

@@ -8,31 +8,9 @@
 <body>
 <h1>주문 상세 정보</h1>
 <div>최근 3년 이내의 주문 내역만을 보여줍니다</div>
-<div id="order-list"></div>
-<!--<div th:if="${order != null}">-->
-<!--    <p>주문 번호: <span th:text="${order.id}"></span></p>-->
-<!--    <p>주문 날짜: <span th:text="${order.date}"></span></p>-->
+<div id="order-list">
 
-<!--    <h2>주문 상품 목록</h2>-->
-<!--    <div th:each="product : ${order.products}">-->
-<!--        <p>상품 이름: <span th:text="${product.name}"></span></p>-->
-<!--        <ul th:each="option : ${product.options}">-->
-<!--            <li>-->
-<!--                <p>옵션 이름: <span th:text="${option.name}"></span></p>-->
-<!--                <p>옵션 수량: <span th:text="${option.quantity}"></span></p>-->
-<!--                <p>옵션 가격: <span th:text="${option.price}"></span></p>-->
-<!--                <p>옵션 총 가격: <span th:text="${option.quantity * option.price}"></span></p>-->
-<!--            </li>-->
-<!--        </ul>-->
-<!--        <p>상품 총 가격: <span th:text="${product.options.stream().map(option -> option.quantity * option.price).reduce(0, Integer::sum)}"></span></p>-->
-<!--        <button onclick="window.location.href = '/reviews/write/{id}(id=${product.id})'">후기 작성하기</button>-->
-<!--    </div>-->
-
-<!--    <p>주문 총 가격: <span th:text="${order.products.stream().flatMap(product -> product.options.stream().map(option -> option.quantity * option.price)).reduce(0, Integer::sum)}"></span></p>-->
-<!--</div>-->
-<!--<div th:if="${order == null}">-->
-<!--    <p>주문 정보를 찾을 수 없습니다.</p>-->
-<!--</div>-->
+</div>
 <script th:inline="javascript">
     const findOrderCheck = () => {
         const token = getCookie('token');
@@ -76,11 +54,11 @@
 
                         output += "<td>";
                         if (orders[i].commentId !== null) {
-                            output += "<button class='update' data-row='" + i + "'>수정</button>";
-                            output += "<button class='delete' data-id='" + carts[j].id + "' data-num='" + carts[j].quantity + "'>삭제</button>";
+                            output += "<button class='update' data-id='" + orders[i].commentId + "'>수정</button>";
+                            output += "<button class='delete' data-id='" + orders[i].commentId + "'>삭제</button>";
                         } else {
                             const orderId = "/product_comment/save/" + orders[i].id;
-                            output += "<button class='create' onclick=''" + ">작성</button>";
+                            output += "<button class='create' data-id='" + orders[i].id + "' onclick=''>작성</button>";
                         }
                         output += "</td>";
 
@@ -98,36 +76,21 @@
                 createButton.forEach(button => {
                     button.addEventListener("click", function() {
                         const id = this.dataset.id;
-                        const option = this.dataset.option;
-                        const product = this.dataset.product;
-                        createComment(id, option, product);
+                        createComment(id);
                     });
                 });
 
-                // showUpdateBox.forEach(button => {
-                //     button.addEventListener("click", function () {
-                //         const row = this.dataset.row;
-                //         const rr = parseInt(row) + 1;
-                //         const table = document.getElementsByClassName('table')[0];
-                //         const selectCell = table.rows.item(rr).cells[2];
-                //
-                //         const updateInput = selectCell.querySelector('.new-quantity');
-                //         const updateButton = selectCell.querySelector('.quantity-update-button');
-                //         if (updateInput.style.display === 'none') {
-                //             updateInput.style.display = 'block';
-                //             updateButton.style.display = 'block';
-                //         } else {
-                //             updateInput.style.display = 'none';
-                //             updateButton.style.display = 'none';
-                //         }
-                //     });
-                // });
+                updateButton.forEach(button => {
+                    button.addEventListener("click", function() {
+                        const id = this.dataset.id;
+                        updateComment(id);
+                    });
+                });
 
                 deleteButton.forEach(button => {
                     button.addEventListener("click", function() {
                         const id = this.dataset.id;
-                        const quantity = this.dataset.num;
-                        deleteCart(id, quantity);
+                        deleteComment(id);
                     });
                 });
             },
@@ -153,8 +116,32 @@
         return null;
     }
 
-    const createComment = (id, option, product) => {
-        
+    const createComment = (id) => {
+        location.href = "/product_comment/save/" + id;
+    }
+
+    const updateComment = (id) => {
+        location.href = "/product_comment/update/" + id;
+    }
+
+    const deleteComment = (id) => {
+        const token = getCookie('token');
+        $.ajax({
+            type: "post",
+            url: "/product_comment/delete/" + id,
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': token
+            },
+            success: function (res) {
+                console.log("요청성공", res);
+                findOrderCheck();
+            },
+            error: function (err) {
+                console.log("요청실패", err);
+                alert("삭제 실패");
+            }
+        });
     }
 </script>
 </body>

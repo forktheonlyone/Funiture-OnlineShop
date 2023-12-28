@@ -38,19 +38,23 @@ public class ProductCommentService {
     private final CommentFileRepository commentFileRepository;
     private final OrderCheckRepository orderCheckRepository;
     // 파일 저장 경로
-    private String filePath = "";
+    private String filePath = "C:/Users/NT767/OneDrive/바탕 화면/demodata/";
 
     // 상품 후기 저장
     @Transactional
     public ProductComment save(ProductCommentRequest.SaveDto saveDto,
-                               MultipartFile[] files) throws IOException {
+                               MultipartFile[] files,
+                               Long userId) throws IOException {
         Optional<OrderCheck> optionalOrderCheck = orderCheckRepository.findById(saveDto.getOrderCheckId());
         // 존재하지 않는 주문 내역일 경우
         if (optionalOrderCheck.isEmpty())
             throw new Exception404("해당 주문 내역을 찾을 수 없습니다. : " + saveDto.getOrderCheckId());
         OrderCheck orderCheck = optionalOrderCheck.get();
         // 값 로딩 맞추기
-        Hibernate.initialize(orderCheck);
+        //Hibernate.initialize(orderCheck);
+
+        if (!orderCheck.getUser().getId().equals(userId))
+            throw new Exception401("해당 상품의 후기을 작성할 권한이 없습니다.");
 
         // 작성 시간 넣기
         saveDto.setCreateTime(LocalDateTime.now());
@@ -144,7 +148,7 @@ public class ProductCommentService {
 
     // 상품 후기 삭제
     @Transactional
-    public void delete(Long id, User user) {
+    public void delete(Long id, Long userId) {
         // 삭제할 상품 후기 탐색
         Optional<ProductComment> optionalProductComment = productCommentRepository.findById(id);
         // 상품 후기 존재 x
@@ -152,9 +156,8 @@ public class ProductCommentService {
             throw new Exception404("해당 상품 후기를 찾을 수 없습니다. : " + id);
         ProductComment productComment = optionalProductComment.get();
 
-        // 상품 후기 삭제 권한 확인 (작성자 혹은 관리자만 삭제 가능)
-        if (!user.getRoles().contains("ROLE_ADMIN") &&
-                !(productComment.getOrderCheck().getUser().getId().equals(user.getId())))
+        // 상품 후기 삭제 권한 확인 (작성자만 삭제 가능)
+        if (!productComment.getOrderCheck().getUser().getId().equals(userId))
             throw new Exception401("해당 상품 후기을 삭제할 권한이 없습니다.");
         try {
             productCommentRepository.deleteById(id);
@@ -165,7 +168,7 @@ public class ProductCommentService {
 
     // 상품 후기 수정
     @Transactional
-    public ProductComment update(ProductCommentRequest.UpdateDto updateDto, MultipartFile[] files, User user) {
+    public ProductComment update(ProductCommentRequest.UpdateDto updateDto, MultipartFile[] files, Long userId) {
         // 수정할 상품 후기 탐색
         Optional<ProductComment> optionalProductComment =
                 productCommentRepository.findById(updateDto.getId());
@@ -175,8 +178,7 @@ public class ProductCommentService {
         ProductComment productComment = optionalProductComment.get();
 
         // 상품 후기 삭제 권한 확인 (작성자만 수정 가능)
-        if (!(user.getRoles().contains("ROLE_USER") &&
-                productComment.getOrderCheck().getUser().getId().equals(user.getId())))
+        if (!productComment.getOrderCheck().getUser().getId().equals(userId))
             throw new Exception401("해당 상품 후기을 수정할 권한이 없습니다.");
 
         try {

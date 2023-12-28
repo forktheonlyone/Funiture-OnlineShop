@@ -8,7 +8,7 @@ insert into category (id, category_name, super_category_id) values (4, '참나�
 insert into category (id, category_name, super_category_id) values (5, '등나무 책상', 2);
 
 insert into product (id, delivery_fee, description, price, product_name, category_id) values (1, 500, '이거슨 레스비 책상이여', 1000, '레쓰비 책상1', 3)
-    insert into product (id, delivery_fee, description, price, product_name, category_id) values (2, 500, '이거슨 레스비 책상이여', 1000, '레쓰비 책상2', 3)
+insert into product (id, delivery_fee, description, price, product_name, category_id) values (2, 500, '이거슨 레스비 책상이여', 1000, '레쓰비 책상2', 3)
 insert into product (id, delivery_fee, description, price, product_name, category_id) values (3, 500, '이거슨 레스비 책상이여', 1000, '레쓰비 책상3', 3)
 insert into product (id, delivery_fee, description, price, product_name, category_id) values (4, 500, '이거슨 레스비 책상이여', 1000, '레쓰비 책상4', 4)
 insert into product (id, delivery_fee, description, price, product_name, category_id) values (5, 500, '이거슨 레스비 책상이여', 1000, '레쓰비 책상5', 4)

@@ -23,8 +23,9 @@ public class ProductCommentController {
     // 상품 후기 저장
     @PostMapping("/save")
     public ResponseEntity<?> save(@ModelAttribute ProductCommentRequest.SaveDto saveDto,
-                                  @RequestParam MultipartFile[] files) throws IOException {
-        ProductComment comment = productCommentService.save(saveDto, files);
+                                  @RequestParam MultipartFile[] files,
+                                  @AuthenticationPrincipal CustomUserDetails customUserDetails) throws IOException {
+        ProductComment comment = productCommentService.save(saveDto, files, customUserDetails.getUser().getId());
 
         if (comment != null) {
             return ResponseEntity.ok(ApiUtils.success(saveDto));
@@ -45,7 +46,7 @@ public class ProductCommentController {
     @PostMapping("/delete/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id,
                                     @AuthenticationPrincipal CustomUserDetails customUserDetails){
-        productCommentService.delete(id, customUserDetails.getUser());
+        productCommentService.delete(id, customUserDetails.getUser().getId());
 
         return ResponseEntity.ok(ApiUtils.success(null));
     }
@@ -55,7 +56,7 @@ public class ProductCommentController {
     public ResponseEntity<?> update(@ModelAttribute ProductCommentRequest.UpdateDto updateDto,
                                     @RequestParam MultipartFile[] files,
                                     @AuthenticationPrincipal CustomUserDetails customUserDetails) throws IOException {
-        ProductComment comment = productCommentService.update(updateDto, files, customUserDetails.getUser());
+        ProductComment comment = productCommentService.update(updateDto, files, customUserDetails.getUser().getId());
 
         if (comment != null) {
             return ResponseEntity.ok(ApiUtils.success(updateDto));
