@@ -39,11 +39,11 @@ public class Order {
     private Cart cart;
 
     @Builder
-    public Order(Long id, User user, List<Item> orderItems, LocalDateTime orderDate) {
+    public Order(Long id, User user, List<Item> orderItems) {
         this.id = id;
         this.user = user;
         this.orderItems = orderItems;
-        this.orderDate = orderDate;
+        this.orderDate = LocalDateTime.now();
     }
 
 
