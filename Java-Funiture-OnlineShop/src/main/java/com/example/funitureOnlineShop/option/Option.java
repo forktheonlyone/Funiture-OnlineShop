@@ -1,5 +1,6 @@
 package com.example.funitureOnlineShop.option;
 
+import com.example.funitureOnlineShop.cart.Cart;
 import com.example.funitureOnlineShop.product.Product;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,7 +11,10 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor
-@Table(name = "option_tb")
+@Table(name ="option_tb",
+        indexes = {
+                @Index(name = "option_product_id_index", columnList = "product_id")
+        })
 public class Option {
     // ** PK
     @Id
@@ -27,13 +31,17 @@ public class Option {
     @ManyToOne(fetch = FetchType.LAZY)
     private Product product;
 
+    @OneToOne(mappedBy = "option", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Cart cart;
+
     @Builder
-    public Option(Long id, String optionName, Long price, Long stockQuantity, Product product) {
+    public Option(Long id, String optionName, Long price, Long stockQuantity, Product product, Cart cart) {
         this.id = id;
         this.optionName = optionName;
         this.price = price;
         this.stockQuantity = stockQuantity;
         this.product = product;
+        this.cart = cart;
     }
 
     public Option toUpdate(Product product) {

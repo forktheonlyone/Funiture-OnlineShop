@@ -18,6 +18,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -45,15 +48,17 @@ public class ProductController {
         return ResponseEntity.ok(apiResult);
     }
 
-
+/*
     // 전체 상품 조회
     @GetMapping("/products")
     public ResponseEntity<?> findAll(@RequestParam(required = false, defaultValue = "0") int page,
                                      @RequestParam(required = false, defaultValue = "10") int size) {
-        Page<ProductResponse.FindAllDTO> products = productService.findAll(PageRequest.of(page, size));
-        ApiUtils.ApiResult<Page<ProductResponse.FindAllDTO>> apiResult = ApiUtils.success(products);
+        Page<ProductResponse.findByCategoryForAllDTOS> products = productService.findAll(PageRequest.of(page, size));
+        ApiUtils.ApiResult<Page<ProductResponse.findByCategoryForAllDTOS>> apiResult = ApiUtils.success(products);
         return ResponseEntity.ok(apiResult);
     }
+
+ */
 
     // 상품 찾기
     @GetMapping("/product/{id}")
@@ -62,6 +67,18 @@ public class ProductController {
         ApiUtils.ApiResult<?> apiResult = ApiUtils.success(productDTOS);
         return ResponseEntity.ok(apiResult);
     }
+
+    // 카테고리별 상품 조회
+    @GetMapping("/products/{categoryId}")
+    public ResponseEntity<?> findByCategoryId(@PathVariable Long categoryId,
+                                              @RequestParam(required = false, defaultValue = "0") int page,
+                                              @RequestParam(required = false, defaultValue = "10") int size) {
+        Page<ProductResponse.findByCategoryForAllDTOS> products = productService.findByCategoryId(categoryId, PageRequest.of(page, size));
+        ApiUtils.ApiResult<Page<ProductResponse.findByCategoryForAllDTOS>> apiResult = ApiUtils.success(products);
+        return ResponseEntity.ok(apiResult);
+    }
+
+
 
     /*
     // 상품 수정
@@ -75,6 +92,7 @@ public class ProductController {
 
      */
 
+    // 상품 삭제
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/product/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id){
@@ -103,6 +121,34 @@ public class ProductController {
         return new ResponseEntity<>(imageBytes, headers, HttpStatus.OK);
     }
 
+    @GetMapping("/product/images/{id}")
+    public ResponseEntity<String> getImages(@PathVariable Long id) {
+        List<FileProduct> fileProducts = fileProductRepository.findByProductId(id);
+
+        if (fileProducts.isEmpty()) {
+            return new ResponseEntity<>("FileProduct not found for id: " + id, HttpStatus.NOT_FOUND);
+        }
+
+        FileProduct fileProduct = fileProducts.get(0);
+        String fileName = fileProduct.getUuid() + fileProduct.getFileName();
+        File imgFile = new File(filePath + fileName);
+
+        if (!imgFile.exists() || !imgFile.isFile()) {
+            return new ResponseEntity<>("File not found: " + imgFile.getAbsolutePath(), HttpStatus.NOT_FOUND);
+        }
+
+        byte[] imageBytes;
+        try {
+            imageBytes = Files.readAllBytes(imgFile.toPath());
+        } catch (IOException e) {
+            return new ResponseEntity<>("Error reading file: " + imgFile.getAbsolutePath(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        String imageBase64 = Base64.getEncoder().encodeToString(imageBytes);
+        String imageBase64URI = "data:image/jpeg;base64," + imageBase64;
+
+        return new ResponseEntity<>(imageBase64URI, HttpStatus.OK);
+    }
 
 
 }
