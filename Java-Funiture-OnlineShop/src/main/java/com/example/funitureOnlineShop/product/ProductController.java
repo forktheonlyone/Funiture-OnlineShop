@@ -78,29 +78,6 @@ public class ProductController {
         return ResponseEntity.ok(apiResult);
     }
 
-
-
-    /*
-    // 상품 수정
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PutMapping("/product/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, ProductResponse.FindByIdDTO findByIdDTO) {
-        ProductResponse.FindByIdDTO updatedProduct = productService.update(id, findByIdDTO);
-        ApiUtils.ApiResult<?> apiResult = ApiUtils.success(updatedProduct);
-        return ResponseEntity.ok(apiResult);
-    }
-
-     */
-
-    // 상품 삭제
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @DeleteMapping("/product/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id){
-        productService.delete(id);
-        ApiUtils.ApiResult<?> apiResult = ApiUtils.success(id);
-        return ResponseEntity.ok(apiResult);
-    }
-
     @GetMapping("/product/{id}/image")
     public ResponseEntity<byte[]> getImage(@PathVariable("id") Long id) throws IOException {
         FileProduct fileProduct = fileProductRepository.findByProductId(id).get(0);
@@ -121,35 +98,57 @@ public class ProductController {
         return new ResponseEntity<>(imageBytes, headers, HttpStatus.OK);
     }
 
-    @GetMapping("/product/image/{id}")
-    public ResponseEntity<byte[]> getOneImage(@PathVariable Long id) {
-        List<FileProduct> fileProducts = fileProductRepository.findByProductId(id);
+    @GetMapping("/product/image/{productId}")
+    public ResponseEntity<byte[]> getOneImage(@PathVariable Long productId) {
+        // 이미지 파일을 가져오거나, 없을 경우 예외를 발생시킬 FileProductService 메소드 호출
+        List<FileProduct> fileProducts = fileProductRepository.findByProductId(productId);
 
         if (fileProducts.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            // 이미지가 없을 경우, 404 상태 코드로 응답
+            return ResponseEntity.notFound().build();
         }
 
-        // 첫 번째 이미지 파일만 사용합니다.
-        FileProduct fileProduct = fileProducts.get(0);
-        String fileName = fileProduct.getUuid() + "_" + fileProduct.getFileName();
+        FileProduct fileProduct = fileProducts.get(0); // 첫 번째 이미지 추출
+        String fileName = fileProduct.getUuid() + fileProduct.getFileName();
         File imgFile = new File(filePath + fileName);
 
         if (!imgFile.exists() || !imgFile.isFile()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            // 파일 시스템에 이미지가 없을 경우, 404 상태 코드로 응답
+            return ResponseEntity.notFound().build();
         }
 
         byte[] imageBytes;
         try {
             imageBytes = Files.readAllBytes(imgFile.toPath());
         } catch (IOException e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            // 파일을 읽는 중 오류가 발생할 경우, 500 상태 코드로 응답
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.IMAGE_JPEG);
-        headers.setContentLength(imageBytes.length);
+        // 이미지 바이트 배열과 함께 200 상태 코드로 응답
+        return ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_JPEG) // 이미지의 MIME 타입 설정
+                .body(imageBytes);
+    }
 
-        return new ResponseEntity<>(imageBytes, headers, HttpStatus.OK);
+    /*
+    // 상품 수정
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PutMapping("/product/{id}")
+    public ResponseEntity<?> update(@PathVariable Long id, ProductResponse.FindByIdDTO findByIdDTO) {
+        ProductResponse.FindByIdDTO updatedProduct = productService.update(id, findByIdDTO);
+        ApiUtils.ApiResult<?> apiResult = ApiUtils.success(updatedProduct);
+        return ResponseEntity.ok(apiResult);
+    }
+     */
+
+    // 상품 삭제
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @DeleteMapping("/product/{id}")
+    public ResponseEntity<?> delete(@PathVariable Long id){
+        productService.delete(id);
+        ApiUtils.ApiResult<?> apiResult = ApiUtils.success(id);
+        return ResponseEntity.ok(apiResult);
     }
 
 

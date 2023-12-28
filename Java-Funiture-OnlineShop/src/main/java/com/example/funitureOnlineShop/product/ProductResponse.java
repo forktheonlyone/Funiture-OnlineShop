@@ -104,23 +104,6 @@ public class ProductResponse {
             this.files = (files != null) ? files : new ArrayList<>();
         }
     }
-
-    @NoArgsConstructor
-    @Setter
-    @Getter
-    public static class SaveByIdDTO {
-
-        private String productName;
-
-        private String description;
-
-        private Long price;
-
-        private Long deliveryFee;
-
-        private Long categoryId;
-    }
-
     @Getter
     @Setter
     @NoArgsConstructor
@@ -139,4 +122,19 @@ public class ProductResponse {
         }
     }
 
+    @NoArgsConstructor
+    @Setter
+    @Getter
+    public static class SaveByIdDTO {
+
+        private String productName;
+
+        private String description;
+
+        private Long price;
+
+        private Long deliveryFee;
+
+        private Long categoryId;
+    }
 }

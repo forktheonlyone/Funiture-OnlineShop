@@ -71,10 +71,11 @@ public class HomeController {
     }
 
     // 카테고리 클릭시 특정 카테고리 상품 확인
-    @GetMapping("/category/show/{id}")
-    public String showProductByCategory(@PathVariable Long id, Model model) {
-        Page<ProductResponse.findByCategoryForAllDTOS> products = productService.findByCategoryId(id, PageRequest.of(0, 10));
+    @GetMapping("/category/show/{categoryId}")
+    public String showProductByCategory(@PathVariable Long categoryId, Model model) {
+        Page<ProductResponse.findByCategoryForAllDTOS> products = productService.findByCategoryId(categoryId, PageRequest.of(0, 10));
         model.addAttribute("products", products);
+        model.addAttribute("categoryId", categoryId);
         return "productCategoryPage";
     }
 
