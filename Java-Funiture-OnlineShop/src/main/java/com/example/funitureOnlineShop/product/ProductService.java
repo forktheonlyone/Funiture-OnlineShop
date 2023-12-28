@@ -4,6 +4,8 @@ import com.example.funitureOnlineShop.category.Category;
 import com.example.funitureOnlineShop.category.CategoryRepository;
 import com.example.funitureOnlineShop.core.error.exception.Exception400;
 import com.example.funitureOnlineShop.core.error.exception.Exception404;
+import com.example.funitureOnlineShop.core.error.exception.Exception500;
+import com.example.funitureOnlineShop.core.utils.ApiUtils;
 import com.example.funitureOnlineShop.fileProduct.FileProduct;
 import com.example.funitureOnlineShop.fileProduct.FileProductRepository;
 import com.example.funitureOnlineShop.fileProduct.FileProductResponse;
@@ -13,6 +15,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -152,17 +158,19 @@ public class ProductService {
                 .orElseThrow(() -> new Exception404("해당 상품을 찾을 수 없습니다."));
     }
 
-
-    public Page<ProductResponse.FindAllDTO> findAll(Pageable pageable) {
+/*
+    public Page<ProductResponse.findByCategoryForAllDTOS> findAll(Pageable pageable) {
         return productRepository.findAll(pageable)
-                .map(product -> new ProductResponse.FindAllDTO(
+                .map(product -> new ProductResponse.findByCategoryForAllDTOS(
                         product.getId(),
                         product.getProductName(),
                         product.getPrice()
                 ));
     }
 
+ */
 
+    // ID로 특정 상품 하나 찾기
     @Transactional
     public ProductResponse.FindByIdDTO findById(Long id) {
         Product product = getProduct(id);
@@ -188,4 +196,30 @@ public class ProductService {
 
         return new ProductResponse.FindByIdDTO(product, optionList, fileProductResponseList);
     }
+
+    @Transactional
+    public Page<ProductResponse.findByCategoryForAllDTOS> findByCategoryId(Long categoryId, PageRequest pageRequest) {
+        Page<Product> products = productRepository.findByCategoryId(categoryId, pageRequest);
+
+        Page<ProductResponse.findByCategoryForAllDTOS> findByCategoryForAllDTOS = products.map(product -> {
+            List<FileProduct> fileProducts = fileProductRepository.findByProductId(product.getId());
+
+            FileProductResponse file = null;
+            if (!fileProducts.isEmpty()) {
+                // 첫 번째 파일 프로덕트만 가져와서 DTO에 설정
+                file = new FileProductResponse(fileProducts.get(0));
+            }
+
+            // DTO 생성자에 파일을 단일 객체로 전달
+            return new ProductResponse.findByCategoryForAllDTOS(
+                    product.getId(),
+                    product.getProductName(),
+                    product.getPrice(),
+                    file  // 변경된 부분: 리스트 대신 단일 객체
+            );
+        });
+
+        return findByCategoryForAllDTOS;
+    }
 }
+

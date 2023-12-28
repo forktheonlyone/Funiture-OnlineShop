@@ -18,6 +18,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -45,15 +48,17 @@ public class ProductController {
         return ResponseEntity.ok(apiResult);
     }
 
-
+/*
     // 전체 상품 조회
     @GetMapping("/products")
     public ResponseEntity<?> findAll(@RequestParam(required = false, defaultValue = "0") int page,
                                      @RequestParam(required = false, defaultValue = "10") int size) {
-        Page<ProductResponse.FindAllDTO> products = productService.findAll(PageRequest.of(page, size));
-        ApiUtils.ApiResult<Page<ProductResponse.FindAllDTO>> apiResult = ApiUtils.success(products);
+        Page<ProductResponse.findByCategoryForAllDTOS> products = productService.findAll(PageRequest.of(page, size));
+        ApiUtils.ApiResult<Page<ProductResponse.findByCategoryForAllDTOS>> apiResult = ApiUtils.success(products);
         return ResponseEntity.ok(apiResult);
     }
+
+ */
 
     // 상품 찾기
     @GetMapping("/product/{id}")
@@ -63,23 +68,13 @@ public class ProductController {
         return ResponseEntity.ok(apiResult);
     }
 
-    /*
-    // 상품 수정
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PutMapping("/product/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, ProductResponse.FindByIdDTO findByIdDTO) {
-        ProductResponse.FindByIdDTO updatedProduct = productService.update(id, findByIdDTO);
-        ApiUtils.ApiResult<?> apiResult = ApiUtils.success(updatedProduct);
-        return ResponseEntity.ok(apiResult);
-    }
-
-     */
-
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @DeleteMapping("/product/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id){
-        productService.delete(id);
-        ApiUtils.ApiResult<?> apiResult = ApiUtils.success(id);
+    // 카테고리별 상품 조회
+    @GetMapping("/products/{categoryId}")
+    public ResponseEntity<?> findByCategoryId(@PathVariable Long categoryId,
+                                              @RequestParam(required = false, defaultValue = "0") int page,
+                                              @RequestParam(required = false, defaultValue = "10") int size) {
+        Page<ProductResponse.findByCategoryForAllDTOS> products = productService.findByCategoryId(categoryId, PageRequest.of(page, size));
+        ApiUtils.ApiResult<Page<ProductResponse.findByCategoryForAllDTOS>> apiResult = ApiUtils.success(products);
         return ResponseEntity.ok(apiResult);
     }
 
@@ -101,6 +96,59 @@ public class ProductController {
         headers.setContentLength(imageBytes.length);
 
         return new ResponseEntity<>(imageBytes, headers, HttpStatus.OK);
+    }
+
+    @GetMapping("/product/image/{productId}")
+    public ResponseEntity<byte[]> getOneImage(@PathVariable Long productId) {
+        // 이미지 파일을 가져오거나, 없을 경우 예외를 발생시킬 FileProductService 메소드 호출
+        List<FileProduct> fileProducts = fileProductRepository.findByProductId(productId);
+
+        if (fileProducts.isEmpty()) {
+            // 이미지가 없을 경우, 404 상태 코드로 응답
+            return ResponseEntity.notFound().build();
+        }
+
+        FileProduct fileProduct = fileProducts.get(0); // 첫 번째 이미지 추출
+        String fileName = fileProduct.getUuid() + fileProduct.getFileName();
+        File imgFile = new File(filePath + fileName);
+
+        if (!imgFile.exists() || !imgFile.isFile()) {
+            // 파일 시스템에 이미지가 없을 경우, 404 상태 코드로 응답
+            return ResponseEntity.notFound().build();
+        }
+
+        byte[] imageBytes;
+        try {
+            imageBytes = Files.readAllBytes(imgFile.toPath());
+        } catch (IOException e) {
+            // 파일을 읽는 중 오류가 발생할 경우, 500 상태 코드로 응답
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+
+        // 이미지 바이트 배열과 함께 200 상태 코드로 응답
+        return ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_JPEG) // 이미지의 MIME 타입 설정
+                .body(imageBytes);
+    }
+
+    /*
+    // 상품 수정
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PutMapping("/product/{id}")
+    public ResponseEntity<?> update(@PathVariable Long id, ProductResponse.FindByIdDTO findByIdDTO) {
+        ProductResponse.FindByIdDTO updatedProduct = productService.update(id, findByIdDTO);
+        ApiUtils.ApiResult<?> apiResult = ApiUtils.success(updatedProduct);
+        return ResponseEntity.ok(apiResult);
+    }
+     */
+
+    // 상품 삭제
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @DeleteMapping("/product/{id}")
+    public ResponseEntity<?> delete(@PathVariable Long id){
+        productService.delete(id);
+        ApiUtils.ApiResult<?> apiResult = ApiUtils.success(id);
+        return ResponseEntity.ok(apiResult);
     }
 
 

@@ -15,6 +15,7 @@ import com.example.funitureOnlineShop.productComment.ProductCommentResponse;
 import com.example.funitureOnlineShop.productComment.ProductCommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -70,8 +71,11 @@ public class HomeController {
     }
 
     // 카테고리 클릭시 특정 카테고리 상품 확인
-    @GetMapping("/category/show/{id}")
-    public String showProductByCategory(@PathVariable Long id) {
+    @GetMapping("/category/show/{categoryId}")
+    public String showProductByCategory(@PathVariable Long categoryId, Model model) {
+        Page<ProductResponse.findByCategoryForAllDTOS> products = productService.findByCategoryId(categoryId, PageRequest.of(0, 10));
+        model.addAttribute("products", products);
+        model.addAttribute("categoryId", categoryId);
         return "productCategoryPage";
     }
 

@@ -90,9 +90,9 @@ public class ProductResponse {
 
         private List<OptionDTO> optionList;
 
-        private List<FileProductResponse> fileProductList;
+        private List<FileProductResponse> files;
 
-        public FindByIdDTO(Product product, List<Option> optionList, List<FileProductResponse> fileProductList) {
+        public FindByIdDTO(Product product, List<Option> optionList, List<FileProductResponse> files) {
             this.id = product.getId();
             this.productName = product.getProductName();
             this.description = product.getDescription();
@@ -101,7 +101,24 @@ public class ProductResponse {
             this.categoryId = product.getCategory().getId();
             this.optionList = optionList.stream().map(OptionDTO::new)
                     .collect(Collectors.toList());
-            this.fileProductList = (fileProductList != null) ? fileProductList : new ArrayList<>();
+            this.files = (files != null) ? files : new ArrayList<>();
+        }
+    }
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    public static class findByCategoryForAllDTOS {
+
+        private Long id;
+        private String productName;
+        private Long price;
+        private FileProductResponse file;
+
+        public findByCategoryForAllDTOS(Long id, String productName, Long price, FileProductResponse file) {
+            this.id = id;
+            this.productName = productName;
+            this.price = price;
+            this.file = file;
         }
     }
 
@@ -120,21 +137,4 @@ public class ProductResponse {
 
         private Long categoryId;
     }
-
-    @Getter
-    @Setter
-    @NoArgsConstructor
-    public static class FindAllDTO {
-
-        private Long id;
-        private String productName;
-        private Long price;
-
-        public FindAllDTO(Long id, String productName, Long price) {
-            this.id = id;
-            this.productName = productName;
-            this.price = price;
-        }
-    }
-
 }
