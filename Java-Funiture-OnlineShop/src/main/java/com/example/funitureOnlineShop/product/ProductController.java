@@ -121,34 +121,37 @@ public class ProductController {
         return new ResponseEntity<>(imageBytes, headers, HttpStatus.OK);
     }
 
-    @GetMapping("/product/images/{id}")
-    public ResponseEntity<String> getImages(@PathVariable Long id) {
+    @GetMapping("/product/image/{id}")
+    public ResponseEntity<byte[]> getOneImage(@PathVariable Long id) {
         List<FileProduct> fileProducts = fileProductRepository.findByProductId(id);
 
         if (fileProducts.isEmpty()) {
-            return new ResponseEntity<>("FileProduct not found for id: " + id, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
+        // 첫 번째 이미지 파일만 사용합니다.
         FileProduct fileProduct = fileProducts.get(0);
-        String fileName = fileProduct.getUuid() + fileProduct.getFileName();
+        String fileName = fileProduct.getUuid() + "_" + fileProduct.getFileName();
         File imgFile = new File(filePath + fileName);
 
         if (!imgFile.exists() || !imgFile.isFile()) {
-            return new ResponseEntity<>("File not found: " + imgFile.getAbsolutePath(), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
         byte[] imageBytes;
         try {
             imageBytes = Files.readAllBytes(imgFile.toPath());
         } catch (IOException e) {
-            return new ResponseEntity<>("Error reading file: " + imgFile.getAbsolutePath(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        String imageBase64 = Base64.getEncoder().encodeToString(imageBytes);
-        String imageBase64URI = "data:image/jpeg;base64," + imageBase64;
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.IMAGE_JPEG);
+        headers.setContentLength(imageBytes.length);
 
-        return new ResponseEntity<>(imageBase64URI, HttpStatus.OK);
+        return new ResponseEntity<>(imageBytes, headers, HttpStatus.OK);
     }
+
 
 
 }

@@ -19,12 +19,9 @@
 <body>
 <div class="product-grid" th:each="product : ${products}">
     <div>
-        <!-- Thymeleaf를 사용하여 이미지 URL 구성 -->
-        <div th:each="fileProduct : ${product.files}">
-            <img id="productImage" th:src="@{'/product/images/' + ${product.id}}" alt="Product image">
-        </div>
-        <!-- 상품 ID 정보를 뷰에서 숨김 -->
-        <div th:id="${product.id}" style="display: none;"></div>
+        <!-- 단일 이미지 URL 구성 -->
+        <img id="productImage" th:if="${product.file}" th:src="@{'/product/image/' + ${product.id}}" alt="Product image">
+        <!-- 상품 정보 표시 -->
         <div th:text="${product.productName}"></div>
         <div th:text="${product.price + '원'}"></div>
     </div>
@@ -32,20 +29,7 @@
 <button id="prevPage">이전 페이지</button>
 <button id="nextPage">다음 페이지</button>
 <script>
-    $(document).ready(function(){
-        var page = 0;
-        var size = 12;
-        $('#prevPage').click(function(){
-            if(page > 0){
-                page--;
-                window.location.href = "/category/show/" + page;
-            }
-        });
-        $('#nextPage').click(function(){
-            page++;
-            window.location.href = "/category/show/" + page;
-        });
-    });
+
 </script>
 </body>
 </html>
