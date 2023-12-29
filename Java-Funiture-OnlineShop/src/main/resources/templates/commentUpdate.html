@@ -141,6 +141,7 @@
             max-height: 300px; /* 최대 세로 크기 */
         }
     </style>
+    <script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
 </head>
 <body>
 <form id="updateForm" enctype="multipart/form-data">
@@ -187,7 +188,12 @@
     </div>
     <button type="button" class="button_upload" onclick="submitForm()">수정</button>
 </form>
-<script>
+<script th:inline="javascript">
+    show();
+    function show() {
+        console.log([[${comment}]]);
+    }
+
     function updateSelectedFiles(event) {
         var selectedFilesContainer = document.querySelector("#selected-files");
         selectedFilesContainer.innerHTML = "";

@@ -4,55 +4,67 @@
     <meta charset="UTF-8">
     <title>상품 상세 페이지</title>
     <script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
+    <style>
+        .max-size-image {
+            max-width: 300px; /* 최대 가로 크기 */
+            max-height: 300px; /* 최대 세로 크기 */
+        }
+        .image-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #img-box {
+            margin-right: 10px;
+        }
+    </style>
 </head>
 <body>
 
+<div th:if="${product != null}">
+    <!-- 상품 정보 섹션 -->
+    <div>
+        <h1 th:text="${product.productName}">상품명</h1>
+        <p>가격: <span id="basePrice" th:text="${product.price}">상품 가격</span>원</p>
+        <p>배송비: <span id="deliveryFee" th:text="${product.deliveryFee}">배송비</span>원</p>
 
-<!--<div th:if="${product != null}">-->
-<!--    &lt;!&ndash; 상품 정보 섹션 &ndash;&gt;-->
-<!--    <div>-->
-<!--        <h1 th:text="${product.productName}">상품명</h1>-->
-<!--        <p>가격: <span id="basePrice" th:text="${product.price}">상품 가격</span>원</p>-->
-<!--        <p>배송비: <span id="deliveryFee" th:text="${product.deliveryFee}">배송비</span>원</p>-->
+        <h3>상품 이미지</h3>
+        <div class="image-container">
+            <!-- Thymeleaf를 사용하여 이미지 URL 구성 -->
+            <div id="img-box" th:each="file: ${product.files}">
+                <img class="productImg max-size-image" th:src="'/product/image/' + ${file.id}" alt="상품 이미지">
+            </div>
+        </div>
+        <!-- 옵션 선택 섹션 -->
+        <div th:if="${product.optionList != null}">
+            <h3>옵션 선택</h3>
+            <select id="optionSelect" name="optionSelect" onchange="updateTotalPrice()">
+                <option selected value="">옵션 선택</option> <!-- 기본 옵션 추가 -->
+                <option th:each="option : ${product.optionList}"
+                        th:value="${option.id}"
+                        th:text="${option.optionName}"
+                        th:data-price="${option.price}"
+                        th:data-stock="${option.stockQuantity}"
+                        th:data-product-id="${option.productId}"> <!-- productId 데이터 속성 추가 -->
+                    옵션 명
+                </option>
+            </select>
+        </div>
+        <!-- 수량 선택 섹션 -->
+        <div>
+            <h3>수량 선택</h3>
+            <input type="number" id="quantitySelect" name="quantitySelect" min="1" max="" value="1" onchange="updateTotalPrice()">
+        </div>
+        <div id="totalPriceSection">
+            <h3>총 가격: <span id="totalPrice"></span>원</h3>
+        </div>
+        <div>
+            <button type="submit" id="addCartButton" onclick="addCart()">장바구니 추가</button>
+        </div>
+        <p th:text="${product.description}">상품 설명</p> <!-- 상품 설명을 장바구니 추가 버튼 밑으로 옮김 -->
+    </div>
+</div>
 
-<!--        <div>-->
-<!--            <h3>상품 이미지</h3>-->
-<!--            &lt;!&ndash; Thymeleaf를 사용하여 이미지 URL 구성 &ndash;&gt;-->
-<!--            <div th:each="file, iterStat : ${product.files}">-->
-<!--                <div th:if="${file != null}">-->
-<!--                    <img id="'productImage' + ${iterStat.index}" th:src="${file.filePath}" alt="Product image">-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--        &lt;!&ndash; 옵션 선택 섹션 &ndash;&gt;-->
-<!--        <div th:if="${product.optionList != null}">-->
-<!--            <h3>옵션 선택</h3>-->
-<!--            <select id="optionSelect" name="optionSelect" onchange="updateTotalPrice()">-->
-<!--                <option selected value="">옵션 선택</option> &lt;!&ndash; 기본 옵션 추가 &ndash;&gt;-->
-<!--                <option th:each="option : ${product.optionList}"-->
-<!--                        th:value="${option.id}"-->
-<!--                        th:text="${option.optionName}"-->
-<!--                        th:data-price="${option.price}"-->
-<!--                        th:data-stock="${option.stockQuantity}"-->
-<!--                        th:data-product-id="${option.productId}"> &lt;!&ndash; productId 데이터 속성 추가 &ndash;&gt;-->
-<!--                    옵션 명-->
-<!--                </option>-->
-<!--            </select>-->
-<!--        </div>-->
-<!--        &lt;!&ndash; 수량 선택 섹션 &ndash;&gt;-->
-<!--        <div>-->
-<!--            <h3>수량 선택</h3>-->
-<!--            <input type="number" id="quantitySelect" name="quantitySelect" min="1" max="" value="1" onchange="updateTotalPrice()">-->
-<!--        </div>-->
-<!--        <div id="totalPriceSection">-->
-<!--            <h3>총 가격: <span id="totalPrice"></span>원</h3>-->
-<!--        </div>-->
-<!--        <div>-->
-<!--            <button type="submit" id="addCartButton" onclick="addCart()">장바구니 추가</button>-->
-<!--        </div>-->
-<!--        <p th:text="${product.description}">상품 설명</p> &lt;!&ndash; 상품 설명을 장바구니 추가 버튼 밑으로 옮김 &ndash;&gt;-->
-<!--    </div>-->
-<!--</div>-->
 <!--&lt;!&ndash; 리뷰 섹션 &ndash;&gt;-->
 <!--<div th:if="${product.reviewList != null}">-->
 <!--    <h2>상품 리뷰 (총 리뷰 수: <span id="reviewCount" th:text="${product.reviewList.size()}">0</span>, 평균 별점: <span id="averageRating">0.0</span>)</h2>-->
@@ -92,12 +104,20 @@ function updateTotalPrice() {
     inputElement.setAttribute("max", maxValue.toString()); // 수량 선택의 최댓값을 설정합니다.
 }
 
+// 상품 이미지 보이기
+function showImg() {
+
+    const imgBox = $('#productImg');
+    imgBox.attr('src', '/product/image/' + id);
+}
+
 
 // 문서 로드 후 총 가격을 초기화
 document.addEventListener('DOMContentLoaded', function() {
-    //updateTotalPrice();
+    updateTotalPrice();
     //calculateAverageRating();
     show();
+    //showImg([[${product.files[0].id}]]);
 });
 
 function show(){

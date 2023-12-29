@@ -1,13 +1,11 @@
 package com.example.funitureOnlineShop.fileProduct;
 
 import com.example.funitureOnlineShop.product.Product;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.io.File;
 
+@AllArgsConstructor
 @NoArgsConstructor
 @ToString
 @Setter
@@ -53,5 +51,16 @@ public class FileProductResponse {
                 .fileType(fileType)
                 .fileSize(fileSize)
                 .build();
+    }
+
+    public static FileProductResponse toDto(FileProduct fileProduct) {
+        return new FileProductResponse(
+                fileProduct.getId(),
+                fileProduct.getFilePath(),
+                fileProduct.getFileName(),
+                fileProduct.getUuid(),
+                fileProduct.getFileType(),
+                fileProduct.getFileSize(),
+                fileProduct.getProduct().getId());
     }
 }

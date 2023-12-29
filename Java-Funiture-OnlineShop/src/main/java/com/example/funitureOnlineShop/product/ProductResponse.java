@@ -1,9 +1,11 @@
 package com.example.funitureOnlineShop.product;
 
+import com.example.funitureOnlineShop.fileProduct.FileProduct;
 import com.example.funitureOnlineShop.fileProduct.FileProductResponse;
 import com.example.funitureOnlineShop.option.Option;
 import com.example.funitureOnlineShop.productComment.ProductComment;
 import com.example.funitureOnlineShop.productComment.ProductCommentResponse;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -32,7 +34,7 @@ public class ProductResponse {
         }
     }
 
-    @NoArgsConstructor
+    @AllArgsConstructor
     @Setter
     @Getter
     public static class FindByIdDTO {
@@ -53,16 +55,17 @@ public class ProductResponse {
 
         private List<FileProductResponse> files;
 
-        public FindByIdDTO(Product product, List<Option> optionList, List<FileProductResponse> files) {
-            this.id = product.getId();
-            this.productName = product.getProductName();
-            this.description = product.getDescription();
-            this.price = product.getPrice();
-            this.deliveryFee = product.getDeliveryFee();
-            this.categoryId = product.getCategory().getId();
-            this.optionList = optionList.stream().map(OptionDTO::new)
-                    .collect(Collectors.toList());
-            this.files = (files != null) ? files : new ArrayList<>();
+        public static FindByIdDTO toDto(Product product, List<Option> options, List<FileProduct> files) {
+            return new FindByIdDTO(
+                    product.getId(),
+                    product.getProductName(),
+                    product.getDescription(),
+                    product.getPrice(),
+                    product.getDeliveryFee(),
+                    product.getCategory().getId(),
+                    options.stream().map(OptionDTO::new).collect(Collectors.toList()),
+                    files.stream().map(FileProductResponse::toDto).collect(Collectors.toList())
+            );
         }
     }
 
@@ -105,6 +108,7 @@ public class ProductResponse {
     @Setter
     @NoArgsConstructor
     public static class UpdateDTO {
+        private Long id;
         private String productName;
         private String description;
         private Long price;
