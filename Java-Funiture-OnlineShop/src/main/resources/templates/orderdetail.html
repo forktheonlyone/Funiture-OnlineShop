@@ -1,33 +1,148 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>주문 상세 정보</title>
+    <meta charset="UTF-8">
+    <title>주문 내역</title>
+    <script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
 </head>
 <body>
 <h1>주문 상세 정보</h1>
-<div th:if="${order != null}">
-    <p>주문 번호: <span th:text="${order.id}"></span></p>
-    <p>주문 날짜: <span th:text="${order.date}"></span></p>
+<div>최근 3년 이내의 주문 내역만을 보여줍니다</div>
+<div id="order-list">
 
-    <h2>주문 상품 목록</h2>
-    <div th:each="product : ${order.products}">
-        <p>상품 이름: <span th:text="${product.name}"></span></p>
-        <ul th:each="option : ${product.options}">
-            <li>
-                <p>옵션 이름: <span th:text="${option.name}"></span></p>
-                <p>옵션 수량: <span th:text="${option.quantity}"></span></p>
-                <p>옵션 가격: <span th:text="${option.price}"></span></p>
-                <p>옵션 총 가격: <span th:text="${option.quantity * option.price}"></span></p>
-            </li>
-        </ul>
-        <p>상품 총 가격: <span th:text="${product.options.stream().map(option -> option.quantity * option.price).reduce(0, Integer::sum)}"></span></p>
-        <button onclick="window.location.href = '/reviews/write/{id}(id=${product.id})'">후기 작성하기</button>
-    </div>
+</div>
+<script th:inline="javascript">
+    const findOrderCheck = () => {
+        const token = getCookie('token');
+        $.ajax({
+            // 요청방식: post, 요청주소: /comment/update, 요청데이터: 작성자, 작성내용, 게시글번호
+            type: "get",
+            url: "/product_comment/orderCheck",
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': token
+            },
+            success: function (res) {
+                console.log("요청승인", res);
+                let orders = res.response;
+                let output = "";
+                if (orders.length > 0) {
+                    output += "<div>";
+                    output += "<table class='table table-striped' id='orderTable'>";
+                    output += "<tr>";
+                    output += "<th>" + "주문 번호" + "</th>";
+                    output += "<th>" + "주문 일자 및 시간" + "</th>";
+                    output += "<th>" + "상품명" + "</th>";
+                    output += "<th>" + "옵션명" + "</th>";
+                    output += "<th>" + "가격" + "</th>";
+                    output += "<th>" + "수량" + "</th>";
+                    output += "<th>" + "상품후기" + "</th>";
+                    output += "</tr>";
 
-    <p>주문 총 가격: <span th:text="${order.products.stream().flatMap(product -> product.options.stream().map(option -> option.quantity * option.price)).reduce(0, Integer::sum)}"></span></p>
-</div>
-<div th:if="${order == null}">
-    <p>주문 정보를 찾을 수 없습니다.</p>
-</div>
+                    for (let i in orders){
+                        output += "<tr>";
+                        output += "<td>" + orders[i].tid + "</td>";
+
+                        output += "<td>" + orders[i].orderDate.substring(0,10) + " ";
+                        output += orders[i].orderDate.substring(11,20);
+                        output += "</td>";
+
+                        output += "<td>" + orders[i].productName + "</td>";
+                        output += "<td>" + orders[i].optionName + "</td>";
+                        output += "<td>" + orders[i].price + "</td>";
+                        output += "<td>" + orders[i].quantity + "</td>";
+
+                        output += "<td>";
+                        if (orders[i].commentId !== null) {
+                            output += "<button class='update' data-id='" + orders[i].commentId + "'>수정</button>";
+                            output += "<button class='delete' data-id='" + orders[i].commentId + "'>삭제</button>";
+                        } else {
+                            const orderId = "/product_comment/save/" + orders[i].id;
+                            output += "<button class='create' data-id='" + orders[i].id + "' onclick=''>작성</button>";
+                        }
+                        output += "</td>";
+
+                        output += "</tr>";
+                    }
+                    output += "</table>";
+                    output += "</div>";
+                }
+                document.getElementById('order-list').innerHTML = output;
+
+                const createButton = document.querySelectorAll('.create');
+                const updateButton = document.querySelectorAll('.update');
+                const deleteButton = document.querySelectorAll('.delete');
+
+                createButton.forEach(button => {
+                    button.addEventListener("click", function() {
+                        const id = this.dataset.id;
+                        createComment(id);
+                    });
+                });
+
+                updateButton.forEach(button => {
+                    button.addEventListener("click", function() {
+                        const id = this.dataset.id;
+                        updateComment(id);
+                    });
+                });
+
+                deleteButton.forEach(button => {
+                    button.addEventListener("click", function() {
+                        const id = this.dataset.id;
+                        deleteComment(id);
+                    });
+                });
+            },
+            error: function (err) {
+                console.log("화면 이동 실패", err);
+                console.log(location.href);
+                location.href = "/";
+            }
+        });
+    }
+
+    findOrderCheck();
+
+    function getCookie(name) {
+        const cookieName = name + "=";
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.indexOf(cookieName) === 0) {
+                return cookie.substring(cookieName.length, cookie.length);
+            }
+        }
+        return null;
+    }
+
+    const createComment = (id) => {
+        location.href = "/product_comment/save/" + id;
+    }
+
+    const updateComment = (id) => {
+        location.href = "/product_comment/update/" + id;
+    }
+
+    const deleteComment = (id) => {
+        const token = getCookie('token');
+        $.ajax({
+            type: "post",
+            url: "/product_comment/delete/" + id,
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': token
+            },
+            success: function (res) {
+                console.log("요청성공", res);
+                findOrderCheck();
+            },
+            error: function (err) {
+                console.log("요청실패", err);
+                alert("삭제 실패");
+            }
+        });
+    }
+</script>
 </body>
 </html>

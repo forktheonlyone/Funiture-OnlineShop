@@ -8,6 +8,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.Comparator;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -24,6 +27,8 @@ public class OrderCheck {
 
     private Long price;
 
+    private LocalDateTime orderDate;
+
     @ManyToOne(fetch = FetchType.LAZY)
     private Option option;
 
@@ -31,12 +36,17 @@ public class OrderCheck {
     private User user;
 
     @Builder
-    public OrderCheck(Long id, String tid, Long quantity, Long price, Option option, User user) {
+    public OrderCheck(Long id, String tid, Long quantity, Long price, LocalDateTime orderDate, Option option, User user) {
         this.id = id;
         this.tid = tid;
         this.quantity = quantity;
         this.price = price;
+        this.orderDate = orderDate;
         this.option = option;
         this.user = user;
+    }
+
+    public static void sortByCreateDate(List<OrderCheck> orderChecks) {
+        orderChecks.sort(Comparator.comparing(OrderCheck::getOrderDate).reversed());
     }
 }

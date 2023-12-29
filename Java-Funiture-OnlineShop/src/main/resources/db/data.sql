@@ -8,7 +8,7 @@ insert into category (id, category_name, super_category_id) values (4, '참나�
 insert into category (id, category_name, super_category_id) values (5, '등나무 책상', 2);
 
 insert into product (id, delivery_fee, description, price, product_name, category_id) values (1, 500, '이거슨 레스비 책상이여', 1000, '레쓰비 책상1', 3)
-    insert into product (id, delivery_fee, description, price, product_name, category_id) values (2, 500, '이거슨 레스비 책상이여', 1000, '레쓰비 책상2', 3)
+insert into product (id, delivery_fee, description, price, product_name, category_id) values (2, 500, '이거슨 레스비 책상이여', 1000, '레쓰비 책상2', 3)
 insert into product (id, delivery_fee, description, price, product_name, category_id) values (3, 500, '이거슨 레스비 책상이여', 1000, '레쓰비 책상3', 3)
 insert into product (id, delivery_fee, description, price, product_name, category_id) values (4, 500, '이거슨 레스비 책상이여', 1000, '레쓰비 책상4', 4)
 insert into product (id, delivery_fee, description, price, product_name, category_id) values (5, 500, '이거슨 레스비 책상이여', 1000, '레쓰비 책상5', 4)
@@ -58,6 +58,6 @@ insert into file_product (id, file_name, file_path, file_size, file_type, uuid, 
 
 insert into order_tb (id, order_date, cart_id, user_id) values (1, '2023-12-27', 1, 1)
 
-insert into order_check (id, price, quantity, tid, option_id, user_id) values (1, 4000, 1, "asdfasfd", 3, 1)
-insert into order_check (id, price, quantity, tid, option_id, user_id) values (2, 8000, 2, "asdfasfd", 6, 1)
-insert into order_check (id, price, quantity, tid, option_id, user_id) values (3, 12000, 3, "asdfasfd", 9, 1)
+insert into order_check (id, price, order_date, quantity, tid, option_id, user_id) values (1, 4000, '2019-8-14 08:43:12', 1, 'asdfasfd', 3, 1)
+insert into order_check (id, price, order_date, quantity, tid, option_id, user_id) values (2, 8000, '2023-8-14 08:43:12', 2, 'asdfasfd', 6, 1)
+insert into order_check (id, price, order_date, quantity, tid, option_id, user_id) values (3, 12000, '2023-8-14 08:43:12', 3, 'asdfasfd', 9, 1)
