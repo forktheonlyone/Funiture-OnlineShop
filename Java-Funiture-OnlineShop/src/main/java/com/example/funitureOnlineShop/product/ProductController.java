@@ -58,7 +58,7 @@ public class ProductController {
 
  */
 
-    // 상품과 해당 상품의 리뷰 찾기
+    // 상품 찾기
     @GetMapping("/product/{id}")
     public ResponseEntity<?> findById(@PathVariable Long id) {
         ProductResponse.FindByIdDTO productDTOS = productService.findById(id);
@@ -76,6 +76,7 @@ public class ProductController {
         return ResponseEntity.ok(apiResult);
     }
 
+    // 이미지들 찾기
     @GetMapping("/product/{id}/image")
     public ResponseEntity<byte[]> getImage(@PathVariable("id") Long id) throws IOException {
         FileProduct fileProduct = fileProductRepository.findByProductId(id).get(0);
