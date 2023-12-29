@@ -1,9 +1,7 @@
 package com.example.funitureOnlineShop.option;
 
-import com.example.funitureOnlineShop.core.error.exception.Exception500;
 import com.example.funitureOnlineShop.core.security.CustomUserDetails;
 import com.example.funitureOnlineShop.core.utils.ApiUtils;
-import com.example.funitureOnlineShop.orderCheck.OrderCheck;
 import com.example.funitureOnlineShop.orderCheck.OrderCheckDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

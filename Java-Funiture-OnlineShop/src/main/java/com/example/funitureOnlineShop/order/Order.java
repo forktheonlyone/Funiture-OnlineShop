@@ -1,8 +1,6 @@
 package com.example.funitureOnlineShop.order;
 
-import com.example.funitureOnlineShop.cart.Cart;
 import com.example.funitureOnlineShop.order.item.Item;
-import com.example.funitureOnlineShop.orderCheck.OrderCheck;
 import com.example.funitureOnlineShop.user.User;
 import lombok.Builder;
 import lombok.Getter;

@@ -1,12 +1,10 @@
 package com.example.funitureOnlineShop.Board;
 
 import com.example.funitureOnlineShop.BoardFile.BoardFile;
-import com.example.funitureOnlineShop.category.Category;
 import com.example.funitureOnlineShop.user.User;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;

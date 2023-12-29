@@ -5,6 +5,7 @@ import com.example.funitureOnlineShop.commentFile.CommentFileDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -17,6 +18,7 @@ public class ProductCommentResponse {
     @Setter
     @Getter
     @AllArgsConstructor
+    @ToString
     public static class CommentDto {
         // PK
         private Long id;
@@ -26,6 +28,8 @@ public class ProductCommentResponse {
         private String writer;
         // 내용
         private String contents;
+        // 옵션 명
+        private String optionName;
         // 작성일
         private LocalDateTime createTime;
         // 수정일
@@ -48,6 +52,7 @@ public class ProductCommentResponse {
                     comment.getStar(),
                     comment.getOrderCheck().getUser().getUsername(),
                     comment.getContents(),
+                    comment.getOrderCheck().getCart().getOption().getOptionName(),
                     comment.getCreateTime(),
                     comment.getUpdateTime(),
                     comment.getOrderCheck().getId(),

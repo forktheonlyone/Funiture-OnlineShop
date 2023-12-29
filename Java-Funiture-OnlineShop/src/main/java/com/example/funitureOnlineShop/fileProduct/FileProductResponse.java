@@ -1,12 +1,11 @@
 package com.example.funitureOnlineShop.fileProduct;
 
-import com.example.funitureOnlineShop.product.Product;
-import lombok.*;
-
-import java.io.File;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 @AllArgsConstructor
-@NoArgsConstructor
 @ToString
 @Setter
 @Getter
@@ -30,9 +29,6 @@ public class FileProductResponse {
     // ** 파일 크기
     private Long fileSize;
 
-    // ** 상품 id
-    private Long productId;
-
     public FileProductResponse(FileProduct fileProduct) {
         this.id = fileProduct.getId();
         this.filePath = fileProduct.getFilePath();
@@ -40,7 +36,6 @@ public class FileProductResponse {
         this.uuid = fileProduct.getUuid();
         this.fileType = fileProduct.getFileType();
         this.fileSize = fileProduct.getFileSize();
-        this.productId = fileProduct.getProduct().getId();
     }
 
     public FileProduct toEntity() {
@@ -60,7 +55,6 @@ public class FileProductResponse {
                 fileProduct.getFileName(),
                 fileProduct.getUuid(),
                 fileProduct.getFileType(),
-                fileProduct.getFileSize(),
-                fileProduct.getProduct().getId());
+                fileProduct.getFileSize());
     }
 }

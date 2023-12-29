@@ -53,8 +53,15 @@ insert into cart_tb (id, price, quantity, option_id, user_id) values (4, 12000, 
 insert into cart_tb (id, price, quantity, option_id, user_id) values (5, 8000, 2, 6, 2)
 insert into cart_tb (id, price, quantity, option_id, user_id) values (6, 4000, 1, 9, 2)
 
-insert into file_product (id, file_name, file_path, file_size, file_type, uuid, product_id) values (1, '레쓰비.jpg', 'C:/Users/soone/Desktop/FunitureOnlineShopFiles/', 52144, '.jpg', 'e491486f-66ea-4a74-8c74-84b52f38e2c9', 1)
-insert into file_product (id, file_name, file_path, file_size, file_type, uuid, product_id) values (2, '레쓰비.jpg', 'C:/Users/soone/Desktop/FunitureOnlineShopFiles/', 52144, '.jpg', 'e491486f-66ea-4a74-8c74-84b52f38e2c9', 2)
+insert into file_product (id, file_name, file_path, file_size, file_type, uuid, product_id) values (1, 'pic1.png', 'C:/Users/NT767/OneDrive/바탕 화면/demodata/', 58636, '.png', 'asdf-asdf-asdf', 1)
+insert into file_product (id, file_name, file_path, file_size, file_type, uuid, product_id) values (2, 'pic2.png', 'C:/Users/NT767/OneDrive/바탕 화면/demodata/', 58636, '.png', 'asdf-asdf-asdf', 1)
+insert into file_product (id, file_name, file_path, file_size, file_type, uuid, product_id) values (3, 'pic3.png', 'C:/Users/NT767/OneDrive/바탕 화면/demodata/', 58636, '.png', 'asdf-asdf-asdf', 1)
+insert into file_product (id, file_name, file_path, file_size, file_type, uuid, product_id) values (4, 'pic4.png', 'C:/Users/NT767/OneDrive/바탕 화면/demodata/', 58636, '.png', 'asdf-asdf-asdf', 2)
+insert into file_product (id, file_name, file_path, file_size, file_type, uuid, product_id) values (5, 'pic5.png', 'C:/Users/NT767/OneDrive/바탕 화면/demodata/', 58636, '.png', 'asdf-asdf-asdf', 2)
+insert into file_product (id, file_name, file_path, file_size, file_type, uuid, product_id) values (6, 'pic6.png', 'C:/Users/NT767/OneDrive/바탕 화면/demodata/', 58636, '.png', 'asdf-asdf-asdf', 2)
+insert into file_product (id, file_name, file_path, file_size, file_type, uuid, product_id) values (7, 'pic7.png', 'C:/Users/NT767/OneDrive/바탕 화면/demodata/', 58636, '.png', 'asdf-asdf-asdf', 3)
+insert into file_product (id, file_name, file_path, file_size, file_type, uuid, product_id) values (8, 'pic8.png', 'C:/Users/NT767/OneDrive/바탕 화면/demodata/', 58636, '.png', 'asdf-asdf-asdf', 4)
+insert into file_product (id, file_name, file_path, file_size, file_type, uuid, product_id) values (9, 'pic9.png', 'C:/Users/NT767/OneDrive/바탕 화면/demodata/', 58636, '.png', 'asdf-asdf-asdf', 5)
 
 insert into order_tb (id, order_date, user_id) values (1, '2023-12-27', 1)
 

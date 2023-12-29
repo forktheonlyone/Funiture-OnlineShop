@@ -2,7 +2,10 @@ package com.example.funitureOnlineShop.cart;
 
 import com.example.funitureOnlineShop.option.Option;
 import com.example.funitureOnlineShop.product.Product;
-import lombok.*;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.util.List;
 import java.util.stream.Collectors;

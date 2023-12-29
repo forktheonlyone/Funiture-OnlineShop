@@ -1,8 +1,6 @@
 package com.example.funitureOnlineShop.option;
 
 import com.example.funitureOnlineShop.core.error.exception.Exception500;
-import com.example.funitureOnlineShop.order.Order;
-import com.example.funitureOnlineShop.order.item.Item;
 import com.example.funitureOnlineShop.orderCheck.OrderCheck;
 import com.example.funitureOnlineShop.orderCheck.OrderCheckDto;
 import com.example.funitureOnlineShop.orderCheck.OrderCheckRepository;

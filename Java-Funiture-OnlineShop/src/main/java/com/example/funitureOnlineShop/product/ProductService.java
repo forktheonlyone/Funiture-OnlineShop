@@ -44,7 +44,7 @@ public class ProductService {
 
     // ------------<파일경로>-------------
     // !!!!!!!!!! 꼭 반드시 테스트시 파일 경로 특히 사용자명 확인할것 !!!!!!!!!!
-    private final String filePath = "C:/Users/G/Desktop/GitHub/Funiture-OnlineShop/Product Files/";
+    private final String filePath = "C:/Users/NT767/OneDrive/바탕 화면/demodata/";
 
     @Transactional
     public Product save(ProductResponse.SaveByIdDTO saveByIdDTO, MultipartFile[] files) throws IOException {
@@ -127,9 +127,9 @@ public class ProductService {
         // 상품 id에 따른 FileProduct를 찾는 코드
         List<FileProduct> fileProductList = fileProductRepository.findByProductId(updateDTO.getId());
         for (FileProduct fileProduct : fileProductList) {
-            FileProductResponse fileProductResponse = new FileProductResponse();
-            fileProductResponse.setFilePath(fileProduct.getFilePath());
-            fileProductResponse.setFileName(fileProduct.getFileName());
+//            FileProductResponse fileProductResponse = new FileProductResponse();
+//            fileProductResponse.setFilePath(fileProduct.getFilePath());
+//            fileProductResponse.setFileName(fileProduct.getFileName());
         }
 
         // 수정된 제품 정보를 FindByIdDTO 객체로 변환하여 반환
@@ -165,6 +165,9 @@ public class ProductService {
 
         // 상품 id에 따른 FileProduct들을 찾는 코드
         List<FileProduct> fileProductList = fileProductRepository.findByProductId(id);
+
+        if (fileProductList.isEmpty())
+            fileProductList.add(new FileProduct());
 
         return ProductResponse.FindByIdDTO.toDto(product, optionList, fileProductList);
     }

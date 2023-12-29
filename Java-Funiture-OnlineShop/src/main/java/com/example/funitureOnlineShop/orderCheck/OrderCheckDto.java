@@ -1,15 +1,11 @@
 package com.example.funitureOnlineShop.orderCheck;
 
-import com.example.funitureOnlineShop.cart.Cart;
-import com.example.funitureOnlineShop.productComment.ProductCommentResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.Comparator;
-import java.util.List;
 
 @Getter
 @Setter

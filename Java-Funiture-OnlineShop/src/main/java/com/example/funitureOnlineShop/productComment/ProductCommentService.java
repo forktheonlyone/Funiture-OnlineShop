@@ -1,21 +1,16 @@
 package com.example.funitureOnlineShop.productComment;
 
 import com.example.funitureOnlineShop.commentFile.CommentFile;
-import com.example.funitureOnlineShop.commentFile.CommentFileDto;
 import com.example.funitureOnlineShop.commentFile.CommentFileRepository;
 import com.example.funitureOnlineShop.core.error.exception.Exception400;
 import com.example.funitureOnlineShop.core.error.exception.Exception401;
 import com.example.funitureOnlineShop.core.error.exception.Exception404;
 import com.example.funitureOnlineShop.core.error.exception.Exception500;
-import com.example.funitureOnlineShop.fileProduct.FileProduct;
-import com.example.funitureOnlineShop.option.Option;
 import com.example.funitureOnlineShop.option.OptionRepository;
 import com.example.funitureOnlineShop.orderCheck.OrderCheck;
 import com.example.funitureOnlineShop.orderCheck.OrderCheckDto;
 import com.example.funitureOnlineShop.orderCheck.OrderCheckRepository;
-import com.example.funitureOnlineShop.user.User;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -38,7 +33,7 @@ public class ProductCommentService {
     private final CommentFileRepository commentFileRepository;
     private final OrderCheckRepository orderCheckRepository;
     // 파일 저장 경로
-    private String filePath = "C:/Users/G/Desktop/GitHub/Funiture-OnlineShop/Product Files/";
+    private String filePath = "C:/Users/NT767/OneDrive/바탕 화면/demodata/";
     private final List<String> isImage = new ArrayList<>(Arrays.asList(
             ".tiff", ".jfif", ".bmp", ".gif", ".svg", ".png", ".jpeg",
             ".svgz", ".webp", ".jpg", ".ico", ".xbm", ".dib", ".pjp",
@@ -136,7 +131,6 @@ public class ProductCommentService {
                 ProductCommentResponse.CommentDto commentDto = ProductCommentResponse.CommentDto.toDto(comment, commentFile);
                 // 상품에 대한 후기일 경우 추가
                 if (commentDto.getProductId().equals(pId)) {
-                    System.out.println("aaaaaaaaaaaaaa" + commentDto.getId());
                     commentDtos.add(commentDto);
                 }
             }
@@ -146,6 +140,8 @@ public class ProductCommentService {
 
             return commentDtos;
         } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println(e.getMessage());
             throw new Exception500("상품 후기 탐색 중 오류 발생 : " + pId);
         }
     }
