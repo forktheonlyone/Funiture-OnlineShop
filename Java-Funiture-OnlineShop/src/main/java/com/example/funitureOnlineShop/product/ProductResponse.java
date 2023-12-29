@@ -1,8 +1,9 @@
 package com.example.funitureOnlineShop.product;
 
-import com.example.funitureOnlineShop.category.Category;
 import com.example.funitureOnlineShop.fileProduct.FileProductResponse;
 import com.example.funitureOnlineShop.option.Option;
+import com.example.funitureOnlineShop.productComment.ProductComment;
+import com.example.funitureOnlineShop.productComment.ProductCommentResponse;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -34,46 +35,6 @@ public class ProductResponse {
     @NoArgsConstructor
     @Setter
     @Getter
-    public static class FindByCategoryIdDTO {
-
-        private Long id;
-
-        private String productName;
-
-        private String description;
-
-        private Long price;
-
-        private Long deliveryFee;
-
-        private Long categoryId;
-
-
-        public FindByCategoryIdDTO(Product product) {
-            this.id = product.getId();
-            this.productName = product.getProductName();
-            this.description = product.getDescription();
-            this.price = product.getPrice();
-            this.deliveryFee = product.getDeliveryFee();
-            this.categoryId = product.getCategory().getId();
-        }
-
-
-        public Product toEntity(Category category) {
-            return Product.builder()
-                    .id(id)
-                    .productName(productName)
-                    .description(description)
-                    .price(price)
-                    .deliveryFee(deliveryFee)
-                    .category(category)
-                    .build();
-        }
-    }
-
-    @NoArgsConstructor
-    @Setter
-    @Getter
     public static class FindByIdDTO {
 
         private Long id;
@@ -92,6 +53,7 @@ public class ProductResponse {
 
         private List<FileProductResponse> files;
 
+
         public FindByIdDTO(Product product, List<Option> optionList, List<FileProductResponse> files) {
             this.id = product.getId();
             this.productName = product.getProductName();
@@ -104,17 +66,56 @@ public class ProductResponse {
             this.files = (files != null) ? files : new ArrayList<>();
         }
     }
+
+    @NoArgsConstructor
+    @Setter
+    @Getter
+    public static class FindByIdAndReviewDTO {
+
+        private Long id;
+
+        private String productName;
+
+        private String description;
+
+        private Long price;
+
+        private Long deliveryFee;
+
+        private Long categoryId;
+
+        private List<OptionDTO> optionList;
+
+        private List<FileProductResponse> files;
+
+        private List<ProductCommentResponse.CommentDto> reviewList;
+
+        public FindByIdAndReviewDTO(Product product, List<Option> optionList
+                , List<FileProductResponse> files, List<ProductCommentResponse.CommentDto> reviewList) {
+            this.id = product.getId();
+            this.productName = product.getProductName();
+            this.description = product.getDescription();
+            this.price = product.getPrice();
+            this.deliveryFee = product.getDeliveryFee();
+            this.categoryId = product.getCategory().getId();
+            this.optionList = optionList.stream().map(OptionDTO::new)
+                    .collect(Collectors.toList());
+            this.files = (files != null) ? files : new ArrayList<>();
+            this.reviewList = (reviewList != null) ? reviewList : new ArrayList<>();
+        }
+    }
+
     @Getter
     @Setter
     @NoArgsConstructor
-    public static class findByCategoryForAllDTOS {
+    public static class FindByCategoryForAllDTOS {
 
         private Long id;
         private String productName;
         private Long price;
         private FileProductResponse file;
 
-        public findByCategoryForAllDTOS(Long id, String productName, Long price, FileProductResponse file) {
+        public FindByCategoryForAllDTOS(Long id, String productName, Long price, FileProductResponse file) {
             this.id = id;
             this.productName = productName;
             this.price = price;
@@ -136,5 +137,18 @@ public class ProductResponse {
         private Long deliveryFee;
 
         private Long categoryId;
+
     }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    public static class UpdateDTO {
+        private String productName;
+        private String description;
+        private Long price;
+        private Long deliveryFee;
+    }
+
 }
+

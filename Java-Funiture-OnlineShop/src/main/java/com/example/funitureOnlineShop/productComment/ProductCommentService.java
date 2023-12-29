@@ -11,7 +11,6 @@ import com.example.funitureOnlineShop.orderCheck.OrderCheck;
 import com.example.funitureOnlineShop.orderCheck.OrderCheckDto;
 import com.example.funitureOnlineShop.orderCheck.OrderCheckRepository;
 import com.example.funitureOnlineShop.user.User;
-import com.example.funitureOnlineShop.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;

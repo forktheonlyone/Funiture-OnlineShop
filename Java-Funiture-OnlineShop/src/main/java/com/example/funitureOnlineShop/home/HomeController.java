@@ -24,6 +24,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -65,15 +66,15 @@ public class HomeController {
     // 상품 상세 페이지
     @GetMapping("/product/show/{id}")
     public String showProduct(@PathVariable Long id, Model model) {
-        ProductResponse.FindByIdDTO findByIdDTO = productService.findById(id);
-        model.addAttribute("product", findByIdDTO);
+        ProductResponse.FindByIdAndReviewDTO findByIdAndReviewDTO = productService.findByIdAndReview(id);
+        model.addAttribute("product", findByIdAndReviewDTO);
         return "productPage";
     }
 
     // 카테고리 클릭시 특정 카테고리 상품 확인
     @GetMapping("/category/show/{categoryId}")
     public String showProductByCategory(@PathVariable Long categoryId, Model model) {
-        Page<ProductResponse.findByCategoryForAllDTOS> products = productService.findByCategoryId(categoryId, PageRequest.of(0, 10));
+        Page<ProductResponse.FindByCategoryForAllDTOS> products = productService.findByCategoryId(categoryId, PageRequest.of(0, 10));
         model.addAttribute("products", products);
         model.addAttribute("categoryId", categoryId);
         return "productCategoryPage";
@@ -89,9 +90,15 @@ public class HomeController {
     }
 
     // !< 관리자용 > 상품 신규 수정 페이지
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/product/update")
-    public String showProductUpdate() {
+    public String showProductUpdate(@PathVariable Long categoryId,
+                                    @RequestParam(required = false, defaultValue = "0") int page,
+                                    @RequestParam(required = false, defaultValue = "10") int size,
+                                    Model model) {
+        List<CategoryResponse.FindAllDto> categories = categoryService.findAllSuper();
+        Page<ProductResponse.FindByCategoryForAllDTOS> categoryProducts = productService.findByCategoryId(categoryId, PageRequest.of(page, size));
+        model.addAttribute("categories", categories);
+        model.addAttribute("categoryProducts", categoryProducts);
         return "productUpdate";
     }
 
