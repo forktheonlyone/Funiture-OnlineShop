@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>반품 신청</title>
+    <script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
+    <!-- 여기에 필요한 스타일시트 및 기타 리소스를 추가할 수 있습니다. -->
+</head>
+<body>
+<h1>주문 상세 정보</h1>
+
+<!-- 반품 여부 선택 체크박스 -->
+<div id="returnOrder"></div>
+<label for="returnCheckbox">반품 신청</label>
+<input type="checkbox" id="returnCheckbox">
+
+<!-- 반품 요청 버튼 -->
+<button id="returnButton" onclick="requestReturn()">반품 요청</button>
+
+<script>
+    const fetchOrderDetail = () => {
+    const token = getCookie('token');
+    $.ajax({
+        type: "get",
+        url: "/orders/ordercheck/" + [[${id}]],
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': token
+        },
+        success: function (res) {
+            console.log("요청승인", res);
+            let orders = res;
+            let output = "";
+
+            output += "<div>";
+            output += "<table class='table table-striped' id='orderTable'>";
+            output += "<tr>";
+            output += "<th>" + "주문 번호" + "</th>";
+            output += "<th>" + "주문 일자 및 시간" + "</th>";
+            output += "<th>" + "상품명" + "</th>";
+            output += "<th>" + "옵션명" + "</th>";
+            output += "<th>" + "가격" + "</th>";
+            output += "<th>" + "수량" + "</th>";
+            output += "</tr>";
+
+
+            output += "<tr>";
+            output += "<td>" + orders.tid + "</td>";
+            output += "<td>" + orders.orderDate.substring(0, 10) + " " + orders.orderDate.substring(11, 20) + "</td>";
+            output += "<td>" + orders.productName + "</td>";
+            output += "<td>" + orders.optionName + "</td>";
+            output += "<td>" + orders.price + "</td>";
+            output += "<td>" + orders.quantity + "</td>";
+            output += "</tr>";
+
+            output += "</table>";
+            output += "</div>";
+
+            document.getElementById('returnOrder').innerHTML = output;
+        },
+        error: function (err) {
+            console.error("주문 상세 정보 가져오기 실패", err);
+        }
+    });
+}
+
+       const requestReturn = () => {
+              const token = getCookie('token');
+              const returnCheckbox = document.getElementById('returnCheckbox');
+              const isReturnRequested = returnCheckbox.checked;
+
+              if (isReturnRequested) {
+                  // 반품 요청 API 호출
+                  fetch(`/orders/${id}/return`, {
+                      method: 'POST',
+                      headers: {
+                          'Content-Type': 'application/json',
+                          'Authorization': token
+                      },
+                  })
+                  .then(response => response.json())
+                  .then(data => {
+                      alert(data);  // 반품 처리 결과를 사용자에게 알림
+                  })
+                  .catch(error => {
+                      console.error('Error:', error);
+                      // 오류 발생 시 사용자에게 알림 또는 기타 처리
+                  });
+              } else {
+                  alert('반품 신청이 체크되지 않았습니다.');
+              }
+          }
+
+       // 주문 상세 정보를 먼저 가져온 후 반품 신청 페이지를 로드
+       fetchOrderDetail();
+
+       function getCookie(name) {
+           const cookieName = name + "=";
+           const cookies = document.cookie.split(';');
+           for (let i = 0; i < cookies.length; i++) {
+               const cookie = cookies[i].trim();
+               if (cookie.indexOf(cookieName) === 0) {
+                   return cookie.substring(cookieName.length, cookie.length);
+               }
+           }
+           return null;
+       }
+</script>
+</body>
+</html>

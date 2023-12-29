@@ -37,6 +37,7 @@
                     output += "<th>" + "가격" + "</th>";
                     output += "<th>" + "수량" + "</th>";
                     output += "<th>" + "상품후기" + "</th>";
+                    output += "<th>" + "반품" + "</th>";
                     output += "</tr>";
 
                     for (let i in orders){
@@ -61,7 +62,12 @@
                             output += "<button class='create' data-id='" + orders[i].id + "' onclick=''>작성</button>";
                         }
                         output += "</td>";
-
+                        output += "<td>";
+                        if (orders[i].tId !== null) {
+                         const orderId = "/returnorder/" + orders[i].id;
+                            output += "<button class='create1' data-id='" + orders[i].id + "' onclick=''>반품</button>";
+                        }
+                        output += "</td>";
                         output += "</tr>";
                     }
                     output += "</table>";
@@ -72,6 +78,14 @@
                 const createButton = document.querySelectorAll('.create');
                 const updateButton = document.querySelectorAll('.update');
                 const deleteButton = document.querySelectorAll('.delete');
+                const returnButton = document.querySelectorAll('.create1');
+
+                returnButton.forEach(button => {
+                    button.addEventListener("click", function() {
+                        const id = this.dataset.id;
+                        returnorder(id);
+                    });
+                });
 
                 createButton.forEach(button => {
                     button.addEventListener("click", function() {
@@ -123,7 +137,9 @@
     const updateComment = (id) => {
         location.href = "/product_comment/update/" + id;
     }
-
+    const returnorder = (id) => {
+        location.href = "/returnorder/" + id;
+    }
     const deleteComment = (id) => {
         const token = getCookie('token');
         $.ajax({

@@ -39,14 +39,8 @@ public class NicepayController {
     private final String SECRET_KEY = "cdcb051f99f1495fa46d1499ed294be6";
 
     @RequestMapping("/")
-    public String indexDemo(Model model,
-                            @RequestParam OrderRequest.OrderDTO orderDTO){
+    public String indexDemo(Model model){
         UUID id = UUID.randomUUID();
-        Order order = orderService.findByOrderId(orderDTO.getId());
-        Long amount = order.getCart().getPrice();
-        String goodsName = order.getCart().getOption().getProduct().getProductName();
-        model.addAttribute("orderAmount", amount);
-        model.addAttribute("goodsName", goodsName);
         model.addAttribute("orderId", id);
         model.addAttribute("clientId", CLIENT_ID);
         return "/payindex";

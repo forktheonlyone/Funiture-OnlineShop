@@ -2,6 +2,7 @@ package com.example.funitureOnlineShop.order;
 
 import com.example.funitureOnlineShop.core.security.CustomUserDetails;
 import com.example.funitureOnlineShop.core.utils.ApiUtils;
+import com.example.funitureOnlineShop.orderCheck.OrderCheckDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -10,6 +11,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -37,9 +40,18 @@ public class OrderController {
         return ResponseEntity.ok(ApiUtils.success(apiResult));
     }
 
-    @GetMapping("/orders/{orderId}")
-    public ResponseEntity<?> getOrderDetail(@PathVariable Long orderId){
-        OrderResponse.FindByIdDTO findByIdDTO = orderService.findById(orderId);
-        return ResponseEntity.ok(findByIdDTO);
+    @GetMapping("/orders/ordercheck/{id}")
+    public ResponseEntity<?> getOrderDetail(@PathVariable Long id,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails){
+        OrderCheckDto orderCheckDtos =orderService.findOrderChecks(id);
+
+        return ResponseEntity.ok(orderCheckDtos);
+    }
+
+    @PostMapping("/orders/{id}/return")
+    public ResponseEntity<String> processReturn(@PathVariable Long id) {
+        orderService.findById(id);
+        orderService.processReturn(id);
+        return ResponseEntity.ok("반품 처리가 완료되었습니다.");
     }
 }
