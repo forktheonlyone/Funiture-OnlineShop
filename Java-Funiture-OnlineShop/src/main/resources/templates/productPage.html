@@ -29,14 +29,14 @@
         <p>배송비: <span id="deliveryFee" th:text="${product.deliveryFee}">배송비</span>원</p>
 
         <h3>상품 이미지</h3>
-        <div class="image-container">
+        <div class="image-container" th:unless="${product.files == null}">
             <!-- Thymeleaf를 사용하여 이미지 URL 구성 -->
             <div id="img-box" th:each="file: ${product.files}">
                 <img class="productImg max-size-image" th:src="'/product/image/' + ${file.id}" alt="상품 이미지">
             </div>
         </div>
         <!-- 옵션 선택 섹션 -->
-        <div th:if="${product.optionList != null}">
+        <div th:unless="${product.optionList == null}">
             <h3>옵션 선택</h3>
             <select id="optionSelect" name="optionSelect" onchange="updateTotalPrice()">
                 <option selected value="">옵션 선택</option> <!-- 기본 옵션 추가 -->

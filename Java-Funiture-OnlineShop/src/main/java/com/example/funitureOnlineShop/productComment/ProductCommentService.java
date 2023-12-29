@@ -135,8 +135,10 @@ public class ProductCommentService {
                 // 상품 후기를 dto로 변환
                 ProductCommentResponse.CommentDto commentDto = ProductCommentResponse.CommentDto.toDto(comment, commentFile);
                 // 상품에 대한 후기일 경우 추가
-                if (commentDto.getProductId().equals(pId))
+                if (commentDto.getProductId().equals(pId)) {
+                    System.out.println("aaaaaaaaaaaaaa" + commentDto.getId());
                     commentDtos.add(commentDto);
+                }
             }
 
             // 작성일 기준 최신순으로 정렬

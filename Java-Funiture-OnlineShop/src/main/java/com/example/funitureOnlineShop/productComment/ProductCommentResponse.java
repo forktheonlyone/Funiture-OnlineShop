@@ -1,5 +1,7 @@
 package com.example.funitureOnlineShop.productComment;
 
+import com.example.funitureOnlineShop.commentFile.CommentFile;
+import com.example.funitureOnlineShop.commentFile.CommentFileDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -7,6 +9,7 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 public class ProductCommentResponse {
@@ -36,8 +39,10 @@ public class ProductCommentResponse {
         // 작성자 id
         private Long userId;
 
+        private List<CommentFileDto> files;
+
         // dto로 변경
-        public static CommentDto toDto(ProductComment comment) {
+        public static CommentDto toDto(ProductComment comment, List<CommentFile> files) {
             return new CommentDto(
                     comment.getId(),
                     comment.getStar(),
@@ -48,7 +53,8 @@ public class ProductCommentResponse {
                     comment.getOrderCheck().getId(),
                     comment.getOrderCheck().getCart().getOption().getId(),
                     comment.getOrderCheck().getCart().getOption().getProduct().getId(),
-                    comment.getOrderCheck().getUser().getId());
+                    comment.getOrderCheck().getUser().getId(),
+                    files.stream().map(CommentFileDto::toFileDto).collect(Collectors.toList()));
         }
 
         // 작성일을 기준으로 리스트를 정렬 (최신순)
