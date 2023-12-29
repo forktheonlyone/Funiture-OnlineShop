@@ -84,7 +84,7 @@ public class HomeController {
     }
 
     // !< 관리자용 > 상품 신규 수정 페이지
-    @GetMapping("/product/update")
+    @GetMapping("/product/update/{categoryId}")
     public String showProductUpdate(@PathVariable Long categoryId,
                                     @RequestParam(required = false, defaultValue = "0") int page,
                                     @RequestParam(required = false, defaultValue = "10") int size,
@@ -106,7 +106,7 @@ public class HomeController {
 
     // !!----------< 결제 관련 페이지 > -----------
     // 결제 상세 페이지
-    @GetMapping("/order")
+    @GetMapping("/orderPage")
     public String showOrder() {
         return "orderPage";
     }

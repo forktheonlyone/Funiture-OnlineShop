@@ -1,10 +1,13 @@
 package com.example.funitureOnlineShop.productComment;
 
 import com.example.funitureOnlineShop.commentFile.CommentFile;
+import com.example.funitureOnlineShop.commentFile.CommentFileDto;
 import com.example.funitureOnlineShop.commentFile.CommentFileRepository;
+import com.example.funitureOnlineShop.core.error.exception.Exception400;
 import com.example.funitureOnlineShop.core.error.exception.Exception401;
 import com.example.funitureOnlineShop.core.error.exception.Exception404;
 import com.example.funitureOnlineShop.core.error.exception.Exception500;
+import com.example.funitureOnlineShop.fileProduct.FileProduct;
 import com.example.funitureOnlineShop.option.Option;
 import com.example.funitureOnlineShop.option.OptionRepository;
 import com.example.funitureOnlineShop.orderCheck.OrderCheck;
@@ -23,10 +26,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -38,7 +38,11 @@ public class ProductCommentService {
     private final CommentFileRepository commentFileRepository;
     private final OrderCheckRepository orderCheckRepository;
     // 파일 저장 경로
-    private String filePath = "C:/Users/NT767/OneDrive/바탕 화면/demodata/";
+    private String filePath = "C:/Users/G/Desktop/GitHub/Funiture-OnlineShop/Product Files/";
+    private final List<String> isImage = new ArrayList<>(Arrays.asList(
+            ".tiff", ".jfif", ".bmp", ".gif", ".svg", ".png", ".jpeg",
+            ".svgz", ".webp", ".jpg", ".ico", ".xbm", ".dib", ".pjp",
+            ".apng", ".tif", ".pjpeg", "avif"));
 
     // 상품 후기 저장
     @Transactional
@@ -91,6 +95,9 @@ public class ProductCommentService {
                 String formatType = originalFilename.substring(
                         originalFilename.lastIndexOf("."));
 
+                if (!isImage.contains(formatType))
+                    throw new Exception400("이미지 파일만 가능합니다.");
+
                 // UUID 생성
                 String uuid = UUID.randomUUID().toString();
 
@@ -117,10 +124,6 @@ public class ProductCommentService {
     // 상품의 상품 후기들을 탐색
     public List<ProductCommentResponse.CommentDto> commentList(Long pId) {
         try {
-            List<Option> optionList = optionRepository.findByProductId(pId);
-            // 아직 옵션이 없는 없는 경우
-            if (optionList.isEmpty())
-                return null;
             List<ProductCommentResponse.CommentDto> commentDtos = new ArrayList<>();
             List<ProductComment> comments = productCommentRepository.findAll();
             // 상품 후기가 하나도 없을 경우
@@ -128,13 +131,12 @@ public class ProductCommentService {
                 return null;
             // 각 옵션의 후기들을 수집
             for (ProductComment comment : comments) {
+                List<CommentFile> commentFile = commentFileRepository.findAllByProductCommentId(comment.getId());
                 // 상품 후기를 dto로 변환
-                ProductCommentResponse.CommentDto commentDto = ProductCommentResponse.CommentDto.toDto(comment);
-                // 상품의 옵션에 대한 후기일 경우 추가
-                for (Option option : optionList) {
-                    if (commentDto.getOptionId().equals(option.getId()))
-                        commentDtos.add(ProductCommentResponse.CommentDto.toDto(comment));
-                }
+                ProductCommentResponse.CommentDto commentDto = ProductCommentResponse.CommentDto.toDto(comment, commentFile);
+                // 상품에 대한 후기일 경우 추가
+                if (commentDto.getProductId().equals(pId))
+                    commentDtos.add(commentDto);
             }
 
             // 작성일 기준 최신순으로 정렬
@@ -202,8 +204,10 @@ public class ProductCommentService {
                 productCommentRepository.findById(id);
         if (optionalProductComment.isEmpty())
             throw new Exception404("해당 상품 후기를 찾을 수 없습니다. : " + id);
+        ProductComment comment = optionalProductComment.get();
+        List<CommentFile> files = commentFileRepository.findAllByProductCommentId(id);
 
-        return ProductCommentResponse.CommentDto.toDto(optionalProductComment.get());
+        return ProductCommentResponse.CommentDto.toDto(comment, files);
     }
 
     // 주문 내역 단체 탐색

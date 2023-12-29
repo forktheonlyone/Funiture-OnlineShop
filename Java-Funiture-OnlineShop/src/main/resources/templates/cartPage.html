@@ -16,7 +16,7 @@
         <h5>총 금액: <div id="totalPrice"></div></h5>
     </div>
     <div class="text-right">
-        <button id="checkoutButton" class="btn btn-primary">결제하기</button>
+        <button type="button" id="checkoutButton" class="btn btn-primary">결제하기</button>
     </div>
 </div>
 <script th:inline="javascript">
@@ -197,9 +197,9 @@
                 'Authorization': token
             },
             success: function (res) {
-                console.log("요청성공", res);
-                alert("주문생성이 완료되었습니다.");
-                window.location.href = "/order";
+                console.log("요청성공", res.response);
+                //alert("주문생성이 완료되었습니다.");
+                //location.href = "/orderPage";
             },
             error: function (err) {
                 console.log("요청실패", err);
@@ -207,8 +207,6 @@
             }
         });
     });
-
-
 </script>
 </body>
 </html>

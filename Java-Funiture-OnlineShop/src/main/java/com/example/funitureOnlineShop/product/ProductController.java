@@ -3,6 +3,7 @@ package com.example.funitureOnlineShop.product;
 import com.example.funitureOnlineShop.core.utils.ApiUtils;
 import com.example.funitureOnlineShop.fileProduct.FileProduct;
 import com.example.funitureOnlineShop.fileProduct.FileProductRepository;
+import com.example.funitureOnlineShop.fileProduct.FileProductResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -11,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.ui.Model;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -18,6 +21,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Arrays;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -26,7 +30,7 @@ public class ProductController {
 
     private final ProductService productService;
     private final FileProductRepository fileProductRepository;
-    private final String filePath = "C:/Users/soone/Desktop/FunitureOnlineShopFiles/";
+    private final String filePath = "C:/Users/G/Desktop/GitHub/Funiture-OnlineShop/Product Files/";
 
     // 상품 생성
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -58,7 +62,7 @@ public class ProductController {
 
  */
 
-    // 상품 찾기
+    // 상품과 해당 상품의 리뷰 찾기
     @GetMapping("/product/{id}")
     public ResponseEntity<?> findById(@PathVariable Long id) {
         ProductResponse.FindByIdDTO productDTOS = productService.findById(id);
@@ -77,65 +81,23 @@ public class ProductController {
     }
 
     // 이미지들 찾기
-    @GetMapping("/product/{id}/image")
-    public ResponseEntity<byte[]> getImage(@PathVariable("id") Long id) throws IOException {
-        FileProduct fileProduct = fileProductRepository.findByProductId(id).get(0);
+    @GetMapping("/product/image/{id}")
+    public ResponseEntity<?> getImage(@PathVariable Long id) throws IOException {
 
-        // UUID와 originalFileName을 결합하여 파일을 찾습니다.
-        String fileName = fileProduct.getUuid() + fileProduct.getFileName();
-        File imgFile = new File(filePath + fileName);
+        FileProductResponse fileDto = productService.findByIdFile(id);
 
-        if (!imgFile.exists() || !imgFile.isFile()) {
-            throw new FileNotFoundException("File not found: " + imgFile.getAbsolutePath());
-        }
+        File file = new File(filePath + fileDto.getUuid() + fileDto.getFileName());
 
-        byte[] imageBytes = Files.readAllBytes(imgFile.toPath());
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.IMAGE_JPEG);
-        headers.setContentLength(imageBytes.length);
-
-        return new ResponseEntity<>(imageBytes, headers, HttpStatus.OK);
-    }
-
-    @GetMapping("/product/image/{productId}")
-    public ResponseEntity<byte[]> getOneImage(@PathVariable Long productId) {
-        // 이미지 파일을 가져오거나, 없을 경우 예외를 발생시킬 FileProductService 메소드 호출
-        List<FileProduct> fileProducts = fileProductRepository.findByProductId(productId);
-
-        if (fileProducts.isEmpty()) {
-            // 이미지가 없을 경우, 404 상태 코드로 응답
-            return ResponseEntity.notFound().build();
-        }
-
-        FileProduct fileProduct = fileProducts.get(0); // 첫 번째 이미지 추출
-        String fileName = fileProduct.getUuid() + fileProduct.getFileName();
-        File imgFile = new File(filePath + fileName);
-
-        if (!imgFile.exists() || !imgFile.isFile()) {
-            // 파일 시스템에 이미지가 없을 경우, 404 상태 코드로 응답
-            return ResponseEntity.notFound().build();
-        }
-
-        byte[] imageBytes;
-        try {
-            imageBytes = Files.readAllBytes(imgFile.toPath());
-        } catch (IOException e) {
-            // 파일을 읽는 중 오류가 발생할 경우, 500 상태 코드로 응답
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-
-        // 이미지 바이트 배열과 함께 200 상태 코드로 응답
         return ResponseEntity.ok()
-                .contentType(MediaType.IMAGE_JPEG) // 이미지의 MIME 타입 설정
-                .body(imageBytes);
+                .header("Content-type", Files.probeContentType(file.toPath()))
+                .body(FileCopyUtils.copyToByteArray(file));
     }
-
 
     // 상품 수정
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PutMapping("/product/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody ProductResponse.UpdateDTO updateDTO) {
-        ProductResponse.FindByIdDTO updatedProduct = productService.update(id, updateDTO);
+    @PutMapping("/product/update")
+    public ResponseEntity<?> update(@RequestBody ProductResponse.UpdateDTO updateDTO) {
+        ProductResponse.FindByIdDTO updatedProduct = productService.update(updateDTO);
         ApiUtils.ApiResult<?> apiResult = ApiUtils.success(updatedProduct);
         return ResponseEntity.ok(apiResult);
     }
@@ -148,7 +110,4 @@ public class ProductController {
         ApiUtils.ApiResult<?> apiResult = ApiUtils.success(id);
         return ResponseEntity.ok(apiResult);
     }
-
-
-
 }

@@ -35,8 +35,8 @@ public class CommentFileDto {
         return new CommentFileDto(
                 commentFile.getFilePath(),
                 commentFile.getFileName(),
-                commentFile.getUuid(),
                 commentFile.getFileType(),
+                commentFile.getUuid(),
                 commentFile.getFileSize(),
                 commentFile.getProductComment().getId());
     }
