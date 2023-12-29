@@ -35,12 +35,6 @@ public class Order {
 
     private LocalDateTime orderDate;
 
-    // ** 작업자 : 아현 (cart 추가)
-    @OneToOne
-    private Cart cart;
-
-    @OneToOne(fetch = FetchType.LAZY)
-    private OrderCheck orderCheck;
 
     @Builder
     public Order(Long id, User user, List<Item> orderItems) {

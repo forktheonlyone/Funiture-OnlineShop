@@ -40,18 +40,4 @@ public class OrderController {
         return ResponseEntity.ok(ApiUtils.success(apiResult));
     }
 
-    @GetMapping("/orders/ordercheck/{id}")
-    public ResponseEntity<?> getOrderDetail(@PathVariable Long id,
-            @AuthenticationPrincipal CustomUserDetails customUserDetails){
-        OrderCheckDto orderCheckDtos =orderService.findOrderChecks(id);
-
-        return ResponseEntity.ok(orderCheckDtos);
-    }
-
-    @PostMapping("/orders/{id}/return")
-    public ResponseEntity<String> processReturn(@PathVariable Long id) {
-        orderService.findById(id);
-        orderService.processReturn(id);
-        return ResponseEntity.ok("반품 처리가 완료되었습니다.");
-    }
 }

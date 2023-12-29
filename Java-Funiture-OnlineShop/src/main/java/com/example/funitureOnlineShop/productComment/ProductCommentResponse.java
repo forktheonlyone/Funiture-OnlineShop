@@ -46,8 +46,8 @@ public class ProductCommentResponse {
                     comment.getCreateTime(),
                     comment.getUpdateTime(),
                     comment.getOrderCheck().getId(),
-                    comment.getOrderCheck().getOption().getId(),
-                    comment.getOrderCheck().getOption().getProduct().getId(),
+                    comment.getOrderCheck().getCart().getOption().getId(),
+                    comment.getOrderCheck().getCart().getOption().getProduct().getId(),
                     comment.getOrderCheck().getUser().getId());
         }
 

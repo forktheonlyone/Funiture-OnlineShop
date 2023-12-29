@@ -56,8 +56,8 @@ insert into cart_tb (id, price, quantity, option_id, user_id) values (6, 4000, 1
 insert into file_product (id, file_name, file_path, file_size, file_type, uuid, product_id) values (1, '레쓰비.jpg', 'C:/Users/soone/Desktop/FunitureOnlineShopFiles/', 52144, '.jpg', 'e491486f-66ea-4a74-8c74-84b52f38e2c9', 1)
 insert into file_product (id, file_name, file_path, file_size, file_type, uuid, product_id) values (2, '레쓰비.jpg', 'C:/Users/soone/Desktop/FunitureOnlineShopFiles/', 52144, '.jpg', 'e491486f-66ea-4a74-8c74-84b52f38e2c9', 2)
 
-insert into order_tb (id, order_date, cart_id, user_id) values (1, '2023-12-27', 1, 1)
+insert into order_tb (id, order_date, user_id) values (1, '2023-12-27', 1)
 
-insert into order_check (id, price, order_date, quantity, tid, option_id, user_id) values (1, 4000, '2019-8-14 08:43:12', 1, 'asdfasfd', 3, 1)
-insert into order_check (id, price, order_date, quantity, tid, option_id, user_id) values (2, 8000, '2023-8-14 08:43:12', 2, 'asdfasfd', 6, 1)
-insert into order_check (id, price, order_date, quantity, tid, option_id, user_id) values (3, 12000, '2023-8-14 08:43:12', 3, 'asdfasfd', 9, 1)
+insert into order_check (id, price, order_date, quantity, tid, cart_id, user_id) values (1, 12000, '2019-8-14 08:43:12', 1, 'asdfasfd', 4, 1)
+insert into order_check (id, price, order_date, quantity, tid, cart_id, user_id) values (2, 8000, '2023-8-14 08:43:12', 2, 'asdfasfd', 6, 1)
+insert into order_check (id, price, order_date, quantity, tid, cart_id, user_id) values (3, 8000, '2023-8-14 08:43:12', 3, 'asdfasfd', 2, 1)

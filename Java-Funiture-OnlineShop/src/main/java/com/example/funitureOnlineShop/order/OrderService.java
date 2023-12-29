@@ -94,44 +94,6 @@ public class OrderService {
     }
 
     // ** 페이먼트 관련 기능 추가 ( 작업 : 이아현)
-    @Transactional
-    public void deductStockOnOrder(Order order) {
-        for (Item orderItem : order.getOrderItems()) {
-            Long optionId = orderItem.getOption().getId();
-            optionService.deductStock(optionId, orderItem);
-        }
-    }
-    @Transactional
-    public void restoreStockOnOrderCancel(Order order) {
-        for (Item orderItem : order.getOrderItems()) {
-            Long optionId = orderItem.getOption().getId();
-            optionService.restoreStock(optionId, orderItem);
-        }
-    }
-
-    public Order findByOrderId(Long id){
-        return orderRepository.findById(id)
-                .orElseThrow(() -> new Exception500("주문 ID를 찾을 수 없습니다: " + id));
-    }
-
-    @Transactional
-    public void cancelOrder(Order order) {
-        try {
-            // 주문 항목 삭제
-            List<Item> itemsToDelete = itemRepository.findAllByOrderId(order.getId());
-            itemRepository.deleteAll(itemsToDelete);
-            // 주문 삭제
-            orderRepository.delete(order);
-        } catch (Exception e) {
-            throw new Exception500("주문 및 주문 항목 삭제 중 오류가 발생했습니다: " + e.getMessage());
-        }
-    }
-    @Transactional
-    public void processReturn(Long id) {
-        Order order = findByOrderId(id);
-        cancelOrder(order);
-        restoreStockOnOrderCancel(order);
-    }
 
     public OrderCheckDto findOrderChecks(Long checkId) {
         Optional<OrderCheck> optionalOrderCheck = orderCheckRepository.findById(checkId);
