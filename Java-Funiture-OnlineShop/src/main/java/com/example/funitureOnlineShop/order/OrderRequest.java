@@ -19,8 +19,6 @@ public class OrderRequest {
 
     private Long userId;
 
-    private Long cartId;
-
     private List<OrderItemRequest> items;
 
     @Data
@@ -41,13 +39,10 @@ public class OrderRequest {
 
         private Long userId;
 
-        private Long cartId;
-
         public OrderDTO(){
             Order order = new Order();
             this.id = order.getId();
             this.userId = order.getUser().getId();
-            this.cartId = order.getCart().getId();
         }
     }
 }

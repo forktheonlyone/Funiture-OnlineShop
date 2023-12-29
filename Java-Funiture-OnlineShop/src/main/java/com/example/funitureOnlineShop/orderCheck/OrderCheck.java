@@ -1,5 +1,6 @@
 package com.example.funitureOnlineShop.orderCheck;
 
+import com.example.funitureOnlineShop.cart.Cart;
 import com.example.funitureOnlineShop.option.Option;
 import com.example.funitureOnlineShop.product.Product;
 import com.example.funitureOnlineShop.user.User;
@@ -30,19 +31,19 @@ public class OrderCheck {
     private LocalDateTime orderDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private Option option;
+    private Cart cart;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
     @Builder
-    public OrderCheck(Long id, String tid, Long quantity, Long price, LocalDateTime orderDate, Option option, User user) {
+    public OrderCheck(Long id, String tid, Long quantity, Long price, LocalDateTime orderDate, Cart cart, User user) {
         this.id = id;
         this.tid = tid;
         this.quantity = quantity;
         this.price = price;
         this.orderDate = orderDate;
-        this.option = option;
+        this.cart = cart;
         this.user = user;
     }
 

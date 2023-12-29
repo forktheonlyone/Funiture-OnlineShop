@@ -1,9 +1,15 @@
 package com.example.funitureOnlineShop.option;
 
+import com.example.funitureOnlineShop.core.error.exception.Exception500;
+import com.example.funitureOnlineShop.core.security.CustomUserDetails;
 import com.example.funitureOnlineShop.core.utils.ApiUtils;
+import com.example.funitureOnlineShop.orderCheck.OrderCheck;
+import com.example.funitureOnlineShop.orderCheck.OrderCheckDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -69,5 +75,26 @@ public class OptionController {
         return ResponseEntity.ok(apiResult);
     }
 
+    @GetMapping("/ordercheck/{id}")
+    public ResponseEntity<?> getOrderDetail(@PathVariable Long id,
+                                            @AuthenticationPrincipal CustomUserDetails customUserDetails){
+        OrderCheckDto orderCheckDtos = optionService.findOrderChecks(id);
 
+        return ResponseEntity.ok(orderCheckDtos);
+    }
+
+    // ** 주문 취소 시 재고 복구
+    @PostMapping("/restoreStock/{id}")
+    public ResponseEntity<?> restoreStockOnOrderCancel(@PathVariable Long id) {
+        OrderCheckDto orderCheckDtos = optionService.findOrderChecks(id);
+        try {
+            optionService.restoreStockOnOrderCancel(orderCheckDtos.toEntity());
+            ApiUtils.ApiResult<?> apiResult = ApiUtils.success("주문 취소 시 재고가 복구되었습니다.");
+            return ResponseEntity.ok(apiResult);
+        } catch (Exception e) {
+            e.printStackTrace();
+            ApiUtils.ApiResult<?> apiResult = ApiUtils.success(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiResult);
+        }
+    }
 }

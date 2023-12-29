@@ -56,8 +56,7 @@ public class NicepayController {
             @RequestParam String tid,
             @RequestParam Long amount,
             Model model) throws Exception {
-        OrderRequest.OrderDTO orderDTO = new OrderRequest.OrderDTO();
-        Order order = orderService.findByOrderId(orderDTO.getId());
+
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Basic " + Base64.getEncoder().encodeToString((CLIENT_ID + ":" + SECRET_KEY).getBytes()));
@@ -78,9 +77,7 @@ public class NicepayController {
         System.out.println(responseNode.toPrettyString());
 
         if (resultCode.equalsIgnoreCase("0000")) {
-            orderService.deductStockOnOrder(order);
-            orderService.delete(order.getId());
-            // cartService.deleteCartList(order.getCart());
+
             OrderCheckDto orderCheck = new OrderCheckDto();
             orderCheck.setTid(tid);
             orderCheck.setPrice(amount);
@@ -122,8 +119,6 @@ public class NicepayController {
         System.out.println(responseNode.toPrettyString());
 
         if (resultCode.equalsIgnoreCase("0000")) {
-            Order order = orderService.findByOrderId(orderDTO.getId());
-            orderService.restoreStockOnOrderCancel(order);
             OrderCheckDto orderCheck = new OrderCheckDto();
             orderCheck.setTid(tid);
             orderCheck.setPrice(amount);

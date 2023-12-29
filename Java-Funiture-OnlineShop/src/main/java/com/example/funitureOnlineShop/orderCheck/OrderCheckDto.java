@@ -1,5 +1,6 @@
 package com.example.funitureOnlineShop.orderCheck;
 
+import com.example.funitureOnlineShop.cart.Cart;
 import com.example.funitureOnlineShop.productComment.ProductCommentResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -30,7 +31,7 @@ public class OrderCheckDto {
     // 주문일자
     private LocalDateTime orderDate;
     // 옵션 id
-    private Long optionId;
+    private Long cartId;
     // 회원 id
     private Long userId;
     // 상품 후기 적힘?
@@ -40,11 +41,11 @@ public class OrderCheckDto {
         return new OrderCheckDto(orderCheck.getId(),
                 orderCheck.getTid(),
                 orderCheck.getQuantity(),
-                orderCheck.getOption().getProduct().getProductName(),
-                orderCheck.getOption().getOptionName(),
-                orderCheck.getOption().getPrice(),
+                orderCheck.getCart().getOption().getProduct().getProductName(),
+                orderCheck.getCart().getOption().getOptionName(),
+                orderCheck.getCart().getOption().getPrice(),
                 orderCheck.getOrderDate(),
-                orderCheck.getOption().getId(),
+                orderCheck.getCart().getId(),
                 orderCheck.getUser().getId(),
                 commentId);
     }
