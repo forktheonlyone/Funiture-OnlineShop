@@ -18,8 +18,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -63,7 +61,7 @@ public class ProductController {
     // 상품과 해당 상품의 리뷰 찾기
     @GetMapping("/product/{id}")
     public ResponseEntity<?> findById(@PathVariable Long id) {
-        ProductResponse.FindByIdAndReviewDTO productDTOS = productService.findByIdAndReview(id);
+        ProductResponse.FindByIdDTO productDTOS = productService.findById(id);
         ApiUtils.ApiResult<?> apiResult = ApiUtils.success(productDTOS);
         return ResponseEntity.ok(apiResult);
     }

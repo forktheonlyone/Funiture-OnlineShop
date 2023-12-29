@@ -53,7 +53,6 @@ public class ProductResponse {
 
         private List<FileProductResponse> files;
 
-
         public FindByIdDTO(Product product, List<Option> optionList, List<FileProductResponse> files) {
             this.id = product.getId();
             this.productName = product.getProductName();
@@ -64,44 +63,6 @@ public class ProductResponse {
             this.optionList = optionList.stream().map(OptionDTO::new)
                     .collect(Collectors.toList());
             this.files = (files != null) ? files : new ArrayList<>();
-        }
-    }
-
-    @NoArgsConstructor
-    @Setter
-    @Getter
-    public static class FindByIdAndReviewDTO {
-
-        private Long id;
-
-        private String productName;
-
-        private String description;
-
-        private Long price;
-
-        private Long deliveryFee;
-
-        private Long categoryId;
-
-        private List<OptionDTO> optionList;
-
-        private List<FileProductResponse> files;
-
-        private List<ProductCommentResponse.CommentDto> reviewList;
-
-        public FindByIdAndReviewDTO(Product product, List<Option> optionList
-                , List<FileProductResponse> files, List<ProductCommentResponse.CommentDto> reviewList) {
-            this.id = product.getId();
-            this.productName = product.getProductName();
-            this.description = product.getDescription();
-            this.price = product.getPrice();
-            this.deliveryFee = product.getDeliveryFee();
-            this.categoryId = product.getCategory().getId();
-            this.optionList = optionList.stream().map(OptionDTO::new)
-                    .collect(Collectors.toList());
-            this.files = (files != null) ? files : new ArrayList<>();
-            this.reviewList = (reviewList != null) ? reviewList : new ArrayList<>();
         }
     }
 

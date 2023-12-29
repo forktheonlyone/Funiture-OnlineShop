@@ -2,9 +2,11 @@ package com.example.funitureOnlineShop.productComment;
 
 import com.example.funitureOnlineShop.core.security.CustomUserDetails;
 import com.example.funitureOnlineShop.core.utils.ApiUtils;
+import com.example.funitureOnlineShop.orderCheck.OrderCheckDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,8 +23,9 @@ public class ProductCommentController {
     // 상품 후기 저장
     @PostMapping("/save")
     public ResponseEntity<?> save(@ModelAttribute ProductCommentRequest.SaveDto saveDto,
-                                  @RequestParam MultipartFile[] files) throws IOException {
-        ProductComment comment = productCommentService.save(saveDto, files);
+                                  @RequestParam MultipartFile[] files,
+                                  @AuthenticationPrincipal CustomUserDetails customUserDetails) throws IOException {
+        ProductComment comment = productCommentService.save(saveDto, files, customUserDetails.getUser().getId());
 
         if (comment != null) {
             return ResponseEntity.ok(ApiUtils.success(saveDto));
@@ -43,7 +46,7 @@ public class ProductCommentController {
     @PostMapping("/delete/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id,
                                     @AuthenticationPrincipal CustomUserDetails customUserDetails){
-        productCommentService.delete(id, customUserDetails.getUser());
+        productCommentService.delete(id, customUserDetails.getUser().getId());
 
         return ResponseEntity.ok(ApiUtils.success(null));
     }
@@ -53,12 +56,20 @@ public class ProductCommentController {
     public ResponseEntity<?> update(@ModelAttribute ProductCommentRequest.UpdateDto updateDto,
                                     @RequestParam MultipartFile[] files,
                                     @AuthenticationPrincipal CustomUserDetails customUserDetails) throws IOException {
-        ProductComment comment = productCommentService.update(updateDto, files, customUserDetails.getUser());
+        ProductComment comment = productCommentService.update(updateDto, files, customUserDetails.getUser().getId());
 
         if (comment != null) {
             return ResponseEntity.ok(ApiUtils.success(updateDto));
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @GetMapping("/orderCheck")
+    public ResponseEntity<?> orderCheck(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+         List<OrderCheckDto> orderCheckDtos = productCommentService.findOrderChecks(customUserDetails.getUser().getId());
+
+         ApiUtils.ApiResult apiResult = ApiUtils.success(orderCheckDtos);
+         return ResponseEntity.ok(apiResult);
     }
 }

@@ -133,27 +133,32 @@
         .rating-stars input[type="radio"] {
             margin-right: 5px;
         }
+
+        .max-size-image {
+            max-width: 300px; /* 최대 가로 크기 */
+            max-height: 300px; /* 최대 세로 크기 */
+        }
     </style>
 </head>
 <header> <h2>상품후기 작성</h2> </header>
 <body>
-<form action="/product_comment/save" method="post" enctype="multipart/form-data" onsubmit="return moveView()">
-    <h3> <label th:text="${orderCheck.productName} + ${orderCheck.optionName}">구매 제품명</label> </h3>
+<form id="commentForm" enctype="multipart/form-data">
+    <h3>구매 제품명 : <label th:text="${orderCheck.productName} + ' ' + ${orderCheck.optionName}" style="display: inline;"></label> </h3>
     <div class="form-group">
         <div class="title_area">
             <label>별점</label>
         </div>
         <div class="option_area">
             <div class="rating-stars">
-                <input type="radio" id="star1" name="rating" value="1" /> 1
+                <input type="radio" id="star1" name="star" value="1" /> 1
                 <label for="star1" title="1점"></label>
-                <input type="radio" id="star2" name="rating" value="2" /> 2
+                <input type="radio" id="star2" name="star" value="2" /> 2
                 <label for="star2" title="2점"></label>
-                <input type="radio" id="star3" name="rating" value="3" /> 3
+                <input type="radio" id="star3" name="star" value="3" /> 3
                 <label for="star3" title="3점"></label>
-                <input type="radio" id="star4" name="rating" value="4" /> 4
+                <input type="radio" id="star4" name="star" value="4" /> 4
                 <label for="star4" title="4점"></label>
-                <input type="radio" id="star5" name="rating" value="5" checked/> 5
+                <input type="radio" id="star5" name="star" value="5" checked/> 5
                 <label for="star5" title="5점"></label>
             </div>
         </div>
@@ -171,7 +176,7 @@
             <label>주문 내역</label>
         </div>
         <div class="option_area">
-            <input type="hidden" name="order_id" value="${orderCheck.id}">
+            <input type="hidden" name="orderCheckId" th:value="${orderCheck.id}">
         </div>
     </div>
     <div class="form-group">
@@ -186,25 +191,25 @@
             <div id="selected-files"></div>
         </div>
     </div>
-    <input type="submit" value="글 작성" class="file-upload">
+    <button type="button" class="file-upload" onclick="submitForm()">글 작성</button>
 </form>
 
 <script>
     function updateSelectedFiles(event) {
-        const files = event.target.files;
-        const selectedFilesContainer = document.getElementById('selected-files');
-        selectedFilesContainer.innerHTML = '';
+        var selectedFilesContainer = document.querySelector("#selected-files");
+        selectedFilesContainer.innerHTML = "";
+        for (var image of event.target.files) {
+            var reader = new FileReader();
 
-        for (let i = 0; i < files.length; i++) {
-            const file = files[i];
-            const fileName = file.name;
-            const fileType = file.type;
+            reader.onload = function(event) {
+                var img = document.createElement("img");
+                img.setAttribute("src", event.target.result);
+                img.classList.add("max-size-image");
 
-            if (fileType.startsWith("image/")) {
-                const fileItem = document.createElement('div');
-                fileItem.textContent = fileName;
-                selectedFilesContainer.appendChild(fileItem);
-            }
+                document.querySelector("#selected-files").appendChild(img);
+            };
+
+            reader.readAsDataURL(image);
         }
     }
 
@@ -212,12 +217,54 @@
     ratingStars.forEach(function(star) {
         star.addEventListener("change", function() {
             const selectedRating = this.value;
-            console.log("별점 선택:", selectedRating);
         });
     });
 
-    function moveView() {
-        location.href = "/";
+    function getCookie(name) {
+        const cookieName = name + "=";
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.indexOf(cookieName) === 0) {
+                return cookie.substring(cookieName.length, cookie.length);
+            }
+        }
+        return null;
+    }
+
+    async function submitForm() {
+        const form = document.getElementById('commentForm');
+        const formData = new FormData(form);
+        const token = getCookie('token');
+
+        for (let entry of formData.entries()) {
+            console.log(entry[0] + ': ' + entry[1]);
+        }
+
+        await fetch('/product_comment/save',{
+            method: 'POST',
+            body: formData,
+            headers: {
+                'Authorization': 'Bearer ' + token
+            }
+        }).then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error("서버 오류");
+            }
+        }).then(data => {
+            if (data.success) {
+                console.log(data);
+                alert("상품 후기가 성공적으로 저장되었습니다.");
+                location.href="/";
+            } else {
+                console.log(data.error);
+                alert("상품 후기 생성 중 오류가 발생했습니다.\n잠시 후 다시 시도해주세요.");
+            }
+        }).catch(error => {
+            console.error(error);
+        });
     }
 </script>
 </body>
