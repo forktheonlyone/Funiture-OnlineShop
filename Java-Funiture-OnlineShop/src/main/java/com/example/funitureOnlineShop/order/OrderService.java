@@ -5,6 +5,10 @@ import com.example.funitureOnlineShop.cart.CartRepository;
 import com.example.funitureOnlineShop.core.error.exception.Exception404;
 import com.example.funitureOnlineShop.core.error.exception.Exception500;
 import com.example.funitureOnlineShop.option.OptionService;
+import com.example.funitureOnlineShop.orderCheck.OrderCheck;
+import com.example.funitureOnlineShop.orderCheck.OrderCheckDto;
+import com.example.funitureOnlineShop.orderCheck.OrderCheckRepository;
+import com.example.funitureOnlineShop.productComment.ProductComment;
 import com.example.funitureOnlineShop.user.User;
 import com.example.funitureOnlineShop.order.item.Item;
 import com.example.funitureOnlineShop.order.item.ItemRepository;
@@ -12,8 +16,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +29,7 @@ public class OrderService {
     private final CartRepository cartRepository;
     private final ItemRepository itemRepository;
     private final OptionService optionService;
+    private final OrderCheckRepository orderCheckRepository;
     // 결제 시도시 작동
     @Transactional
     public OrderResponse.FindByIdDTO save(User user) {
@@ -107,4 +114,31 @@ public class OrderService {
                 .orElseThrow(() -> new Exception500("주문 ID를 찾을 수 없습니다: " + id));
     }
 
+    @Transactional
+    public void cancelOrder(Order order) {
+        try {
+            // 주문 항목 삭제
+            List<Item> itemsToDelete = itemRepository.findAllByOrderId(order.getId());
+            itemRepository.deleteAll(itemsToDelete);
+            // 주문 삭제
+            orderRepository.delete(order);
+        } catch (Exception e) {
+            throw new Exception500("주문 및 주문 항목 삭제 중 오류가 발생했습니다: " + e.getMessage());
+        }
+    }
+    @Transactional
+    public void processReturn(Long id) {
+        Order order = findByOrderId(id);
+        cancelOrder(order);
+        restoreStockOnOrderCancel(order);
+    }
+
+    public OrderCheckDto findOrderChecks(Long checkId) {
+        Optional<OrderCheck> optionalOrderCheck = orderCheckRepository.findById(checkId);
+        if (optionalOrderCheck.isEmpty())
+            throw new Exception500("아이디 못받아옴ㅋ");
+        OrderCheck orderCheck = optionalOrderCheck.get();
+
+        return OrderCheckDto.toOrderCheckDto(orderCheck, null);
+    }
 }

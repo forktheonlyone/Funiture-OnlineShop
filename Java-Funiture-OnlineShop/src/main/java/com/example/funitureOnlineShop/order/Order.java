@@ -2,6 +2,7 @@ package com.example.funitureOnlineShop.order;
 
 import com.example.funitureOnlineShop.cart.Cart;
 import com.example.funitureOnlineShop.order.item.Item;
+import com.example.funitureOnlineShop.orderCheck.OrderCheck;
 import com.example.funitureOnlineShop.user.User;
 import lombok.Builder;
 import lombok.Getter;
@@ -37,6 +38,9 @@ public class Order {
     // ** 작업자 : 아현 (cart 추가)
     @OneToOne
     private Cart cart;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    private OrderCheck orderCheck;
 
     @Builder
     public Order(Long id, User user, List<Item> orderItems) {
