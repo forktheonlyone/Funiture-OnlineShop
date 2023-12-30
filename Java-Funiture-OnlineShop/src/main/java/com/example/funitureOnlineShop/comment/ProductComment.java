@@ -1,4 +1,4 @@
-package com.example.funitureOnlineShop.productComment;
+package com.example.funitureOnlineShop.comment;
 
 import com.example.funitureOnlineShop.commentFile.CommentFile;
 import com.example.funitureOnlineShop.orderCheck.OrderCheck;

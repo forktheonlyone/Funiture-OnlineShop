@@ -1,6 +1,6 @@
-package com.example.funitureOnlineShop.BoardFile;
+package com.example.funitureOnlineShop.boardFile;
 
-import com.example.funitureOnlineShop.Board.Board;
+import com.example.funitureOnlineShop.board.Board;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,7 +32,6 @@ public class BoardFile {
     private Long fileSize;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "board_id")
     private Board board;
 
     @Builder

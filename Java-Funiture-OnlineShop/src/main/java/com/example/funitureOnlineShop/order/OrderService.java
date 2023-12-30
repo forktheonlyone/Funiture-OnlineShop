@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -39,34 +40,34 @@ public class OrderService {
         }
 
         // 주문 생성
-        Order order = Order.builder().user(user).build();
-        order = orderRepository.save(order);
-
-        // OrderStatus 생성 및 주문 연결
-
-
-        // 아이템 저장
+        Order order = Order.builder()
+                .user(user)
+                .orderDate(LocalDateTime.now())
+                .build();
         List<Item> itemList = new ArrayList<>();
-        for(Cart cart : cartList){
-            Item item = Item.builder()
-                    .option(cart.getOption())
-                    .order(order)
-                    .quantity(cart.getQuantity())
-                    .price(cart.getOption().getPrice() * cart.getQuantity())
-                    .build();
 
-            itemList.add(item);
-        }
+        try {
+            order = orderRepository.save(order);
 
-        try{
+            // 아이템 저장
+            for (Cart cart : cartList) {
+                Item item = Item.builder()
+                        .option(cart.getOption())
+                        .order(order)
+                        .quantity(cart.getQuantity())
+                        .price(cart.getPrice())
+                        .build();
+
+                itemList.add(item);
+            }
+
             itemRepository.saveAll(itemList);
+            cartRepository.deleteAll(cartList);
         } catch (Exception e){
             throw new Exception500("주문 생성중 오류가 발생하였습니다.");
         }
         return new OrderResponse.FindByIdDTO(order, itemList);
     }
-
-
 
     public OrderResponse.FindByIdDTO findById(Long id) {
         Order order = orderRepository.findById(id).orElseThrow(
@@ -84,8 +85,9 @@ public class OrderService {
         List<Item> itemsToDelete = itemRepository.findAllByOrderId(orderId);
 
         try {
-            itemRepository.deleteAll(itemsToDelete);
+            optionService.deductStock(itemsToDelete);
             orderRepository.delete(order);
+            itemRepository.deleteAll(itemsToDelete);
         } catch (Exception e) {
             throw new Exception500("주문 및 주문 항목 삭제 중 오류가 발생했습니다: " + e.getMessage());
         }

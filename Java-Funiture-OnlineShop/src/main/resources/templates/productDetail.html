@@ -17,6 +17,11 @@
         #img-box {
             margin-right: 10px;
         }
+        .star-container {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+        }
     </style>
 </head>
 <body>
@@ -65,11 +70,15 @@
     </div>
 </div>
 
+<h3>상품 후기</h3>
+<div class="star-container">
+    <h3>평균 별점 :</h3>
+    <h3>
+        <div id="all-star" th:if="${comments != null}"></div>
+        <div th:unless="${comments != null}">0.0</div>
+    </h3>
+</div>
 <div th:if="${comments != null}">
-    <h3>상품 후기</h3>
-    <div>
-        <h3>평균 별점</h3>
-    </div>
     <div>
         <table>
             <tr>
@@ -77,6 +86,21 @@
                 <th>별점</th>
                 <th>옵션명</th>
                 <th>내용</th>
+                <th>작성시간</th>
+                <th>사진</th>
+            </tr>
+            <tr th:each="comment: ${comments}">
+                <td th:text="${comment.getWriter()}"></td>
+                <td th:text="${comment.getStar()}"></td>
+                <td th:text="${comment.getOptionName()}"></td>
+                <td th:text="${comment.getContents()}"></td>
+                <td th:text="*{#temporals.format(comment.getCreateTime(), 'yyyy.MM.dd hh:mm:ss')}"></td>
+                <td th:if="${comment.files[0].id != null}">
+                    <div class="image-container" th:each="file: ${comment.getFiles()}">
+                        <img class="productImg max-size-image" th:src="'/product_comment/image/' + ${file.id}" alt="상품 이미지">
+                    </div>
+                </td>
+                <td th:unless="${comment.files[0].id != null}"></td>
             </tr>
         </table>
     </div>
@@ -103,20 +127,11 @@ function updateTotalPrice() {
     }
 }
 
-// 상품 이미지 보이기
-function showImg() {
-
-    const imgBox = $('#productImg');
-    imgBox.attr('src', '/product/image/' + id);
-}
-
-
 // 문서 로드 후 총 가격을 초기화
 document.addEventListener('DOMContentLoaded', function() {
     updateTotalPrice();
-    //calculateAverageRating();
+    averageStar();
     show();
-    //showImg([[${product.files[0].id}]]);
 });
 
 function show(){
@@ -129,10 +144,10 @@ async function addCart() {
     const optionSelect = document.getElementById('optionSelect');
     const optionId = (optionSelect.options[optionSelect.selectedIndex]).value; // 선택된 옵션의 ID를 가져옵니다.
     const quantity = document.getElementById('quantitySelect').value; // 선택된 수량을 가져옵니다.
-    const reqData = [{
+    const reqData = {
         optionId: optionId,
         quantity: quantity // 선택된 수량을 서버에 전달합니다.
-    }];
+    };
     // 서버에 장바구니 추가 요청을 보냅니다.
     try {
         const token = getCookie("token");
@@ -149,13 +164,14 @@ async function addCart() {
             console.log(result);
             alert('장바구니에 상품이 추가되었습니다.'); // 성공 메시지를 보여줍니다.
         } else {
-            console.log(result);
-            alert('장바구니 추가에 실패했습니다. 다시 시도해주세요.'); // 실패 메시지를 보여줍니다.
+            console.log(result.error);
+            alert(result.error.message); // 실패 메시지를 보여줍니다.
         }
     } catch (error) {
         console.error('Error:', error);
     }
 }
+
 function getCookie(name) {
     const cookieName = name + "=";
     const cookies = document.cookie.split(';');
@@ -168,21 +184,19 @@ function getCookie(name) {
     return null;
 }
 
-function calculateAverageRating() {
-    var reviews = document.querySelectorAll('.review-rating'); // 리뷰 별점 요소들을 선택합니다.
-    var totalRating = 0;
-
-    if (reviews.length === 0) {
-        document.getElementById('averageRating').innerText = '0.0';
-        return; // 리뷰가 없는 경우 함수를 종료합니다.
+function averageStar() {
+    const reviews = document.getElementById('all-star');
+    if (reviews) {
+        const comments = [[${comments}]];
+        let stars = 0.0;
+        let cnt = comments.length;
+        for (let i in comments) {
+            stars += Number(comments[i].star);
+        }
+        const temp = (stars / cnt).toFixed(2);
+        console.log(stars);
+        reviews.textContent = temp.toString();
     }
-
-    for (var i = 0; i < reviews.length; i++) {
-        totalRating += parseInt(reviews[i].innerText, 10);
-    }
-
-    var averageRating = (totalRating / reviews.length).toFixed(1);
-    document.getElementById('averageRating').innerText = averageRating;
 }
 </script>
 

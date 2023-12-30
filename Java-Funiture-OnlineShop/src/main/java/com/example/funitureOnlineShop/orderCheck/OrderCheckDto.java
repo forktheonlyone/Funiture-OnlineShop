@@ -26,8 +26,10 @@ public class OrderCheckDto {
     private Long price;
     // 주문일자
     private LocalDateTime orderDate;
+    // 배송주소
+    private String address;
     // 옵션 id
-    private Long cartId;
+    private Long optionId;
     // 회원 id
     private Long userId;
     // 상품 후기 적힘?
@@ -37,11 +39,12 @@ public class OrderCheckDto {
         return new OrderCheckDto(orderCheck.getId(),
                 orderCheck.getTid(),
                 orderCheck.getQuantity(),
-                orderCheck.getCart().getOption().getProduct().getProductName(),
-                orderCheck.getCart().getOption().getOptionName(),
-                orderCheck.getCart().getOption().getPrice(),
+                orderCheck.getOption().getProduct().getProductName(),
+                orderCheck.getOption().getOptionName(),
+                orderCheck.getOption().getPrice(),
                 orderCheck.getOrderDate(),
-                orderCheck.getCart().getId(),
+                orderCheck.getAddress(),
+                orderCheck.getOption().getId(),
                 orderCheck.getUser().getId(),
                 commentId);
     }
@@ -52,6 +55,7 @@ public class OrderCheckDto {
                 .quantity(quantity)
                 .price(price)
                 .orderDate(orderDate)
+                .address(address)
                 .build();
     }
 }

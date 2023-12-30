@@ -1,4 +1,4 @@
-package com.example.funitureOnlineShop.productComment;
+package com.example.funitureOnlineShop.comment;
 
 import com.example.funitureOnlineShop.commentFile.CommentFile;
 import com.example.funitureOnlineShop.commentFile.CommentFileDto;
@@ -42,7 +42,7 @@ public class ProductCommentResponse {
         private Long productId;
         // 작성자 id
         private Long userId;
-
+        // 사진들
         private List<CommentFileDto> files;
 
         // dto로 변경
@@ -52,12 +52,12 @@ public class ProductCommentResponse {
                     comment.getStar(),
                     comment.getOrderCheck().getUser().getUsername(),
                     comment.getContents(),
-                    comment.getOrderCheck().getCart().getOption().getOptionName(),
+                    comment.getOrderCheck().getOption().getOptionName(),
                     comment.getCreateTime(),
                     comment.getUpdateTime(),
                     comment.getOrderCheck().getId(),
-                    comment.getOrderCheck().getCart().getOption().getId(),
-                    comment.getOrderCheck().getCart().getOption().getProduct().getId(),
+                    comment.getOrderCheck().getOption().getId(),
+                    comment.getOrderCheck().getOption().getProduct().getId(),
                     comment.getOrderCheck().getUser().getId(),
                     files.stream().map(CommentFileDto::toFileDto).collect(Collectors.toList()));
         }

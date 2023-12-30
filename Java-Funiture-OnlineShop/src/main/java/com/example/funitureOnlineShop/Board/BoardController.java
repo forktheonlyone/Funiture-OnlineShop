@@ -1,6 +1,6 @@
-package com.example.funitureOnlineShop.Board;
+package com.example.funitureOnlineShop.board;
 
-import com.example.funitureOnlineShop.BoardFile.BoardFile;
+import com.example.funitureOnlineShop.boardFile.BoardFile;
 import com.example.funitureOnlineShop.core.error.exception.Exception500;
 import com.example.funitureOnlineShop.core.security.CustomUserDetails;
 import com.example.funitureOnlineShop.core.utils.ApiUtils;
@@ -30,7 +30,7 @@ public class BoardController {
 
     @GetMapping("/create")
     public String boardCreateForm() {
-        return "createboard";
+        return "boardCreate";
     }
 
     @PostMapping("/save")
@@ -62,7 +62,7 @@ public class BoardController {
         model.addAttribute("startPage", startPage);
         model.addAttribute("endPage", endPage);
 
-        return "noticePage";
+        return "boardPage";
     }
 
     // CRUD update / "update" 템플릿을 렌더링하여 반환
@@ -74,7 +74,7 @@ public class BoardController {
         model.addAttribute("board", boardDTO);
         model.addAttribute("existingFiles", existingFiles);
 
-        return "noticeupdate";
+        return "boardUpdate";
     }
     // CRUD update / "/board/"로 리다이렉트
     @PostMapping("/update")
@@ -97,7 +97,7 @@ public class BoardController {
         model.addAttribute("page", pageable.getPageNumber());
         model.addAttribute("files", files != null ? files : Collections.emptyList());
 
-        return "noticedetail";
+        return "boardDetail";
     }
 
     // CRUD delete /  "/board/paging"으로 리다이렉트

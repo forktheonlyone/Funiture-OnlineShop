@@ -1,7 +1,7 @@
 package com.example.funitureOnlineShop.product;
 
 import com.example.funitureOnlineShop.category.Category;
-import com.example.funitureOnlineShop.fileProduct.FileProduct;
+import com.example.funitureOnlineShop.productFile.ProductFile;
 import com.example.funitureOnlineShop.option.Option;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
@@ -40,11 +40,10 @@ public class Product {
     private List<Option> options = new ArrayList<>();
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JsonIgnore
-    private List<FileProduct> files =  new ArrayList<>();
+    private List<ProductFile> files =  new ArrayList<>();
 
     @Builder
-    public Product(Long id, String productName, String description, Long price, Long deliveryFee, Category category, List<Option> options, List<FileProduct> files) {
+    public Product(Long id, String productName, String description, Long price, Long deliveryFee, Category category, List<Option> options, List<ProductFile> files) {
         this.id = id;
         this.productName = productName;
         this.description = description;

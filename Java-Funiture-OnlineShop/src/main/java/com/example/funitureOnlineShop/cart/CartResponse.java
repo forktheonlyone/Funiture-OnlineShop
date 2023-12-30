@@ -88,36 +88,24 @@ public class CartResponse {
 
     @Data
     public static class UpdateDTO{
-        private List<CartDTO> dtoList;
-        private Long totalPrice;
 
-        public UpdateDTO(List<Cart> dtoList) {
-            this.dtoList = dtoList.stream().map(CartDTO::new).collect(Collectors.toList());
-            this.totalPrice = totalPrice;
+        private Long cartId;
+
+        private Long optionId;
+
+        private String optionName;
+
+        private Long quantity;
+
+        private Long price;
+
+        public UpdateDTO(Cart cart) {
+            this.cartId = cart.getId();
+            this.optionId = cart.getOption().getId();
+            this.optionName = cart.getOption().getOptionName();
+            this.quantity = cart.getQuantity();
+            this.price = cart.getPrice();
         }
-
-        @Data
-        public class CartDTO{
-
-            private Long cartId;
-
-            private Long optionId;
-
-            private String optionName;
-
-            private Long quantity;
-
-            private Long price;
-
-            public CartDTO(Cart cart) {
-                this.cartId = cart.getId();
-                this.optionId = cart.getOption().getId();
-                this.optionName = cart.getOption().getOptionName();
-                this.quantity = cart.getQuantity();
-                this.price = cart.getPrice();
-            }
-        }
-
     }
 
     @Data

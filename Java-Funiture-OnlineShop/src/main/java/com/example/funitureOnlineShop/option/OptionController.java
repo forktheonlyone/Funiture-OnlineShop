@@ -64,35 +64,4 @@ public class OptionController {
         ApiUtils.ApiResult<?> apiResult = ApiUtils.success(id);
         return ResponseEntity.ok(apiResult);
     }
-
-    // ** 옵션 수량 업데이트
-    @PostMapping("/updateStock/{id}")
-    public ResponseEntity<?> updateStock(@PathVariable Long id, @RequestParam Long newStockQuantity) {
-        optionService.updateStock(id, newStockQuantity);
-        ApiUtils.ApiResult<?> apiResult = ApiUtils.success("옵션 수량이 업데이트되었습니다.");
-        return ResponseEntity.ok(apiResult);
-    }
-
-    @GetMapping("/ordercheck/{id}")
-    public ResponseEntity<?> getOrderDetail(@PathVariable Long id,
-                                            @AuthenticationPrincipal CustomUserDetails customUserDetails){
-        OrderCheckDto orderCheckDtos = optionService.findOrderChecks(id);
-
-        return ResponseEntity.ok(orderCheckDtos);
-    }
-
-    // ** 주문 취소 시 재고 복구
-    @PostMapping("/restoreStock/{id}")
-    public ResponseEntity<?> restoreStockOnOrderCancel(@PathVariable Long id) {
-        OrderCheckDto orderCheckDtos = optionService.findOrderChecks(id);
-        try {
-            optionService.restoreStockOnOrderCancel(orderCheckDtos.toEntity());
-            ApiUtils.ApiResult<?> apiResult = ApiUtils.success("주문 취소 시 재고가 복구되었습니다.");
-            return ResponseEntity.ok(apiResult);
-        } catch (Exception e) {
-            e.printStackTrace();
-            ApiUtils.ApiResult<?> apiResult = ApiUtils.success(e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiResult);
-        }
-    }
 }

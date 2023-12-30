@@ -5,23 +5,21 @@ import com.example.funitureOnlineShop.core.utils.ApiUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/orders")
 public class OrderController {
     private final OrderService orderService;
 
-    @PostMapping("/orders/save")
+    @PostMapping("/save")
     public ResponseEntity<?> save (@AuthenticationPrincipal CustomUserDetails customUserDetails){
         OrderResponse.FindByIdDTO findByIdDTO = orderService.save(customUserDetails.getUser());
         return ResponseEntity.ok(ApiUtils.success(findByIdDTO));
     }
 
-    @GetMapping("/orders/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<?> findById(@PathVariable Long id){
         OrderResponse.FindByIdDTO findByIdDTO = orderService.findById(id);
 
@@ -29,11 +27,10 @@ public class OrderController {
         return ResponseEntity.ok(ApiUtils.success(apiResult));
     }
 
-    @PostMapping("/orders/delete")
+    @PostMapping("/delete")
     public ResponseEntity<?> delete(Long orderId){
         orderService.delete(orderId);
         ApiUtils.ApiResult<?> apiResult = ApiUtils.success(null);
         return ResponseEntity.ok(ApiUtils.success(apiResult));
     }
-
 }

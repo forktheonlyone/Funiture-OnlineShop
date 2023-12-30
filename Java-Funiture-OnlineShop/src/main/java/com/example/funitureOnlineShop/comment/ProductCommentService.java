@@ -1,6 +1,7 @@
-package com.example.funitureOnlineShop.productComment;
+package com.example.funitureOnlineShop.comment;
 
 import com.example.funitureOnlineShop.commentFile.CommentFile;
+import com.example.funitureOnlineShop.commentFile.CommentFileDto;
 import com.example.funitureOnlineShop.commentFile.CommentFileRepository;
 import com.example.funitureOnlineShop.core.error.exception.Exception400;
 import com.example.funitureOnlineShop.core.error.exception.Exception401;
@@ -127,6 +128,8 @@ public class ProductCommentService {
             // 각 옵션의 후기들을 수집
             for (ProductComment comment : comments) {
                 List<CommentFile> commentFile = commentFileRepository.findAllByProductCommentId(comment.getId());
+                if (commentFile.isEmpty())
+                    commentFile.add(new CommentFile());
                 // 상품 후기를 dto로 변환
                 ProductCommentResponse.CommentDto commentDto = ProductCommentResponse.CommentDto.toDto(comment, commentFile);
                 // 상품에 대한 후기일 경우 추가
@@ -141,7 +144,6 @@ public class ProductCommentService {
             return commentDtos;
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println(e.getMessage());
             throw new Exception500("상품 후기 탐색 중 오류 발생 : " + pId);
         }
     }
@@ -236,5 +238,17 @@ public class ProductCommentService {
             throw new Exception404("해당 주문 내역을 찾을 수 없습니다.");
 
         return OrderCheckDto.toOrderCheckDto(optionalOrderCheck.get(), null);
+    }
+
+    public CommentFileDto findByIdFile(Long id) {
+
+        Optional<CommentFile> optionalFile = commentFileRepository.findById(id);
+
+        if (optionalFile.isEmpty())
+            throw new Exception404("해당 파일을 찾을 수 없습니다." + id);
+
+        CommentFile file = optionalFile.get();
+
+        return CommentFileDto.toFileDto(file);
     }
 }

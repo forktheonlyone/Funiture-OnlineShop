@@ -1,4 +1,4 @@
-package com.example.funitureOnlineShop.productComment;
+package com.example.funitureOnlineShop.comment;
 
 import lombok.Getter;
 import lombok.Setter;

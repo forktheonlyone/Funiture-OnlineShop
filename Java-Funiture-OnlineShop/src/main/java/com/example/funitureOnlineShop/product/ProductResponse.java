@@ -1,16 +1,13 @@
 package com.example.funitureOnlineShop.product;
 
-import com.example.funitureOnlineShop.fileProduct.FileProduct;
-import com.example.funitureOnlineShop.fileProduct.FileProductResponse;
+import com.example.funitureOnlineShop.productFile.ProductFile;
+import com.example.funitureOnlineShop.productFile.ProductFileResponse;
 import com.example.funitureOnlineShop.option.Option;
-import com.example.funitureOnlineShop.productComment.ProductComment;
-import com.example.funitureOnlineShop.productComment.ProductCommentResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -53,9 +50,9 @@ public class ProductResponse {
 
         private List<OptionDTO> optionList;
 
-        private List<FileProductResponse> files;
+        private List<ProductFileResponse> files;
 
-        public static FindByIdDTO toDto(Product product, List<Option> options, List<FileProduct> files) {
+        public static FindByIdDTO toDto(Product product, List<Option> options, List<ProductFile> files) {
             return new FindByIdDTO(
                     product.getId(),
                     product.getProductName(),
@@ -64,7 +61,7 @@ public class ProductResponse {
                     product.getDeliveryFee(),
                     product.getCategory().getId(),
                     options.stream().map(OptionDTO::new).collect(Collectors.toList()),
-                    files.stream().map(FileProductResponse::toDto).collect(Collectors.toList())
+                    files.stream().map(ProductFileResponse::toDto).collect(Collectors.toList())
             );
         }
     }
@@ -77,9 +74,9 @@ public class ProductResponse {
         private Long id;
         private String productName;
         private Long price;
-        private FileProductResponse file;
+        private ProductFileResponse file;
 
-        public FindByCategoryForAllDTOS(Long id, String productName, Long price, FileProductResponse file) {
+        public FindByCategoryForAllDTOS(Long id, String productName, Long price, ProductFileResponse file) {
             this.id = id;
             this.productName = productName;
             this.price = price;

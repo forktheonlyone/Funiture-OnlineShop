@@ -1,6 +1,9 @@
 package com.example.funitureOnlineShop.orderCheck;
 
+import com.example.funitureOnlineShop.boardFile.BoardFile;
 import com.example.funitureOnlineShop.cart.Cart;
+import com.example.funitureOnlineShop.comment.ProductComment;
+import com.example.funitureOnlineShop.option.Option;
 import com.example.funitureOnlineShop.user.User;
 import lombok.Builder;
 import lombok.Getter;
@@ -8,6 +11,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -28,21 +32,28 @@ public class OrderCheck {
 
     private LocalDateTime orderDate;
 
+    private String address;
+
     @ManyToOne(fetch = FetchType.LAZY)
-    private Cart cart;
+    private Option option;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
+    @OneToOne(mappedBy = "orderCheck", cascade = CascadeType.ALL, orphanRemoval = true)
+    private ProductComment productComment;
+
     @Builder
-    public OrderCheck(Long id, String tid, Long quantity, Long price, LocalDateTime orderDate, Cart cart, User user) {
+    public OrderCheck(Long id, String tid, Long quantity, Long price, LocalDateTime orderDate, String address, Option option, User user, ProductComment productComment) {
         this.id = id;
         this.tid = tid;
         this.quantity = quantity;
         this.price = price;
         this.orderDate = orderDate;
-        this.cart = cart;
+        this.address = address;
+        this.option = option;
         this.user = user;
+        this.productComment = productComment;
     }
 
     public static void sortByCreateDate(List<OrderCheck> orderChecks) {

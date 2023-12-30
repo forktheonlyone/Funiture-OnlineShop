@@ -2,24 +2,20 @@ package com.example.funitureOnlineShop.product;
 
 import com.example.funitureOnlineShop.category.Category;
 import com.example.funitureOnlineShop.category.CategoryRepository;
-import com.example.funitureOnlineShop.commentFile.CommentFile;
 import com.example.funitureOnlineShop.core.error.exception.Exception400;
 import com.example.funitureOnlineShop.core.error.exception.Exception404;
-import com.example.funitureOnlineShop.fileProduct.FileProduct;
-import com.example.funitureOnlineShop.fileProduct.FileProductRepository;
-import com.example.funitureOnlineShop.fileProduct.FileProductResponse;
+import com.example.funitureOnlineShop.productFile.ProductFile;
+import com.example.funitureOnlineShop.productFile.ProductFileRepository;
+import com.example.funitureOnlineShop.productFile.ProductFileResponse;
 import com.example.funitureOnlineShop.option.Option;
 import com.example.funitureOnlineShop.option.OptionRepository;
-import com.example.funitureOnlineShop.productComment.ProductComment;
-import com.example.funitureOnlineShop.productComment.ProductCommentResponse;
-import com.example.funitureOnlineShop.productComment.ProductCommentService;
+import com.example.funitureOnlineShop.comment.ProductCommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,7 +30,7 @@ import java.util.*;
 public class ProductService {
     private final ProductRepository productRepository;
     private final OptionRepository optionRepository;
-    private final FileProductRepository fileProductRepository;
+    private final ProductFileRepository productFileRepository;
     private final CategoryRepository categoryRepository;
     private final ProductCommentService productCommentService;
     private final List<String> isImage = new ArrayList<>(Arrays.asList(
@@ -100,7 +96,7 @@ public class ProductService {
                 // 파일을 물리적으로 저장 (DB에 저장 X)
                 file.transferTo( new File(path) );
 
-                FileProduct fileProduct = FileProduct.builder()
+                ProductFile productFile = ProductFile.builder()
                         .filePath(filePath)
                         .fileName(originalFilename)
                         .uuid(uuid)
@@ -109,7 +105,7 @@ public class ProductService {
                         .product(product)
                         .build();
 
-                fileProductRepository.save(fileProduct);
+                productFileRepository.save(productFile);
             }
         }
     }
@@ -125,15 +121,15 @@ public class ProductService {
         List<Option> optionList = optionRepository.findByProductId(product.getId());
 
         // 상품 id에 따른 FileProduct를 찾는 코드
-        List<FileProduct> fileProductList = fileProductRepository.findByProductId(updateDTO.getId());
-        for (FileProduct fileProduct : fileProductList) {
+        List<ProductFile> productFileList = productFileRepository.findByProductId(updateDTO.getId());
+        for (ProductFile productFile : productFileList) {
 //            FileProductResponse fileProductResponse = new FileProductResponse();
 //            fileProductResponse.setFilePath(fileProduct.getFilePath());
 //            fileProductResponse.setFileName(fileProduct.getFileName());
         }
 
         // 수정된 제품 정보를 FindByIdDTO 객체로 변환하여 반환
-        return ProductResponse.FindByIdDTO.toDto(product, optionList, fileProductList);
+        return ProductResponse.FindByIdDTO.toDto(product, optionList, productFileList);
     }
 
     // 삭제 서비스
@@ -164,24 +160,24 @@ public class ProductService {
         List<Option> optionList = optionRepository.findByProductId(product.getId());
 
         // 상품 id에 따른 FileProduct들을 찾는 코드
-        List<FileProduct> fileProductList = fileProductRepository.findByProductId(id);
+        List<ProductFile> productFileList = productFileRepository.findByProductId(id);
 
-        if (fileProductList.isEmpty())
-            fileProductList.add(new FileProduct());
+        if (productFileList.isEmpty())
+            productFileList.add(new ProductFile());
 
-        return ProductResponse.FindByIdDTO.toDto(product, optionList, fileProductList);
+        return ProductResponse.FindByIdDTO.toDto(product, optionList, productFileList);
     }
 
     public Page<ProductResponse.FindByCategoryForAllDTOS> findByCategoryId(Long categoryId, PageRequest pageRequest) {
         Page<Product> products = productRepository.findByCategoryId(categoryId, pageRequest);
 
         Page<ProductResponse.FindByCategoryForAllDTOS> findByCategoryForAllDTOS = products.map(product -> {
-            List<FileProduct> fileProducts = fileProductRepository.findByProductId(product.getId());
+            List<ProductFile> productFiles = productFileRepository.findByProductId(product.getId());
 
-            FileProductResponse file = null;
-            if (!fileProducts.isEmpty()) {
+            ProductFileResponse file = null;
+            if (!productFiles.isEmpty()) {
                 // 첫 번째 파일 프로덕트만 가져와서 DTO에 설정
-                file = new FileProductResponse(fileProducts.get(0));
+                file = new ProductFileResponse(productFiles.get(0));
             }
 
             // DTO 생성자에 파일을 단일 객체로 전달
@@ -196,14 +192,14 @@ public class ProductService {
         return findByCategoryForAllDTOS;
     }
 
-    public FileProductResponse findByIdFile(Long id) {
-        Optional<FileProduct> optionalFile = fileProductRepository.findById(id);
+    public ProductFileResponse findByIdFile(Long id) {
+        Optional<ProductFile> optionalFile = productFileRepository.findById(id);
 
         if (optionalFile.isEmpty())
             throw new Exception404("해당 파일을 찾을 수 없습니다." + id);
 
-        FileProduct file = optionalFile.get();
+        ProductFile file = optionalFile.get();
 
-        return FileProductResponse.toDto(file);
+        return ProductFileResponse.toDto(file);
     }
 }

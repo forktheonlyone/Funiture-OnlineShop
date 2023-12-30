@@ -1,7 +1,7 @@
 package com.example.funitureOnlineShop.product;
 
 import com.example.funitureOnlineShop.core.utils.ApiUtils;
-import com.example.funitureOnlineShop.fileProduct.FileProductResponse;
+import com.example.funitureOnlineShop.productFile.ProductFileResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,13 +17,14 @@ import java.nio.file.Files;
 
 @RequiredArgsConstructor
 @RestController
+@RequestMapping("/product")
 public class ProductController {
 
     private final ProductService productService;
 
     // 상품 생성
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PostMapping("/product/save")
+    @PostMapping("/save")
     public ResponseEntity<ApiUtils.ApiResult<Long>> save(ProductResponse.SaveByIdDTO productResponseFind,
                                                          @RequestParam MultipartFile[] files) throws IOException {
         // 상품 저장 후 생성된 Product 객체를 반환받습니다.
@@ -52,7 +53,7 @@ public class ProductController {
  */
 
     // 상품과 해당 상품의 리뷰 찾기
-    @GetMapping("/product/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<?> findById(@PathVariable Long id) {
         ProductResponse.FindByIdDTO productDTOS = productService.findById(id);
         ApiUtils.ApiResult<?> apiResult = ApiUtils.success(productDTOS);
@@ -60,7 +61,7 @@ public class ProductController {
     }
 
     // 카테고리별 상품 조회
-    @GetMapping("/products/category/{id}")
+    @GetMapping("/category/{id}")
     public ResponseEntity<?> findByCategoryId(@PathVariable Long id,
                                               @RequestParam(required = false, defaultValue = "0") int page,
                                               @RequestParam(required = false, defaultValue = "10") int size) {
@@ -70,9 +71,9 @@ public class ProductController {
     }
 
     // 이미지들 찾기
-    @GetMapping("/product/image/{id}")
+    @GetMapping("/image/{id}")
     public ResponseEntity<?> getImage(@PathVariable Long id) throws IOException {
-        FileProductResponse fileDto = productService.findByIdFile(id);
+        ProductFileResponse fileDto = productService.findByIdFile(id);
 
         File file = new File(fileDto.getFilePath() + fileDto.getUuid() + fileDto.getFileName());
 
@@ -83,7 +84,7 @@ public class ProductController {
 
     // 상품 수정
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PutMapping("/product/update")
+    @PutMapping("/update")
     public ResponseEntity<?> update(@RequestBody ProductResponse.UpdateDTO updateDTO) {
         ProductResponse.FindByIdDTO updatedProduct = productService.update(updateDTO);
         ApiUtils.ApiResult<?> apiResult = ApiUtils.success(updatedProduct);
@@ -92,7 +93,7 @@ public class ProductController {
 
     // 상품 삭제
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @DeleteMapping("/product/delete/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id){
         productService.delete(id);
         ApiUtils.ApiResult<?> apiResult = ApiUtils.success(id);

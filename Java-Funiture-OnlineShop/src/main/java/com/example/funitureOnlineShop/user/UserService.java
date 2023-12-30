@@ -162,8 +162,11 @@ public class UserService {
             throw new Exception500("탈퇴 도중 에러가 발생했습니다.");
         }
     }
-    public User findUserById(Long userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new Exception500("유저 id를 찾을 수 없습니다: " + userId));
+
+    public User findById(Long id){
+        Optional<User> optionalUser = userRepository.findById(id);
+        if (optionalUser.isEmpty())
+            throw new Exception404("존재하지 않는 회원");
+        return optionalUser.get();
     }
 }

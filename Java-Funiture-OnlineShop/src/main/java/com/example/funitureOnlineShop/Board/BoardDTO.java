@@ -1,4 +1,4 @@
-package com.example.funitureOnlineShop.Board;
+package com.example.funitureOnlineShop.board;
 
 import lombok.*;
 

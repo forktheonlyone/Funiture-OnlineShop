@@ -15,6 +15,7 @@ public class OrderResponse {
         private Long id;
         private List<ProductDTO> productDTOS;
         private Long totalPrice;
+        private Long userId;
 
         public FindByIdDTO(Order order,List<Item> itemList) {
             this.id = order.getId();
@@ -23,7 +24,8 @@ public class OrderResponse {
                     .map(product -> new ProductDTO(itemList, product))
                     .collect(Collectors.toList());
 
-            this.totalPrice = itemList.stream().mapToLong(item -> item.getOption().getPrice() * item.getQuantity()).sum();
+            this.totalPrice = itemList.stream().mapToLong(Item::getPrice).sum();
+            this.userId = order.getUser().getId();
         }
 
         @Data

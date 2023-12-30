@@ -163,10 +163,10 @@
     const updateCart = (id) => {
         const token = getCookie('token');
         const quantity = document.getElementById("cart" + id).value
-        const reqData = [{
+        const reqData = {
             cartId: id,
             quantity: quantity
-        }];
+        };
         $.ajax({
             // 요청방식: post, 요청주소: /comment/update, 요청데이터: 작성자, 작성내용, 게시글번호
             type: "post",
@@ -198,8 +198,8 @@
             },
             success: function (res) {
                 console.log("요청성공", res.response);
-                //alert("주문생성이 완료되었습니다.");
-                //location.href = "/orderPage";
+                alert("주문생성이 완료되었습니다.");
+                location.href = "/v1/" + res.response.id;
             },
             error: function (err) {
                 console.log("요청실패", err);

@@ -1,7 +1,9 @@
 package com.example.funitureOnlineShop.user;
 
-import com.example.funitureOnlineShop.Board.Board;
+import com.example.funitureOnlineShop.board.Board;
 import com.example.funitureOnlineShop.cart.Cart;
+import com.example.funitureOnlineShop.order.Order;
+import com.example.funitureOnlineShop.orderCheck.OrderCheck;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -53,6 +55,12 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Cart> carts = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Order> orders = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<OrderCheck> orderChecks = new ArrayList<>();
+
     // 갱신 토큰
     @Column
     private String refreshToken;
@@ -62,7 +70,7 @@ public class User {
     }
 
     @Builder
-    public User(Long id, String email, String password, String username, String phoneNumber, String address, List<String> roles, List<Board> boards, List<Cart> carts, String refreshToken) {
+    public User(Long id, String email, String password, String username, String phoneNumber, String address, List<String> roles, List<Board> boards, List<Cart> carts, List<Order> orders, List<OrderCheck> orderChecks, String refreshToken) {
         this.id = id;
         this.email = email;
         this.password = password;
@@ -72,6 +80,8 @@ public class User {
         this.roles = roles;
         this.boards = boards;
         this.carts = carts;
+        this.orders = orders;
+        this.orderChecks = orderChecks;
         this.refreshToken = refreshToken;
     }
 

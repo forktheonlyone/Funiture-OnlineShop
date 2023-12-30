@@ -32,6 +32,7 @@
                     output += "<tr>";
                     output += "<th>" + "주문 번호" + "</th>";
                     output += "<th>" + "주문 일자 및 시간" + "</th>";
+                    output += "<th>" + "배송 주소" + "</th>";
                     output += "<th>" + "상품명" + "</th>";
                     output += "<th>" + "옵션명" + "</th>";
                     output += "<th>" + "가격" + "</th>";
@@ -48,6 +49,7 @@
                         output += orders[i].orderDate.substring(11,20);
                         output += "</td>";
 
+                        output += "<td>" + orders[i].address + "</td>";
                         output += "<td>" + orders[i].productName + "</td>";
                         output += "<td>" + orders[i].optionName + "</td>";
                         output += "<td>" + orders[i].price + "</td>";

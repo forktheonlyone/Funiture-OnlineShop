@@ -1,54 +1,108 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
+  <meta charset="UTF-8">
   <title>Nicepay spring-boot</title>
-  <meta httpEquiv="x-ua-compatible" content="ie=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta httpEquiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
 </head>
 
 <body>
 <h1>NICEPAY TEST</h1>
+<div>
+  <h2>주문 정보</h2>
+  <form>
+    <!-- 구매자 정보 -->
+    <span>구매자 이름:</span>
+    <span th:text="${user.getUsername()}"></span><br>
+
+    <span>구매자 이메일:</span>
+    <span th:text="${user.getEmail()}"></span><br>
+
+    <span>구매자 전화번호:</span>
+    <span th:text="${user.getPhoneNumber()}"></span><br><br>
+
+    <!-- 받는 사람 정보 -->
+    <label for="receiverName">받는 사람 이름:</label>
+    <input type="text" id="receiverName" name="receiverName" th:value="${user.getUsername()}" required><br>
+
+    <label for="address">배송 주소:</label>
+    <input type="text" id="address" name="address" th:value="${user.getAddress()}" required><br>
+
+    <label for="phoneNumber">받는 사람 전화번호:</label>
+    <input type="text" id="phoneNumber" name="phoneNumber" th:value="${user.getPhoneNumber()}" required><br><br>
+
+    <input type="hidden" id="orderId" th:value="${order.getId()}" required>
+
+    <!-- 판매 업체 정보 안내 -->
+    <p>주문한 상품은 판매 업체에서 직접 배송됩니다.</p>
+    <p>판매 업체 정보는 주문 완료 후 제공될 예정입니다.</p><br>
+
+    <p>구매 상품</p>
+    <div th:each="product: ${order.getProductDTOS()}">
+      <div th:each="item: ${product.getItems()}">
+                    <span th:text="${product.getProductName()} + ' ' +
+                    ${item.getOptionName()} + ' ' +
+                    ${item.getQuantity()} + '개 : ' +
+                    ${item.getPrice()} + '원'"></span>
+      </div>
+    </div>
+
+    <!-- 나이스페이먼츠 정보 -->
+    <span>총 결제 금액:</span>
+    <span th:text="${order.getTotalPrice()} + '원'"></span><br>
+
+    <!-- 결제하기 버튼 -->
+    <button type="button" onclick="sendOrders()">결제하기</button>
+  </form>
+</div>
 
 <script src="https://pay.nicepay.co.kr/v1/js/"></script>
 
-<script>
-  function getCookie(name) {
-    const cookieName = name + "=";
-    const cookies = document.cookie.split(';');
-    for (let i = 0; i < cookies.length; i++) {
-      const cookie = cookies[i].trim();
-      if (cookie.indexOf(cookieName) === 0) {
-        return cookie.substring(cookieName.length, cookie.length);
+<script th:inline="javascript">
+  const receiverName = document.getElementById('receiverName').value;
+  const address = document.getElementById('address').value;
+  const phoneNumber = document.getElementById('phoneNumber').value;
+  const orderId = document.getElementById('orderId').value;
+  const userId = [[${user}]].id;
+
+  function sendOrders(){
+    var order = [[${order}]];
+    for (let i in order.productDTOS) {
+      for (let j in order.productDTOS[i].items) {
+        var price = order.productDTOS[i].items[j].price;
+        var quantity = order.productDTOS[i].items[j].quantity;
+        var productName = order.productDTOS[i].productName;
+        var optionName = order.productDTOS[i].items[j].optionName;
+        console.log(userId, price, quantity, productName + " " + optionName);
       }
     }
-    return null;
+
+    // 다 끝내고 오더 삭제
   }
 
-  function serverAuth() {
-    const orderId = '{{orderId}}';
-
+  function serverAuth(userId, price, quantity, name) {
     AUTHNICE.requestPay({
-      clientId: 'S2_dfb77b9e65454834a591d9866b77a273',
+      clientId: [[${clientId}]],
       method: 'card',
-      orderId: orderId,
-      amount: 1004,
-      goodsName: '{{goodsName}}',
+      orderId: [[${orderId}]],
+      amount: price,
+      goodsName: name,
+
+      id: orderId,
+      receiverName: receiverName,
+      address: address,
+      phoneNumber: phoneNumber,
+      quantity: quantity,
+      userId: userId,
+
       returnUrl: 'http://localhost:8080/v1/serverAuth',
       fnError: function (result) {
         alert('개발자확인용 : ' + result.errorMsg + '');
       }
     });
   }
-
-  const random = (length = 8) => {
-    return Math.random().toString(16).substr(2, length);
-  };
-
-  // 페이지 로드 시 자동으로 serverAuth() 함수 실행
-  window.onload = function () {
-    serverAuth();
-  };
 </script>
 </body>
 
