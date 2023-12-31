@@ -30,9 +30,9 @@ import java.util.*;
 public class ProductCommentService {
 
     private final ProductCommentRepository productCommentRepository;
-    private final OptionRepository optionRepository;
     private final CommentFileRepository commentFileRepository;
     private final OrderCheckRepository orderCheckRepository;
+
     // 파일 저장 경로
     private String filePath = "C:/Users/NT767/OneDrive/바탕 화면/demodata/";
     private final List<String> isImage = new ArrayList<>(Arrays.asList(

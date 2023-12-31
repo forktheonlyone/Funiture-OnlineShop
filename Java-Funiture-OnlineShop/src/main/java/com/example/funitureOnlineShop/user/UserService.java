@@ -162,11 +162,4 @@ public class UserService {
             throw new Exception500("탈퇴 도중 에러가 발생했습니다.");
         }
     }
-
-    public User findById(Long id){
-        Optional<User> optionalUser = userRepository.findById(id);
-        if (optionalUser.isEmpty())
-            throw new Exception404("존재하지 않는 회원");
-        return optionalUser.get();
-    }
 }

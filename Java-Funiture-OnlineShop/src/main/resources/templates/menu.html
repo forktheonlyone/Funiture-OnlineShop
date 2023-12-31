@@ -201,7 +201,7 @@
             <div th:text="${parent.getCategoryName()}"></div>
             <div class="sub-menu-content">
             <div th:each="son: ${sons}" th:if="${son.getSuperCategory_id() == parent.getId()}">
-                <div th:text="${son.getCategoryName()}"></div>
+                <div th:text="${son.getCategoryName()}" th:onclick="'location.href=\'/product/paging/\' + ' + ${son.getId()}"></div>
             </div>
             </div>
         </div>

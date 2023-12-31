@@ -1,7 +1,5 @@
 package com.example.funitureOnlineShop.orderCheck;
 
-import com.example.funitureOnlineShop.boardFile.BoardFile;
-import com.example.funitureOnlineShop.cart.Cart;
 import com.example.funitureOnlineShop.comment.ProductComment;
 import com.example.funitureOnlineShop.option.Option;
 import com.example.funitureOnlineShop.user.User;
@@ -11,7 +9,6 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -26,13 +23,13 @@ public class OrderCheck {
 
     private String tid;
 
+    private String orderId;
+
     private Long quantity;
 
     private Long price;
 
     private LocalDateTime orderDate;
-
-    private String address;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Option option;
@@ -44,13 +41,13 @@ public class OrderCheck {
     private ProductComment productComment;
 
     @Builder
-    public OrderCheck(Long id, String tid, Long quantity, Long price, LocalDateTime orderDate, String address, Option option, User user, ProductComment productComment) {
+    public OrderCheck(Long id, String tid, String orderId, Long quantity, Long price, LocalDateTime orderDate, Option option, User user, ProductComment productComment) {
         this.id = id;
         this.tid = tid;
+        this.orderId = orderId;
         this.quantity = quantity;
         this.price = price;
         this.orderDate = orderDate;
-        this.address = address;
         this.option = option;
         this.user = user;
         this.productComment = productComment;

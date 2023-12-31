@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -27,8 +27,8 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final CartRepository cartRepository;
     private final ItemRepository itemRepository;
-    private final OptionService optionService;
     private final OrderCheckRepository orderCheckRepository;
+
     // 결제 시도시 작동
     @Transactional
     public OrderResponse.FindByIdDTO save(User user) {
@@ -62,7 +62,6 @@ public class OrderService {
             }
 
             itemRepository.saveAll(itemList);
-            cartRepository.deleteAll(cartList);
         } catch (Exception e){
             throw new Exception500("주문 생성중 오류가 발생하였습니다.");
         }
@@ -78,16 +77,28 @@ public class OrderService {
     }
 
     @Transactional
-    public void delete(Long orderId) {
-        Order order = orderRepository.findById(orderId)
+    public void delete(String orderId, String  tid) {
+        Long id = Long.parseLong(orderId.substring(orderId.lastIndexOf(":") + 1));
+        Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new Exception404("주문을 찾을 수 없습니다."));
-
-        List<Item> itemsToDelete = itemRepository.findAllByOrderId(orderId);
+        List<Item> itemsToDelete = itemRepository.findAllByOrderId(id);
 
         try {
-            optionService.deductStock(itemsToDelete);
+            for (Item item : itemsToDelete) {
+                OrderCheck orderCheck = OrderCheck.builder()
+                        .tid(tid)
+                        .orderId(orderId)
+                        .quantity(item.getQuantity())
+                        .price(item.getPrice())
+                        .orderDate(LocalDateTime.now())
+                        .option(item.getOption())
+                        .user(order.getUser())
+                        .build();
+                orderCheckRepository.save(orderCheck);
+            }
             orderRepository.delete(order);
             itemRepository.deleteAll(itemsToDelete);
+            cartRepository.deleteAllByUserId(order.getUser().getId());
         } catch (Exception e) {
             throw new Exception500("주문 및 주문 항목 삭제 중 오류가 발생했습니다: " + e.getMessage());
         }
@@ -95,12 +106,24 @@ public class OrderService {
 
     // ** 페이먼트 관련 기능 추가 ( 작업 : 이아현)
 
-    public OrderCheckDto findOrderChecks(Long checkId) {
-        Optional<OrderCheck> optionalOrderCheck = orderCheckRepository.findById(checkId);
-        if (optionalOrderCheck.isEmpty())
-            throw new Exception500("아이디 못받아옴ㅋ");
-        OrderCheck orderCheck = optionalOrderCheck.get();
+    public List<OrderCheckDto> findOrderChecks(String tid) {
+        List<OrderCheck> orderChecks = orderCheckRepository.findAllByTid(tid);
+        if (orderChecks.isEmpty())
+            throw new Exception404("존재하지 않는 결제 내역");
 
-        return OrderCheckDto.toOrderCheckDto(orderCheck, null);
+        return orderChecks.stream().map(order -> OrderCheckDto.toOrderCheckDto(order, null)).collect(Collectors.toList());
+    }
+
+    public Long getTotalPrice(List<OrderCheckDto> dtos) {
+        Long totalPrice = 0L;
+        for (OrderCheckDto dto : dtos) {
+            totalPrice += dto.getPrice();
+            System.out.println(totalPrice);
+        }
+        return totalPrice;
+    }
+
+    public void cancelOrder(String tid) {
+        orderCheckRepository.deleteAllByTid(tid);
     }
 }

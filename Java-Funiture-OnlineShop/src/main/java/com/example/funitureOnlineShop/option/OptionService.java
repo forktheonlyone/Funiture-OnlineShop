@@ -1,11 +1,9 @@
 package com.example.funitureOnlineShop.option;
 
-import com.example.funitureOnlineShop.cart.Cart;
-import com.example.funitureOnlineShop.core.error.exception.Exception404;
 import com.example.funitureOnlineShop.core.error.exception.Exception500;
 import com.example.funitureOnlineShop.order.item.Item;
+import com.example.funitureOnlineShop.order.item.ItemRepository;
 import com.example.funitureOnlineShop.orderCheck.OrderCheck;
-import com.example.funitureOnlineShop.orderCheck.OrderCheckDto;
 import com.example.funitureOnlineShop.orderCheck.OrderCheckRepository;
 import com.example.funitureOnlineShop.product.Product;
 import com.example.funitureOnlineShop.product.ProductRepository;
@@ -24,6 +22,7 @@ public class OptionService {
     private final OptionRepository optionRepository;
     private final ProductRepository productRepository;
     private final OrderCheckRepository orderCheckRepository;
+    private final ItemRepository itemRepository;
 
     // ** 상품ID를 기반으로 옵션을 저장, 없을 시 예외처리
     @Transactional
@@ -84,17 +83,24 @@ public class OptionService {
         optionRepository.deleteById(id);
     }
 
-    public void deductStock(List<Item> itemList) {
+    @Transactional
+    public void deductStock(String orderId) {
+        Long id = Long.parseLong(orderId.substring(orderId.lastIndexOf(":") + 1));
+        List<Item> itemList = itemRepository.findAllByOrderId(id);
+
         for (Item item : itemList) {
             Option option = item.getOption();
             option.updateStock(- item.getQuantity());
         }
     }
 
-    public Option findById(Long id) {
-        Optional<Option> optional = optionRepository.findById(id);
-        if (optional.isEmpty())
-            throw new Exception404("찾을 수 없는 옵션");
-        return optional.get();
+    @Transactional
+    public void restoreStock(String tid) {
+        List<OrderCheck> orderChecks = orderCheckRepository.findAllByTid(tid);
+
+        for (OrderCheck orderCheck : orderChecks) {
+            Option option = orderCheck.getOption();
+            option.updateStock(orderCheck.getQuantity());
+        }
     }
 }

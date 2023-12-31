@@ -6,6 +6,13 @@
   <meta httpEquiv="x-ua-compatible" content="ie=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
+  <style>
+    .order-container {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+    }
+  </style>
 </head>
 
 <body>
@@ -40,12 +47,10 @@
     <p>판매 업체 정보는 주문 완료 후 제공될 예정입니다.</p><br>
 
     <p>구매 상품</p>
-    <div th:each="product: ${order.getProductDTOS()}">
-      <div th:each="item: ${product.getItems()}">
-                    <span th:text="${product.getProductName()} + ' ' +
-                    ${item.getOptionName()} + ' ' +
-                    ${item.getQuantity()} + '개 : ' +
-                    ${item.getPrice()} + '원'"></span>
+    <div  th:each="product: ${order.getProductDTOS()}">
+      <div class="order-container" th:each="item: ${product.getItems()}">
+        <span th:text="${product.getProductName()} + ' ' + ${item.getOptionName()} + ' ' +
+              ${item.getQuantity()} + '개 : ' + ${item.getPrice()} + '원'"></span>
       </div>
     </div>
 
@@ -54,49 +59,30 @@
     <span th:text="${order.getTotalPrice()} + '원'"></span><br>
 
     <!-- 결제하기 버튼 -->
-    <button type="button" onclick="sendOrders()">결제하기</button>
+    <button type="button" onclick="serverAuth()">결제하기</button>
+    <div id="pay-buttons"></div>
   </form>
 </div>
 
 <script src="https://pay.nicepay.co.kr/v1/js/"></script>
 
 <script th:inline="javascript">
-  const receiverName = document.getElementById('receiverName').value;
-  const address = document.getElementById('address').value;
-  const phoneNumber = document.getElementById('phoneNumber').value;
-  const orderId = document.getElementById('orderId').value;
-  const userId = [[${user}]].id;
-
-  function sendOrders(){
-    var order = [[${order}]];
+  async function serverAuth() {
+    let goodsName = "";
+    const order = [[${order}]];
+    console.log(order);
     for (let i in order.productDTOS) {
       for (let j in order.productDTOS[i].items) {
-        var price = order.productDTOS[i].items[j].price;
-        var quantity = order.productDTOS[i].items[j].quantity;
-        var productName = order.productDTOS[i].productName;
-        var optionName = order.productDTOS[i].items[j].optionName;
-        console.log(userId, price, quantity, productName + " " + optionName);
+        goodsName += "opId=" + order.productDTOS[i].items[j].optionId + " " +
+                order.productDTOS[i].items[j].quantity + "개, ";
       }
     }
-
-    // 다 끝내고 오더 삭제
-  }
-
-  function serverAuth(userId, price, quantity, name) {
-    AUTHNICE.requestPay({
+    await AUTHNICE.requestPay({
       clientId: [[${clientId}]],
       method: 'card',
       orderId: [[${orderId}]],
-      amount: price,
-      goodsName: name,
-
-      id: orderId,
-      receiverName: receiverName,
-      address: address,
-      phoneNumber: phoneNumber,
-      quantity: quantity,
-      userId: userId,
-
+      amount: [[${order}]].totalPrice,
+      goodsName: goodsName,
       returnUrl: 'http://localhost:8080/v1/serverAuth',
       fnError: function (result) {
         alert('개발자확인용 : ' + result.errorMsg + '');

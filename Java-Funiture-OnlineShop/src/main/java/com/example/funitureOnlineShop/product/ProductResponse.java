@@ -1,8 +1,8 @@
 package com.example.funitureOnlineShop.product;
 
+import com.example.funitureOnlineShop.option.Option;
 import com.example.funitureOnlineShop.productFile.ProductFile;
 import com.example.funitureOnlineShop.productFile.ProductFileResponse;
-import com.example.funitureOnlineShop.option.Option;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -69,18 +69,31 @@ public class ProductResponse {
     @Getter
     @Setter
     @NoArgsConstructor
-    public static class FindByCategoryForAllDTOS {
+    @AllArgsConstructor
+    public static class FindByCategoryDTO {
 
         private Long id;
         private String productName;
         private Long price;
         private ProductFileResponse file;
 
-        public FindByCategoryForAllDTOS(Long id, String productName, Long price, ProductFileResponse file) {
+        public FindByCategoryDTO(Long id, String productName, Long price, List<ProductFile> files) {
             this.id = id;
             this.productName = productName;
             this.price = price;
-            this.file = file;
+            ProductFile productFile = new ProductFile();
+            if (!files.isEmpty()) {
+                productFile = files.get(0);
+            }
+            this.file = ProductFileResponse.toDto(productFile);
+        }
+
+        public static FindByCategoryDTO toDto(Product product, ProductFile file) {
+            return new FindByCategoryDTO(
+                    product.getId(),
+                    product.getProductName(),
+                    product.getPrice(),
+                    ProductFileResponse.toDto(file));
         }
     }
 
@@ -110,6 +123,7 @@ public class ProductResponse {
         private String description;
         private Long price;
         private Long deliveryFee;
+        private Long categoryId;
     }
 
 }

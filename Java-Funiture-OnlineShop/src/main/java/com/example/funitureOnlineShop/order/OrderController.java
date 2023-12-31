@@ -27,9 +27,9 @@ public class OrderController {
         return ResponseEntity.ok(ApiUtils.success(apiResult));
     }
 
-    @PostMapping("/delete")
-    public ResponseEntity<?> delete(Long orderId){
-        orderService.delete(orderId);
+    @PostMapping("/delete/{id}")
+    public ResponseEntity<?> delete(@PathVariable String id){
+        orderService.delete(id, null);
         ApiUtils.ApiResult<?> apiResult = ApiUtils.success(null);
         return ResponseEntity.ok(ApiUtils.success(apiResult));
     }

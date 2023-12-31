@@ -7,23 +7,75 @@
         /* 기존 CSS 코드 유지 */
     </style>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <style>
+        .max-size-image {
+            max-width: 200px; /* 최대 가로 크기 */
+            max-height: 200px; /* 최대 세로 크기 */
+        }
+    </style>
 </head>
 <body>
-<div class="product-grid">
-    <!-- th:each를 이용하여 상품 목록 반복 -->
-    <div th:each="product : ${products.content}">
-        <!-- 상품 이미지의 존재 여부를 확인하고, 적절한 URL로 이미지 표시 -->
-        <img th:if="${product.file}" th:src="@{'/product/image/' + ${product.file.id}}" alt="Product image">
-        <!-- 상품명 표시 -->
-        <div th:text="${product.productName}"></div>
-        <!-- 상품 가격 표시 -->
-        <div th:text="${product.price + '원'}"></div>
+<section>
+    <div class="section">
+        <!-- boardList가 존재하고 비어있지 않은 경우 -->
+        <table>
+            <tr>
+                <th>번호</th>
+                <th>상품 사진</th>
+                <th>상품 이름</th>
+                <th>상품 가격</th>
+            </tr>
+            <span th:if="${productList.totalPages == 0}">
+                <tr>
+                    <td colspan="4">
+                        <div>등록된 상품이 없습니다.</div>
+                    </td>
+                </tr>
+            </span>
+            <span th:unless="${productList.totalPages == 0}">
+                <tr th:each="product: ${productList}">
+                    <td th:text="${product.getId()}"></td>
+                    <td th:if="${product.file.getId() != null}"><img class="max-size-image" th:if="${product.file}" th:src="@{'/product/image/' + ${product.file.id}}" alt="Product image"></td>
+                    <td th:unless="${product.file.getId() != null}"></td>
+                    <td><a th:href="@{/product/show/{id}(id=${product.id}, page=${productList.number + 1})}" th:text="${product.getProductName()}"></a></td>
+                    <td th:text="${product.getPrice()}"></td>
+                </tr>
+            </span>
+        </table>
+
+        <div class="paging-buttons">
+            <span th:if="${productList.first}">
+                <span class="active" th:text="처음"></span>
+                <span class="active" th:text="이전"></span>
+            </span>
+            <span th:unless="${productList.first}">
+                <a th:href="@{/product/paging(page=1)}">처음</a>
+                <a th:href="@{/product/paging(page=${productList.number})}">이전</a>
+            </span>
+
+            <span class="paging-links" th:each="page: ${#numbers.sequence(startPage, endPage)}">
+                <!-- 현재페이지는 링크 없이 숫자만 -->
+                <span th:if="${page == productList.number + 1}" class="active" th:text="${page}"></span>
+                <!-- 현재페이지 번호가 아닌 다른 페이지번호에는 링크를 보여줌 -->
+                <span th:unless="${productList.totalPages == 0}">
+                <span th:unless="${page == productList.number + 1}">
+                    <a th:href="@{/product/paging(page=${page})}" th:text="${page}"></a>
+                </span>
+                </span>
+            </span>
+
+            <span th:if="${productList.last}">
+                <span class="active" th:text="다음"></span>
+                <span class="active" th:text="마지막"></span>
+            </span>
+            <span th:unless="${productList.last}">
+                <!-- 다음 링크 활성화 비활성화   사용자: 2페이지, getNumber: 1, 3페이지-->
+                <a th:href="@{/product/paging(page=${productList.number + 2})}">다음</a>
+                <!-- 마지막 페이지로 이동 -->
+                <a th:href="@{/product/paging(page=${productList.totalPages})}">마지막</a>
+            </span>
+        </div>
     </div>
-</div>
-<!-- 페이지네이션 버튼 -->
-<div>
-    <button th:if="${products.hasPrevious()}" th:onclick="'location.href=\'/category/show/' + ${categoryId} + '?page=' + (${products.number} - 1) + '\''">이전 페이지</button>
-    <button th:if="${products.hasNext()}" th:onclick="'location.href=\'/category/show/' + ${categoryId} + '?page=' + (${products.number} + 1) + '\''">다음 페이지</button>
-</div>
+</section>
 </body>
 </html>

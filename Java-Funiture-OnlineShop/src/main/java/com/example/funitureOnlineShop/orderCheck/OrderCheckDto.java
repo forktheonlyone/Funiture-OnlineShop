@@ -16,6 +16,7 @@ public class OrderCheckDto {
     private Long id;
     // 거래 id
     private String tid;
+    private String orderId;
     // 수량
     private Long quantity;
     // 상품명
@@ -26,8 +27,6 @@ public class OrderCheckDto {
     private Long price;
     // 주문일자
     private LocalDateTime orderDate;
-    // 배송주소
-    private String address;
     // 옵션 id
     private Long optionId;
     // 회원 id
@@ -38,12 +37,12 @@ public class OrderCheckDto {
     public static OrderCheckDto toOrderCheckDto(OrderCheck orderCheck, Long commentId) {
         return new OrderCheckDto(orderCheck.getId(),
                 orderCheck.getTid(),
+                orderCheck.getOrderId(),
                 orderCheck.getQuantity(),
                 orderCheck.getOption().getProduct().getProductName(),
                 orderCheck.getOption().getOptionName(),
-                orderCheck.getOption().getPrice(),
+                orderCheck.getPrice(),
                 orderCheck.getOrderDate(),
-                orderCheck.getAddress(),
                 orderCheck.getOption().getId(),
                 orderCheck.getUser().getId(),
                 commentId);
@@ -52,10 +51,10 @@ public class OrderCheckDto {
     public OrderCheck toEntity(){
         return OrderCheck.builder()
                 .tid(tid)
+                .orderId(orderId)
                 .quantity(quantity)
                 .price(price)
                 .orderDate(orderDate)
-                .address(address)
                 .build();
     }
 }

@@ -32,7 +32,6 @@
                     output += "<tr>";
                     output += "<th>" + "주문 번호" + "</th>";
                     output += "<th>" + "주문 일자 및 시간" + "</th>";
-                    output += "<th>" + "배송 주소" + "</th>";
                     output += "<th>" + "상품명" + "</th>";
                     output += "<th>" + "옵션명" + "</th>";
                     output += "<th>" + "가격" + "</th>";
@@ -49,7 +48,6 @@
                         output += orders[i].orderDate.substring(11,20);
                         output += "</td>";
 
-                        output += "<td>" + orders[i].address + "</td>";
                         output += "<td>" + orders[i].productName + "</td>";
                         output += "<td>" + orders[i].optionName + "</td>";
                         output += "<td>" + orders[i].price + "</td>";
@@ -66,8 +64,7 @@
                         output += "</td>";
                         output += "<td>";
                         if (orders[i].tId !== null) {
-                         const orderId = "/returnorder/" + orders[i].id;
-                            output += "<button class='create1' data-id='" + orders[i].id + "' onclick=''>반품</button>";
+                            output += "<button class='cancel' data-id='" + orders[i].tid + "' onclick=''>반품</button>";
                         }
                         output += "</td>";
                         output += "</tr>";
@@ -80,7 +77,7 @@
                 const createButton = document.querySelectorAll('.create');
                 const updateButton = document.querySelectorAll('.update');
                 const deleteButton = document.querySelectorAll('.delete');
-                const returnButton = document.querySelectorAll('.create1');
+                const returnButton = document.querySelectorAll('.cancel');
 
                 returnButton.forEach(button => {
                     button.addEventListener("click", function() {

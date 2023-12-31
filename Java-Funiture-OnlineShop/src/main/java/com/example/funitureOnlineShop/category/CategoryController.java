@@ -15,7 +15,6 @@ import java.util.List;
 public class CategoryController {
 
     private final CategoryService categoryService;
-    private final ProductService productService;
 
     // 카테고리 저장
     @PostMapping("/save")

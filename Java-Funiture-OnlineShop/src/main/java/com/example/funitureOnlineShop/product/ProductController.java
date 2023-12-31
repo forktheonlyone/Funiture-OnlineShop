@@ -3,8 +3,6 @@ package com.example.funitureOnlineShop.product;
 import com.example.funitureOnlineShop.core.utils.ApiUtils;
 import com.example.funitureOnlineShop.productFile.ProductFileResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.FileCopyUtils;
@@ -14,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -60,13 +59,11 @@ public class ProductController {
         return ResponseEntity.ok(apiResult);
     }
 
-    // 카테고리별 상품 조회
+    // 해당 카테고리의 상품들 찾기
     @GetMapping("/category/{id}")
-    public ResponseEntity<?> findByCategoryId(@PathVariable Long id,
-                                              @RequestParam(required = false, defaultValue = "0") int page,
-                                              @RequestParam(required = false, defaultValue = "10") int size) {
-        Page<ProductResponse.FindByCategoryForAllDTOS> products = productService.findByCategoryId(id, PageRequest.of(page, size));
-        ApiUtils.ApiResult<Page<ProductResponse.FindByCategoryForAllDTOS>> apiResult = ApiUtils.success(products);
+    public ResponseEntity<?> findByCategoryId(@PathVariable Long id) {
+        List<ProductResponse.FindByCategoryDTO> productDTOS = productService.findByCategoryId(id);
+        ApiUtils.ApiResult<?> apiResult = ApiUtils.success(productDTOS);
         return ResponseEntity.ok(apiResult);
     }
 
@@ -84,16 +81,17 @@ public class ProductController {
 
     // 상품 수정
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PutMapping("/update")
-    public ResponseEntity<?> update(@RequestBody ProductResponse.UpdateDTO updateDTO) {
-        ProductResponse.FindByIdDTO updatedProduct = productService.update(updateDTO);
+    @PostMapping("/update")
+    public ResponseEntity<?> update(ProductResponse.UpdateDTO updateDTO,
+                                    @RequestParam MultipartFile[] files) throws IOException {
+        ProductResponse.FindByCategoryDTO updatedProduct = productService.update(updateDTO, files);
         ApiUtils.ApiResult<?> apiResult = ApiUtils.success(updatedProduct);
         return ResponseEntity.ok(apiResult);
     }
 
     // 상품 삭제
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @DeleteMapping("/delete/{id}")
+    @PostMapping("/delete/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id){
         productService.delete(id);
         ApiUtils.ApiResult<?> apiResult = ApiUtils.success(id);

@@ -1,13 +1,9 @@
 package com.example.funitureOnlineShop.option;
 
-import com.example.funitureOnlineShop.core.security.CustomUserDetails;
 import com.example.funitureOnlineShop.core.utils.ApiUtils;
-import com.example.funitureOnlineShop.orderCheck.OrderCheckDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -19,6 +15,7 @@ import java.util.List;
 @RequestMapping("/options")
 public class OptionController {
     private final OptionService optionService;
+
     // ** 옵션 저장
     @PostMapping("/products/{productId}/save")
     public ResponseEntity<?> save(@PathVariable Long productId, @RequestBody @Valid OptionResponse.FindByProductIdDTO requestDTO) {
@@ -50,8 +47,8 @@ public class OptionController {
         return ResponseEntity.ok(apiResult);
     }
     // ** 옵션 변경
-    @PostMapping("/update/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, @ModelAttribute OptionResponse.FindAllDTO optionDto) {
+    @PostMapping("/update")
+    public ResponseEntity<?> update(OptionResponse.FindAllDTO optionDto) {
         optionService.update(optionDto);
 
         ApiUtils.ApiResult<?> apiResult = ApiUtils.success(optionDto);

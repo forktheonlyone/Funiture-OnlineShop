@@ -65,6 +65,6 @@ insert into product_file (id, file_name, file_path, file_size, file_type, uuid, 
 
 insert into order_tb (id, order_date, user_id) values (1, '2023-12-27', 1)
 
-insert into order_check (id, price, order_date, address, quantity, tid, option_id, user_id) values (1, 4000, 'asdfasdf', '2019-8-14 08:43:12', 1, 'asdfasfd', 3, 1)
-insert into order_check (id, price, order_date, address, quantity, tid, option_id, user_id) values (2, 8000, 'asdfasdf', '2023-8-14 08:43:12', 2, 'asdfasfd', 6, 1)
-insert into order_check (id, price, order_date, address, quantity, tid, option_id, user_id) values (3, 12000, 'asdfasdf', '2023-8-14 08:43:12', 3, 'asdfasfd', 9, 1)
+insert into order_check (id, price, order_date, order_id, quantity, tid, option_id, user_id) values (1, 4000, '2019-8-14 08:43:12', 'asdfasdf', 1, 'asdfasfd', 3, 1)
+insert into order_check (id, price, order_date, order_id, quantity, tid, option_id, user_id) values (2, 8000, '2023-8-14 08:43:12', 'asdfasdf', 2, 'asdfasfd', 6, 1)
+insert into order_check (id, price, order_date, order_id, quantity, tid, option_id, user_id) values (3, 12000,'2023-8-14 08:43:12', 'asdfasdf', 3, 'asdfasfd', 9, 1)

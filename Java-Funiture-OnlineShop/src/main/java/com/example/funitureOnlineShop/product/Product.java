@@ -1,9 +1,8 @@
 package com.example.funitureOnlineShop.product;
 
 import com.example.funitureOnlineShop.category.Category;
-import com.example.funitureOnlineShop.productFile.ProductFile;
 import com.example.funitureOnlineShop.option.Option;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.example.funitureOnlineShop.productFile.ProductFile;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -60,11 +59,12 @@ public class Product {
         return product;
     }
 
-    public void update(ProductResponse.UpdateDTO updateDTO) {
+    public void update(ProductResponse.UpdateDTO updateDTO, Category category) {
         this.productName = updateDTO.getProductName();
         this.description = updateDTO.getDescription();
         this.price = updateDTO.getPrice();
         this.deliveryFee = updateDTO.getDeliveryFee();
+        this.category = category;
     }
 
 }

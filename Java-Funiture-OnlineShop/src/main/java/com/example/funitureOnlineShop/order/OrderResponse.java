@@ -44,12 +44,14 @@ public class OrderResponse {
             public class ItemDTO{
                 private Long id;
                 private String optionName;
+                private Long optionId;
                 private Long quantity;
                 private Long price;
 
                 public ItemDTO(Item item) {
                     this.id = item.getId();
                     this.optionName = item.getOption().getOptionName();
+                    this.optionId = item.getOption().getId();
                     this.quantity = item.getQuantity();
                     this.price = item.getPrice();
                 }

@@ -6,4 +6,8 @@ import java.util.List;
 
 public interface OrderCheckRepository extends JpaRepository<OrderCheck, Long> {
     List<OrderCheck> findAllByUserId(Long id);
+
+    List<OrderCheck> findAllByTid(String tid);
+
+    void deleteAllByTid(String tid);
 }
