@@ -8,7 +8,7 @@
 </head>
 
 <body>
-<h1>NICEPAY TEST</h1>
+<header> <h1>주문 취소</h1> </header>
 <form method="POST" action="/v1/cancelAuth">
     <label>tid</label><br>
     <input type="text" name="tid" th:value="${order.getTid()}" required><br>
@@ -23,6 +23,9 @@
 
     <input type="submit" value="취소요청">
 </form>
+<footer>
+    <p class="footword">&copy; 2023 My Website. All rights reserved.</p>
+</footer>
 </body>
 
 </html>

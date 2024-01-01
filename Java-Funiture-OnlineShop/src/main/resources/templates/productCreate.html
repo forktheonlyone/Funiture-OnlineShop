@@ -12,6 +12,7 @@
     </style>
 </head>
 <body>
+<header> <h1>상품/옵션 생성</h1> </header>
 
 <form id="productForm">
     <h2>신규 상품 등록</h2>
@@ -81,6 +82,10 @@
 
     <button type="submit" id="saveOptionButton" onclick="sendOption(event)" disabled>옵션 저장</button>
 </form>
+
+<footer>
+    <p class="footword">&copy; 2023 My Website. All rights reserved.</p>
+</footer>
 
 <script th:inline="javascript">
     function updateSelectedFiles(event) {

@@ -1,197 +1,33 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>게시판</title>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
 
-        header {
-            background-color: #333;
-            color: #fff;
-            text-align: center;
-            padding: 1rem;
-        }
-        .home-button {
-            text-decoration: none; /* 밑줄 제거 */
-            margin-right: 20px; /* 오른쪽 여백 조절 */
+    <script th:inline="javascript">
+        // JavaScript 코드는 그대로 유지됩니다.
+        window.addEventListener('DOMContentLoaded', function() {
+            var uiMenu = document.querySelector('.ui-menu');
+            fetch('/menu')
+                .then(function(response) {
+                    return response.text();
+                })
+                .then(function(html) {
+                    uiMenu.innerHTML = html;
+                    var scripts = uiMenu.getElementsByClassName("runNow");
+                    for (var i = 0; i < scripts.length; i++) {
+                        eval(scripts[i].innerHTML);
+                    }
+                })
+                .catch(function(error) {
+                    console.log('뷰를 가져오는 동안 오류가 발생했습니다:', error);
+                });
+        });
 
-        }
-
-        section {
-            display: flex;
-            justify-content: space-around;
-            padding: 20px;
-        }
-
-        .left-section,
-        .right-section {
-            width: 45%;
-        }
-
-        footer {
-            background-color: #333;
-            color: #fff;
-            text-align: center;
-            padding: 1rem;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-
-        th {
-            background-color: #333;
-            color: #fff;
-        }
-
-        .paging-buttons {
-            margin-top: 20px;
-            text-align: center;
-        }
-
-        .paging-buttons a {
-            display: inline-block;
-            padding: 8px;
-            margin: 0 5px;
-            text-decoration: none;
-            background-color: #333;
-            color: #fff;
-        }
-
-        .paging-buttons a:hover {
-            background-color: #555;
-        }
-
-        .write-button {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        .write-button a {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: #4285f4;
-            color: #fff;
-            text-decoration: none;
-            border-radius: 5px;
-        }
-
-        .write-button a:hover {
-            background-color: #3367d6;
-        }
-    </style>
-</head>
-
-<body>
-
-<header>
-    <h1>고객센터</h1>
-    <div>
-        <span class="header-buttons" id="loginButtons" style="display: block;">
-            <button onclick="location.href='/login'">로그인</button>
-            <button onclick="location.href='/join'">회원가입</button>
-        </span>
-        <span class="header-buttons" id="logoutButtons" style="display: none;">
-            <button onclick="logout()">로그아웃</button>
-            <button onclick="location.href='/myPage'">내 정보</button>
-        </span>
-    </div>
-    <!-- 홈으로 가는 버튼 -->
-    <a th:href="@{/}" class="home-button">Home</a>
-</header>
-
-<section>
-    <div class="section">
-        <!-- boardList가 존재하고 비어있지 않은 경우 -->
-        <table>
-            <tr>
-                <th>번호</th>
-                <th>제목</th>
-                <th>작성 시간</th>
-            </tr>
-            <span th:if="${boardList.totalPages == 0}">
-                <tr>
-                    <td colspan="3">
-                        <div>등록된 게시글이 없습니다.</div>
-                    </td>
-                </tr>
-            </span>
-            <span th:unless="${boardList.totalPages == 0}">
-                <tr th:each="board: ${boardList}">
-                    <td th:text="${board.getId()}"></td>
-                    <td><a th:href="@{/board/{id}(id=${board.id}, page=${boardList.number + 1})}" th:text="${board.getTitle()}"></a></td>
-                    <td th:text="*{#temporals.format(board.getCreateTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
-                </tr>
-            </span>
-        </table>
-
-        <div class="paging-buttons">
-            <span th:if="${boardList.first}">
-                <span class="active" th:text="처음"></span>
-                <span class="active" th:text="이전"></span>
-            </span>
-            <span th:unless="${boardList.first}">
-                <a th:href="@{/board/paging(page=1)}">처음</a>
-                <a th:href="@{/board/paging(page=${boardList.number})}">이전</a>
-            </span>
-
-            <span class="paging-links" th:each="page: ${#numbers.sequence(startPage, endPage)}">
-                <!-- 현재페이지는 링크 없이 숫자만 -->
-                <span th:if="${page == boardList.number + 1}" class="active" th:text="${page}"></span>
-                <!-- 현재페이지 번호가 아닌 다른 페이지번호에는 링크를 보여줌 -->
-                <span th:unless="${boardList.totalPages == 0}">
-                <span th:unless="${page == boardList.number + 1}">
-                    <a th:href="@{/board/paging(page=${page})}" th:text="${page}"></a>
-                </span>
-                </span>
-            </span>
-
-            <span th:if="${boardList.last}">
-                <span class="active" th:text="다음"></span>
-                <span class="active" th:text="마지막"></span>
-            </span>
-            <span th:unless="${boardList.last}">
-                <!-- 다음 링크 활성화 비활성화   사용자: 2페이지, getNumber: 1, 3페이지-->
-                <a th:href="@{/board/paging(page=${boardList.number + 2})}">다음</a>
-                <!-- 마지막 페이지로 이동 -->
-                <a th:href="@{/board/paging(page=${boardList.totalPages})}">마지막</a>
-            </span>
-        </div>
-    </div>
-</section>
-
-<span id="adminButton" style="display: none;">
-        <button class="btn" onclick="navigateToCreateBoardPage()">글쓰기</button>
-</span>
-
-<footer>
-    <p>저작권 © 2023 고객센터</p>
-</footer>
-</body>
-<script th:inline="javascript">
-
-
-
-async function logout() {
+        async function logout() {
             try {
                 const token = getCookie("token");
                 const response = await fetch('/user/logout', {
@@ -216,92 +52,198 @@ async function logout() {
             }
         }
 
-function showLoggedInButtons() {
-        var loginButtonsContainer = document.getElementById("loginButtons");
-        loginButtonsContainer.style.display = "none";
-
-        var logoutButtonsContainer = document.getElementById("logoutButtons");
-        logoutButtonsContainer.style.display = "block";
-    }
-
-    // 로그아웃 상태에 따른 동작을 수행하는 함수
-    function showLoggedOutButtons() {
-        var loginButtonsContainer = document.getElementById("loginButtons");
-        loginButtonsContainer.style.display = "block";
-
-        var logoutButtonsContainer = document.getElementById("logoutButtons");
-        logoutButtonsContainer.style.display = "none";
-    }
-
-    // 쿠키를 가져오는 함수
-    function getCookie(name) {
-        var cookieName = name + "=";
-        var cookies = document.cookie.split(';');
-        for (var i = 0; i < cookies.length; i++) {
-            var cookie = cookies[i].trim();
-            if (cookie.indexOf(cookieName) === 0) {
-                return cookie.substring(cookieName.length, cookie.length);
-            }
-        }
-        return null;
-    }
-            async function isAdmin() {
-            try {
-                const token = getCookie("token");
-                const response = await fetch('/user/info', {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': token
-                    }
-                });
-                const result = await response.json();
-
-                if (result.success) {
-                    if (result.response.roles[0] === "ROLE_ADMIN") {
-                        showAdmin();
-                    }
+        function getCookie(name) {
+            const cookieName = name + "=";
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.indexOf(cookieName) === 0) {
+                    return cookie.substring(cookieName.length, cookie.length);
                 }
-            } catch (error) {
-                console.error('Error:', error);
             }
+            return null;
         }
-         $(document).ready(function(){
-        checkButtonVisibility();
-        });
+    </script>
 
-         const checkButtonVisibility = () => {
-            const logined = getCookie("token");
-            if (logined != null) {
-                // 버튼을 보여주는 로직 호출
-                showButtons();
-                isAdmin();
-            }
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
         }
 
-        const showButtons = () => {
-            // 버튼을 보여주는 로직 작성
-            let buttonsContainer = document.getElementById("loginButtons");
-            buttonsContainer.style.display = "none";
-            buttonsContainer = document.getElementById("logoutButtons");
-            buttonsContainer.style.display = "block";
+        .ui-menu {
+            background-color: #f2f2f2;
+            padding: 10px;
         }
 
-        const showAdmin = () => {
-             const buttonsContainer = document.getElementById("adminButton");
-                buttonsContainer.style.display = "block";
+        header {
+            background-color:#ccc;
+            color: black;
+            padding: 20px;
+            text-align: center;
         }
 
-async function navigateToCreateBoardPage() {
+        footer {
+            display: flex;
+            background-color: #f0f0f0;
+            padding: 10px 20px;
+            text-align: center;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-    const token = getCookie("token");
-    console.log("Token:", token);
-    if (!token) {
-        console.error("토큰이 없습니다. 로그인이 필요합니다.");
-        alert("로그인을 해주세요");
-        return;
+        .footword{
+            margin-bottom: 5px;
+            font-size: 12px;
+            color: #999;
+        }
+        section {
+            padding: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .paging-buttons {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .paging-links {
+            margin-right: 5px;
+        }
+
+        .active {
+            font-weight: bold;
+        }
+
+        .btn {
+            background-color: #333;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+        }
+
+        .btn-primary:hover {
+            background-color: #0069d9;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+    </style>
+</head>
+
+<body>
+<div class="ui-menu"></div>
+<header>
+    <h1>고객센터</h1>
+</header>
+
+<section>
+    <div class="section">
+        <!-- boardList가 존재하고 비어있지 않은 경우 -->
+        <table>
+            <tr>
+                <th>번호</th>
+                <th>제목</th>
+                <th>작성 시간</th>
+            </tr>
+            <span th:if="${boardList.totalPages == 0}">
+                <tr>
+                    <td colspan="3">
+                        <div>등록된 게시글이 없습니다.</div>
+                    </td>
+                </tr>
+            </span>
+            <span th:unless="${boardList.totalPages == 0}">
+                <tr th:each="board: ${boardList}">
+                    <td th:text="${board.getId()}"></td>
+                    <td><a th:href="@{/board/{id}(id=${board.id}, page=${boardList.number + 1})}"
+                           th:text="${board.getTitle()}"></a></td>
+                    <td th:text="*{#temporals.format(board.getCreateTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+                </tr>
+            </span>
+        </table>
+
+        <div class="paging-buttons">
+            <span th:if="${boardList.first}">
+                <span class="active" th:text="처음"></span>
+                <span class="active" th:text="이전"></span>
+            </span>
+            <span th:unless="${boardList.first}">
+                <a class="btn btn-secondary" th:href="@{/board/paging(page=1)}">처음</a>
+                <a class="btn btn-secondary" th:href="@{/board/paging(page=${boardList.number})}">이전</a>
+            </span>
+
+            <span class="paging-links" th:each="page: ${#numbers.sequence(startPage, endPage)}">
+                <!-- 현재페이지는 링크 없이 숫자만 -->
+                <span th:if="${page == boardList.number + 1}" class="active" th:text="${page}"></span>
+                <!-- 현재페이지 번호가 아닌 다른 페이지번호에는 링크를 보여줌 -->
+                <span th:unless="${boardList.totalPages == 0}">
+                <span th:unless="${page == boardList.number + 1}">
+                    <a class="btn btn-primary" th:href="@{/board/paging(page=${page})}" th:text="${page}"></a>
+                </span>
+                </span>
+            </span>
+
+            <span th:if="${boardList.last}">
+                <span class="active" th:text="다음"></span>
+                <span class="active" th:text="마지막"></span>
+            </span>
+            <span th:unless="${boardList.last}">
+                <!-- 다음 링크 활성화 비활성화   사용자: 2페이지, getNumber: 1, 3페이지-->
+                <a class="btn btn-secondary" th:href="@{/board/paging(page=${boardList.number + 2})}">다음</a>
+                <!-- 마지막 페이지로 이동 -->
+                <a class="btn btn-secondary" th:href="@{/board/paging(page=${boardList.totalPages})}">마지막</a>
+            </span>
+        </div>
+    </div>
+</section>
+
+<span id="adminButton" style="display: none;">
+    <button class="btn btn-primary" onclick="navigateToCreateBoardPage()">글쓰기</button>
+</span>
+
+<footer>
+    <p class="footword">&copy; 2023 My Website. All rights reserved.</p>
+</footer>
+</body>
+
+<script th:inline="javascript">
+    async function navigateToCreateBoardPage() {
+
+        const token = getCookie("token");
+        console.log("Token:", token);
+        if (!token) {
+            console.error("토큰이 없습니다. 로그인이 필요합니다.");
+            alert("로그인을 해주세요");
+            return;
+        }
+        window.location.href = '/board/create';
     }
-    window.location.href = '/board/create';
-}
 </script>
+
 </html>

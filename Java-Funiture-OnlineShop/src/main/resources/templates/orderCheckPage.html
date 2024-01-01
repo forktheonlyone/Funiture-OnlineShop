@@ -6,11 +6,14 @@
     <script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
 </head>
 <body>
-<h1>주문 상세 정보</h1>
+<header> <h1>주문 상세 정보</h1> </header>
 <div>최근 3년 이내의 주문 내역만을 보여줍니다</div>
 <div id="order-list">
 
 </div>
+<footer>
+    <p class="footword">&copy; 2023 My Website. All rights reserved.</p>
+</footer>
 <script th:inline="javascript">
     const findOrderCheck = () => {
         const token = getCookie('token');

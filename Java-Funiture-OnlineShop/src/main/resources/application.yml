@@ -1,4 +1,8 @@
 server:
+  servlet:
+    encoding:
+      charset: utf-8
+      force: true
   port: 8080
 
 spring:
@@ -9,9 +13,9 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/green?useSSL=false&serverTimezone=UTC&characterEncoding=UTF-8&allowPublicKeyRetrieval=true&useSSL=false
+    url: jdbc:mysql://localhost:3306/green?serverTimezone=Asia/Seoul&charatorEncoding=UTF-8
     username: root
-    password:
+    password: 1234
   thymeleaf:
     cache: false
   jpa:
@@ -26,14 +30,9 @@ spring:
           import_files: classpath:db/data.sql
         format_sql: true
       default_batch_fetch_size: 100
-    output:
-      ansi:
-        enabled: always
+  output:
+    ansi:
+      enabled: always
   h2:
     console:
       enabled: true
-  resources:
-    static-locations: file:///C:/Users/soone/Desktop/FunitureOnlineShopFiles/ # 정적 리소스 위치 설정
-  web:
-    mvc:
-      static-path-pattern: /files/** # 정적 리소스 제공 패턴 설정

@@ -2,14 +2,13 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>신규 상품 등록</title>
+    <title>수정할 상품 선택</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 <body>
+<header> <h1>수정할 상품 선택</h1> </header>
 
 <form id="productForm">
-    <h2>신규 상품 등록</h2>
-
     <label for="selectedCategory1">대분류 카테고리 선택:</label>
     <select id="selectedCategory1" name="superCategory_id" onchange="callSons('selectedCategory1','selectedCategory2')" required>
         <option value="0">없음</option>
@@ -37,6 +36,9 @@
     <button type="button" id="deleteProductButton" onclick="deleteProduct()">상품 삭제하기</button>
 </form>
 
+<footer>
+    <p class="footword">&copy; 2023 My Website. All rights reserved.</p>
+</footer>
 <script th:inline="javascript">
     async function deleteProduct() {
         const selectElement = document.getElementById("productName");

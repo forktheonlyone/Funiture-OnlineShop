@@ -25,11 +25,12 @@
     </style>
 </head>
 <body>
+<header> <h1 th:text="${product.productName}"></h1> </header>
 
 <div th:if="${product != null}">
     <!-- 상품 정보 섹션 -->
     <div>
-        <h1 th:text="${product.productName}">상품명</h1>
+        <h3 th:text="${product.productName}">상품명</h3>
         <p>가격: <span id="basePrice" th:text="${product.price}">상품 가격</span>원</p>
         <p>배송비: <span id="deliveryFee" th:text="${product.deliveryFee}">배송비</span>원</p>
 
@@ -105,6 +106,10 @@
         </table>
     </div>
 </div>
+
+<footer>
+    <p class="footword">&copy; 2023 My Website. All rights reserved.</p>
+</footer>
 
 <script th:inline="javascript">
 // 총 가격 업데이트 함수 (옵션, 수량, 그리고 배송비 선택에 따라 총 가격을 계산)

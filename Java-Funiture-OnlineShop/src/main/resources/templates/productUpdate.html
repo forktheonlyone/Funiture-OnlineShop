@@ -13,9 +13,8 @@
 </head>
 <body>
 
+<header><h1>상품/옵션 수정</h1></header>
 <form id="productForm">
-    <h2>수정할 상품 선택</h2>
-
     <input type="hidden" name="id" th:value="${product.getId()}">
 
     <label for="selectedCategory1">대분류 카테고리 선택:</label>
@@ -90,6 +89,9 @@
     <button type="button" id="saveOptionButton" onclick="sendOption()">옵션 수정</button>
 </form>
 
+<footer>
+    <p class="footword">&copy; 2023 My Website. All rights reserved.</p>
+</footer>
 <script th:inline="javascript">
     function updateSelectedFiles(event) {
         for (var image of event.target.files) {
