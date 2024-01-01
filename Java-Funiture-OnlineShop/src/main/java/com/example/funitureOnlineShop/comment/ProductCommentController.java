@@ -1,16 +1,19 @@
-package com.example.funitureOnlineShop.productComment;
+package com.example.funitureOnlineShop.comment;
 
+import com.example.funitureOnlineShop.commentFile.CommentFileDto;
 import com.example.funitureOnlineShop.core.security.CustomUserDetails;
 import com.example.funitureOnlineShop.core.utils.ApiUtils;
 import com.example.funitureOnlineShop.orderCheck.OrderCheckDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.ui.Model;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.List;
 
 @RestController
@@ -71,5 +74,17 @@ public class ProductCommentController {
 
          ApiUtils.ApiResult apiResult = ApiUtils.success(orderCheckDtos);
          return ResponseEntity.ok(apiResult);
+    }
+
+    // 이미지들 찾기
+    @GetMapping("/image/{id}")
+    public ResponseEntity<?> getImage(@PathVariable Long id) throws IOException {
+        CommentFileDto fileDto = productCommentService.findByIdFile(id);
+
+        File file = new File(fileDto.getFilePath() + fileDto.getUuid() + fileDto.getFileName());
+
+        return ResponseEntity.ok()
+                .header("Content-type", Files.probeContentType(file.toPath()))
+                .body(FileCopyUtils.copyToByteArray(file));
     }
 }

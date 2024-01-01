@@ -1,10 +1,9 @@
 package com.example.funitureOnlineShop.option;
 
 import com.example.funitureOnlineShop.core.error.exception.Exception500;
-import com.example.funitureOnlineShop.order.Order;
 import com.example.funitureOnlineShop.order.item.Item;
+import com.example.funitureOnlineShop.order.item.ItemRepository;
 import com.example.funitureOnlineShop.orderCheck.OrderCheck;
-import com.example.funitureOnlineShop.orderCheck.OrderCheckDto;
 import com.example.funitureOnlineShop.orderCheck.OrderCheckRepository;
 import com.example.funitureOnlineShop.product.Product;
 import com.example.funitureOnlineShop.product.ProductRepository;
@@ -23,6 +22,7 @@ public class OptionService {
     private final OptionRepository optionRepository;
     private final ProductRepository productRepository;
     private final OrderCheckRepository orderCheckRepository;
+    private final ItemRepository itemRepository;
 
     // ** 상품ID를 기반으로 옵션을 저장, 없을 시 예외처리
     @Transactional
@@ -83,56 +83,24 @@ public class OptionService {
         optionRepository.deleteById(id);
     }
 
-    // ** 옵션 수량 업데이트
     @Transactional
-    public void updateStock(Long optionId, Long newStockQuantity) {
-        Option option = optionRepository.findById(optionId)
-                .orElseThrow(() -> new Exception500("옵션이 존재하지 않습니다. 옵션 ID: " + optionId));
-        option.updateStockQuantity(newStockQuantity);
+    public void deductStock(String orderId) {
+        Long id = Long.parseLong(orderId.substring(orderId.lastIndexOf(":") + 1));
+        List<Item> itemList = itemRepository.findAllByOrderId(id);
 
-        optionRepository.save(option);
-    }
-    // 옵션 수량 차감
-    @Transactional
-    public void deductStock(Long optionId, OrderCheck orderCheck) {
-        Option option = optionRepository.findById(optionId)
-                .orElseThrow(() -> new Exception500("옵션이 존재하지 않습니다. 옵션 ID: " + optionId));
-        Long quantity = orderCheck.getQuantity();
-        Long currentStock = option.getStockQuantity();
-        if (currentStock >= quantity) {
-            option.updateStockQuantity(currentStock - quantity);
-            optionRepository.save(option);
-        } else {
-            throw new Exception500("재고가 부족합니다. 옵션 ID: " + optionId);
+        for (Item item : itemList) {
+            Option option = item.getOption();
+            option.updateStock(- item.getQuantity());
         }
     }
-    // 결제 완료 후 재고 차감
-    @Transactional
-    public void deductStockOnOrder(OrderCheck orderCheck) {
-            deductStock(orderCheck.getCart().getOption().getId(), orderCheck);
-    }
-    // 옵션 수량 복구
-    @Transactional
-    public void restoreStock(OrderCheck orderCheck) {
-        Option option = optionRepository.findById(orderCheck.getCart().getOption().getId())
-                .orElseThrow(() -> new Exception500("옵션이 존재하지 않습니다. 옵션 ID: " + orderCheck.getCart().getOption().getId()));
-        Long quantity = orderCheck.getQuantity();
-        option.updateStockQuantity(option.getStockQuantity() + quantity);
-        optionRepository.save(option);
-    }
 
-    // 주문 취소 시 재고 복구
     @Transactional
-    public void restoreStockOnOrderCancel(OrderCheck orderCheck) {
-            restoreStock(orderCheck);
-    }
+    public void restoreStock(String tid) {
+        List<OrderCheck> orderChecks = orderCheckRepository.findAllByTid(tid);
 
-    public OrderCheckDto findOrderChecks(Long checkId) {
-        Optional<OrderCheck> optionalOrderCheck = orderCheckRepository.findById(checkId);
-        if (optionalOrderCheck.isEmpty())
-            throw new Exception500("아이디 못받아옴ㅋ");
-        OrderCheck orderCheck = optionalOrderCheck.get();
-
-        return OrderCheckDto.toOrderCheckDto(orderCheck, null);
+        for (OrderCheck orderCheck : orderChecks) {
+            Option option = orderCheck.getOption();
+            option.updateStock(orderCheck.getQuantity());
+        }
     }
 }

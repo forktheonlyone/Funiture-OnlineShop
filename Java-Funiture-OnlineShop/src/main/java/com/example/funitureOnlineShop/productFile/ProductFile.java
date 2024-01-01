@@ -1,4 +1,4 @@
-package com.example.funitureOnlineShop.fileProduct;
+package com.example.funitureOnlineShop.productFile;
 
 import com.example.funitureOnlineShop.product.Product;
 import lombok.Builder;
@@ -10,7 +10,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Getter
 @Entity
-public class FileProduct {
+public class ProductFile {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -31,12 +31,10 @@ public class FileProduct {
     private Long fileSize;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id")
     private Product product;
 
-
     @Builder
-    public FileProduct(Long id, String filePath, String fileName, String fileType, String uuid, Long fileSize, Product product) {
+    public ProductFile(Long id, String filePath, String fileName, String fileType, String uuid, Long fileSize, Product product) {
         this.id = id;
         this.filePath = filePath;
         this.fileName = fileName;

@@ -1,6 +1,6 @@
-package com.example.funitureOnlineShop.Board;
+package com.example.funitureOnlineShop.board;
 
-import com.example.funitureOnlineShop.BoardFile.BoardFile;
+import com.example.funitureOnlineShop.boardFile.BoardFile;
 import com.example.funitureOnlineShop.core.error.exception.Exception500;
 import com.example.funitureOnlineShop.core.security.CustomUserDetails;
 import com.example.funitureOnlineShop.core.utils.ApiUtils;
@@ -9,9 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,9 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @Controller
@@ -34,7 +30,7 @@ public class BoardController {
 
     @GetMapping("/create")
     public String boardCreateForm() {
-        return "createboard";
+        return "boardCreate";
     }
 
     @PostMapping("/save")
@@ -60,13 +56,13 @@ public class BoardController {
 
         int blockLimit = 3;
         int startPage = (int)(Math.ceil((double)pageable.getPageNumber() / blockLimit) - 1) * blockLimit + 1;
-        int endPage = ((startPage + blockLimit - 1) < boards.getTotalPages()) ? (startPage + blockLimit - 1): boards.getTotalPages();
+        int endPage = Math.min((startPage + blockLimit - 1), boards.getTotalPages());
 
         model.addAttribute("boardList", boards);
         model.addAttribute("startPage", startPage);
         model.addAttribute("endPage", endPage);
 
-        return "noticePage";
+        return "boardPage";
     }
 
     // CRUD update / "update" 템플릿을 렌더링하여 반환
@@ -78,7 +74,7 @@ public class BoardController {
         model.addAttribute("board", boardDTO);
         model.addAttribute("existingFiles", existingFiles);
 
-        return "noticeupdate";
+        return "boardUpdate";
     }
     // CRUD update / "/board/"로 리다이렉트
     @PostMapping("/update")
@@ -101,7 +97,7 @@ public class BoardController {
         model.addAttribute("page", pageable.getPageNumber());
         model.addAttribute("files", files != null ? files : Collections.emptyList());
 
-        return "noticedetail";
+        return "boardDetail";
     }
 
     // CRUD delete /  "/board/paging"으로 리다이렉트

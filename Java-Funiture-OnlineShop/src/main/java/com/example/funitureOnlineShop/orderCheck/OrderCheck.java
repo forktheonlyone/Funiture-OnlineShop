@@ -1,8 +1,7 @@
 package com.example.funitureOnlineShop.orderCheck;
 
-import com.example.funitureOnlineShop.cart.Cart;
+import com.example.funitureOnlineShop.comment.ProductComment;
 import com.example.funitureOnlineShop.option.Option;
-import com.example.funitureOnlineShop.product.Product;
 import com.example.funitureOnlineShop.user.User;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,6 +23,8 @@ public class OrderCheck {
 
     private String tid;
 
+    private String orderId;
+
     private Long quantity;
 
     private Long price;
@@ -31,20 +32,25 @@ public class OrderCheck {
     private LocalDateTime orderDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private Cart cart;
+    private Option option;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
+    @OneToOne(mappedBy = "orderCheck", cascade = CascadeType.ALL, orphanRemoval = true)
+    private ProductComment productComment;
+
     @Builder
-    public OrderCheck(Long id, String tid, Long quantity, Long price, LocalDateTime orderDate, Cart cart, User user) {
+    public OrderCheck(Long id, String tid, String orderId, Long quantity, Long price, LocalDateTime orderDate, Option option, User user, ProductComment productComment) {
         this.id = id;
         this.tid = tid;
+        this.orderId = orderId;
         this.quantity = quantity;
         this.price = price;
         this.orderDate = orderDate;
-        this.cart = cart;
+        this.option = option;
         this.user = user;
+        this.productComment = productComment;
     }
 
     public static void sortByCreateDate(List<OrderCheck> orderChecks) {

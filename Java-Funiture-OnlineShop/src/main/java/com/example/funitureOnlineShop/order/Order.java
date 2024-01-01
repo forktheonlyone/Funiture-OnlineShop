@@ -1,8 +1,6 @@
 package com.example.funitureOnlineShop.order;
 
-import com.example.funitureOnlineShop.cart.Cart;
 import com.example.funitureOnlineShop.order.item.Item;
-import com.example.funitureOnlineShop.orderCheck.OrderCheck;
 import com.example.funitureOnlineShop.user.User;
 import lombok.Builder;
 import lombok.Getter;
@@ -27,22 +25,20 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
+    private LocalDateTime orderDate;
+
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<Item> orderItems = new ArrayList<>();
 
-    private LocalDateTime orderDate;
-
-
     @Builder
-    public Order(Long id, User user, List<Item> orderItems) {
+    public Order(Long id, LocalDateTime orderDate, User user, List<Item> orderItems) {
         this.id = id;
+        this.orderDate = orderDate;
         this.user = user;
         this.orderItems = orderItems;
-        this.orderDate = LocalDateTime.now();
     }
-
-
 }

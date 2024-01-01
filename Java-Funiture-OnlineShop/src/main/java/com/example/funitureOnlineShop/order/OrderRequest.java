@@ -1,9 +1,5 @@
 package com.example.funitureOnlineShop.order;
 
-import com.example.funitureOnlineShop.Board.Board;
-import com.example.funitureOnlineShop.Board.BoardDTO;
-import com.example.funitureOnlineShop.category.Category;
-import com.example.funitureOnlineShop.order.item.Item;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

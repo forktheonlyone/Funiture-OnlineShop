@@ -1,7 +1,6 @@
 package com.example.funitureOnlineShop.commentFile;
 
-import com.example.funitureOnlineShop.productComment.ProductComment;
-import lombok.AccessLevel;
+import com.example.funitureOnlineShop.comment.ProductComment;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,7 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @Entity
 public class CommentFile {
     // PK
@@ -33,7 +32,6 @@ public class CommentFile {
     private Long fileSize;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn
     private ProductComment productComment;
 
     @Builder

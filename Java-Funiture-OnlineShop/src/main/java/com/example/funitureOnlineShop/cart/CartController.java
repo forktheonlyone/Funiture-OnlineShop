@@ -5,7 +5,6 @@ import com.example.funitureOnlineShop.core.utils.ApiUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -20,9 +19,9 @@ public class CartController {
 
     @PostMapping("/add")
     public ResponseEntity<?> addCart(@AuthenticationPrincipal CustomUserDetails customUserDetails,
-                                     @RequestBody @Valid List<CartRequest.SaveDTO> saveDTOS,
+                                     @RequestBody @Valid CartRequest.SaveDTO saveDTOS,
                                      Error error){
-        cartService.addCartList(saveDTOS,customUserDetails.getUser());
+        cartService.addCart(saveDTOS,customUserDetails.getUser());
 
         ApiUtils.ApiResult<?> apiResult = ApiUtils.success(null);
         return ResponseEntity.ok(apiResult);
@@ -38,10 +37,11 @@ public class CartController {
 
     @PostMapping("/update")
     public ResponseEntity<?> updateCart(
-            @RequestBody @Valid List<CartRequest.UpdateDTO> requestDTOS,
+            @RequestBody @Valid CartRequest.UpdateDTO requestDTOS,
             @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         CartResponse.UpdateDTO response = cartService.update(requestDTOS, customUserDetails.getUser());
-        return ResponseEntity.ok(response);
+        ApiUtils.ApiResult<?> apiResult = ApiUtils.success(response);
+        return ResponseEntity.ok(apiResult);
     }
 
     @PostMapping("/delete")

@@ -4,80 +4,134 @@
     <meta charset="UTF-8">
     <title>save</title>
     <style>
-        /* 스타일 부분은 그대로 두었습니다. */
+        /* 여기에 CSS 스타일을 추가해주세요 */
         body {
             font-family: Arial, sans-serif;
-            background-color: #f6f6f6;
+            background-color: #f2f2f2;
             margin: 0;
             padding: 0;
         }
 
         header {
-            background-color: #4285f4;
-            color: #fff;
-            padding: 10px;
+            background-color:#ccc;
+            color: black;
+            padding: 20px;
             text-align: center;
         }
 
         footer {
-            background-color: #4285f4;
-            color: #fff;
-            padding: 10px;
+            display: flex;
+            background-color: #f0f0f0;
+            padding: 10px 20px;
             text-align: center;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footword{
+            margin-bottom: 5px;
+            font-size: 12px;
+            color: #999;
+        }
+
+        h1 {
+            margin: 0;
         }
 
         form {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
             margin: 20px auto;
-            width: 50%;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
         }
 
-        label {
-            font-weight: bold;
-            display: block;
+        h2 {
+            margin: 0 0 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .title_area {
             margin-bottom: 5px;
         }
 
-        input[type="text"], textarea, select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 3px;
-            margin-bottom: 10px;
-            box-sizing: border-box;
-            resize: none;
+        label {
+            display: block;
+            font-weight: bold;
         }
 
-        input[type="file"] {
-            /* 추가된 부분: 파일 업로드 스타일 */
+        .option_area {
+            margin-bottom: 10px;
+        }
+
+        input[type="text"],
+        textarea {
+            width: 95%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            resize: vertical;
+        }
+
+        .button_upload {
+            display: inline-block;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        #selected-files {
             margin-top: 10px;
         }
 
-        input[type="submit"] {
-            background-color: #4285f4;
+        .file-upload {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
             color: #fff;
-            padding: 10px 20px;
             border: none;
-            border-radius: 3px;
+            border-radius: 5px;
+            font-size: 16px;
             cursor: pointer;
-            display: inline-block;
         }
 
-        input[type="submit"]:hover {
-            background-color: #3367d6;
+        .file-upload:hover {
+            background-color: #45a049;
         }
     </style>
+    <script>
+        // JavaScript 코드는 그대로 유지됩니다.
+        function updateSelectedFiles(event) {
+            var files = event.target.files;
+            var selectedFilesDiv = document.getElementById("selected-files");
+            selectedFilesDiv.innerHTML = "";
+            for (var i = 0; i < files.length; i++) {
+                var file = files[i];
+                var fileName = file.name;
+                var fileSize = (file.size / 1024).toFixed(2) + "KB";
+                var fileDiv = document.createElement("div");
+                fileDiv.textContent = fileName + " (" + fileSize + ")";
+                selectedFilesDiv.appendChild(fileDiv);
+            }
+        }
+
+        function submitForm() {
+            var form = document.getElementById("boardForm");
+            form.submit();
+        }
+    </script>
 </head>
 <body>
-
 <header>
-    <h1>Board Form</h1>
+    <h1>공지사항 작성</h1>
 </header>
 
 <form id="boardForm" enctype="multipart/form-data">
@@ -114,7 +168,7 @@
 </form>
 
 <footer>
-    <p>&copy; 2023 Your Website</p>
+    <p class="footword">&copy; 2023 My Website. All rights reserved.</p>
 </footer>
 
 <script>

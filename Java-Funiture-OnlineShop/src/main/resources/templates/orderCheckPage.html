@@ -6,11 +6,14 @@
     <script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
 </head>
 <body>
-<h1>주문 상세 정보</h1>
+<header> <h1>주문 상세 정보</h1> </header>
 <div>최근 3년 이내의 주문 내역만을 보여줍니다</div>
 <div id="order-list">
 
 </div>
+<footer>
+    <p class="footword">&copy; 2023 My Website. All rights reserved.</p>
+</footer>
 <script th:inline="javascript">
     const findOrderCheck = () => {
         const token = getCookie('token');
@@ -64,8 +67,7 @@
                         output += "</td>";
                         output += "<td>";
                         if (orders[i].tId !== null) {
-                         const orderId = "/returnorder/" + orders[i].id;
-                            output += "<button class='create1' data-id='" + orders[i].id + "' onclick=''>반품</button>";
+                            output += "<button class='cancel' data-id='" + orders[i].tid + "' onclick=''>반품</button>";
                         }
                         output += "</td>";
                         output += "</tr>";
@@ -78,7 +80,7 @@
                 const createButton = document.querySelectorAll('.create');
                 const updateButton = document.querySelectorAll('.update');
                 const deleteButton = document.querySelectorAll('.delete');
-                const returnButton = document.querySelectorAll('.create1');
+                const returnButton = document.querySelectorAll('.cancel');
 
                 returnButton.forEach(button => {
                     button.addEventListener("click", function() {

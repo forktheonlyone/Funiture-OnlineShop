@@ -1,15 +1,11 @@
 package com.example.funitureOnlineShop.orderCheck;
 
-import com.example.funitureOnlineShop.cart.Cart;
-import com.example.funitureOnlineShop.productComment.ProductCommentResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.Comparator;
-import java.util.List;
 
 @Getter
 @Setter
@@ -20,6 +16,7 @@ public class OrderCheckDto {
     private Long id;
     // 거래 id
     private String tid;
+    private String orderId;
     // 수량
     private Long quantity;
     // 상품명
@@ -31,7 +28,7 @@ public class OrderCheckDto {
     // 주문일자
     private LocalDateTime orderDate;
     // 옵션 id
-    private Long cartId;
+    private Long optionId;
     // 회원 id
     private Long userId;
     // 상품 후기 적힘?
@@ -40,12 +37,13 @@ public class OrderCheckDto {
     public static OrderCheckDto toOrderCheckDto(OrderCheck orderCheck, Long commentId) {
         return new OrderCheckDto(orderCheck.getId(),
                 orderCheck.getTid(),
+                orderCheck.getOrderId(),
                 orderCheck.getQuantity(),
-                orderCheck.getCart().getOption().getProduct().getProductName(),
-                orderCheck.getCart().getOption().getOptionName(),
-                orderCheck.getCart().getOption().getPrice(),
+                orderCheck.getOption().getProduct().getProductName(),
+                orderCheck.getOption().getOptionName(),
+                orderCheck.getPrice(),
                 orderCheck.getOrderDate(),
-                orderCheck.getCart().getId(),
+                orderCheck.getOption().getId(),
                 orderCheck.getUser().getId(),
                 commentId);
     }
@@ -53,6 +51,7 @@ public class OrderCheckDto {
     public OrderCheck toEntity(){
         return OrderCheck.builder()
                 .tid(tid)
+                .orderId(orderId)
                 .quantity(quantity)
                 .price(price)
                 .orderDate(orderDate)

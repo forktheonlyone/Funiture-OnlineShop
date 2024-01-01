@@ -18,25 +18,25 @@ public class Cart {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private User user;
-
-    @ManyToOne(fetch = FetchType.LAZY) // 지연로딩
-    private Option option;
-
     @Column(nullable = false)
     private Long quantity; // 장바구니의 총수량
 
     @Column(nullable = false)
     private Long price; //장바구니 총 가격
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY) // 지연로딩
+    private Option option;
+
     @Builder
-    public Cart(Long id, User user, Option option, Long quantity, Long price) {
+    public Cart(Long id, Long quantity, Long price, User user, Option option) {
         this.id = id;
-        this.user = user;
-        this.option = option;
         this.quantity = quantity;
         this.price = price;
+        this.user = user;
+        this.option = option;
     }
 
     public void update(Long quantity, Long price){

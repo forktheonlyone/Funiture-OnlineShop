@@ -1,6 +1,8 @@
 package com.example.funitureOnlineShop.option;
 
 import com.example.funitureOnlineShop.cart.Cart;
+import com.example.funitureOnlineShop.order.item.Item;
+import com.example.funitureOnlineShop.orderCheck.OrderCheck;
 import com.example.funitureOnlineShop.product.Product;
 import lombok.Builder;
 import lombok.Getter;
@@ -36,14 +38,22 @@ public class Option {
     @OneToMany(mappedBy = "option", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Cart> cart = new ArrayList<>();
 
+    @OneToMany(mappedBy = "option", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<OrderCheck> orderChecks = new ArrayList<>();
+
+    @OneToOne(mappedBy = "option", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Item item;
+
     @Builder
-    public Option(Long id, String optionName, Long price, Long stockQuantity, Product product, List<Cart> cart) {
+    public Option(Long id, String optionName, Long price, Long stockQuantity, Product product, List<Cart> cart, List<OrderCheck> orderChecks, Item item) {
         this.id = id;
         this.optionName = optionName;
         this.price = price;
         this.stockQuantity = stockQuantity;
         this.product = product;
         this.cart = cart;
+        this.orderChecks = orderChecks;
+        this.item = item;
     }
 
     public Option toUpdate(Product product) {
@@ -58,7 +68,7 @@ public class Option {
         this.price = optionDTO.getPrice();
         this.stockQuantity = optionDTO.getStockQuantity();
     }
-    public void updateStockQuantity(Long newStockQuantity) {
-        this.stockQuantity = newStockQuantity;
+    public void updateStock(Long change) {
+        this.stockQuantity += change;
     }
 }

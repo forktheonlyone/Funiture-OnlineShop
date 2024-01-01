@@ -1,4 +1,4 @@
-package com.example.funitureOnlineShop.productComment;
+package com.example.funitureOnlineShop.comment;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

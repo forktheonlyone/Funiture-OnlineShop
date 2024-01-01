@@ -1,28 +1,26 @@
 package com.example.funitureOnlineShop.payments;
 
 import com.example.funitureOnlineShop.core.error.exception.Exception500;
-import com.example.funitureOnlineShop.core.security.CustomUserDetails;
-import com.example.funitureOnlineShop.order.Order;
-import com.example.funitureOnlineShop.order.OrderRequest;
+import com.example.funitureOnlineShop.option.OptionService;
+import com.example.funitureOnlineShop.order.OrderResponse;
 import com.example.funitureOnlineShop.order.OrderService;
-import com.example.funitureOnlineShop.orderCheck.OrderCheck;
-import com.example.funitureOnlineShop.orderCheck.OrderCheckDto;
-import com.example.funitureOnlineShop.orderCheck.OrderCheckRepository;
-import com.example.funitureOnlineShop.user.User;
+import com.example.funitureOnlineShop.user.UserResponse;
+import com.example.funitureOnlineShop.user.UserService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.*;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 @Controller
 @RequestMapping("/v1")
@@ -30,34 +28,42 @@ import java.util.*;
 @Slf4j
 public class NicepayController {
     private final OrderService orderService;
-    private final OrderCheckRepository orderCheckRepository;
-
+    private final OptionService optionService;
+    private final UserService userService;
     private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    private final String CLIENT_ID = "S2_dfb77b9e65454834a591d9866b77a273";
-    private final String SECRET_KEY = "cdcb051f99f1495fa46d1499ed294be6";
+    private final String CLIENT_ID = "S2_302df305816d49c2bbb1156e5a10527a";
 
-    @RequestMapping("/")
-    public String indexDemo(Model model){
-        UUID id = UUID.randomUUID();
-        model.addAttribute("orderId", id);
+    private final String SECRET_KEY = "c88edc6691ae4acfaaf0ad7e739581da";
+    private final String uuid = UUID.randomUUID().toString();
+
+    @RequestMapping("/{id}")
+    public String indexDemo(@PathVariable Long id, Model model){
+        OrderResponse.FindByIdDTO orderDto = orderService.findById(id);
+        model.addAttribute("order", orderDto);
+
+        UserResponse.UserDTO userDTO = userService.getUserInfo(orderDto.getUserId());
+        model.addAttribute("user", userDTO);
+
+        // UUID uuid = UUID.randomUUID();
+        model.addAttribute("orderId", uuid + ":" + orderDto.getId());
         model.addAttribute("clientId", CLIENT_ID);
-        return "/payindex";
+        return "payIndex";
     }
 
     @RequestMapping(value="/cancel")
     public String cancelDemo(){
-        return "/paycancel";
+        return "payCancel";
     }
 
-    @RequestMapping("/serverAuth")
+    @PostMapping("/serverAuth")
+    @Transactional
     public String requestPayment(
             @RequestParam String tid,
             @RequestParam Long amount,
+            @RequestParam String orderId,
             Model model) throws Exception {
-
-
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Basic " + Base64.getEncoder().encodeToString((CLIENT_ID + ":" + SECRET_KEY).getBytes()));
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -78,24 +84,24 @@ public class NicepayController {
 
         if (resultCode.equalsIgnoreCase("0000")) {
 
-            OrderCheckDto orderCheck = new OrderCheckDto();
-            orderCheck.setTid(tid);
-            orderCheck.setPrice(amount);
-            orderCheckRepository.save(orderCheck.toEntity());
+            optionService.deductStock(orderId);
+            orderService.delete(orderId, tid);
             // 기타 결제 성공 비즈니스 로직
             // (예시: 성공한 결제에 대한 로그 기록 등)
             // 결제 성공 시 오더 생성
         } else {
             throw new Exception500("잘못된 계산정보입니다");
         }
-        return "/payresponse";
+        //return "payResponse";
+        return "payResponse";
     }
 
-    @RequestMapping("/cancelAuth")
+    @PostMapping("/cancelAuth")
     public String requestCancel(
-            @RequestParam OrderRequest.OrderDTO orderDTO,
             @RequestParam String tid,
             @RequestParam Long amount,
+            @RequestParam String reason,
+            @RequestParam String orderId,
             Model model) throws Exception {
 
         HttpHeaders headers = new HttpHeaders();
@@ -104,8 +110,8 @@ public class NicepayController {
 
         Map<String, Object> AuthenticationMap = new HashMap<>();
         AuthenticationMap.put("amount", amount);
-        AuthenticationMap.put("reason", "test");
-        AuthenticationMap.put("orderId", UUID.randomUUID().toString());
+        AuthenticationMap.put("reason", reason);
+        AuthenticationMap.put("orderId", orderId);
 
         HttpEntity<String> request = new HttpEntity<>(objectMapper.writeValueAsString(AuthenticationMap), headers);
 
@@ -119,15 +125,13 @@ public class NicepayController {
         System.out.println(responseNode.toPrettyString());
 
         if (resultCode.equalsIgnoreCase("0000")) {
-            OrderCheckDto orderCheck = new OrderCheckDto();
-            orderCheck.setTid(tid);
-            orderCheck.setPrice(amount);
-            orderCheckRepository.save(orderCheck.toEntity());
+            optionService.restoreStock(tid);
+            orderService.cancelOrder(tid);
         } else {
             // 취소 실패 비즈니스 로직 구현
-            // 고객알림? - User에서 작업할 것인지
+            throw new Exception500("결제 취소 중 오류 발생");
         }
-        return "/payresponse";
+        return "payResponse";
     }
 
     @RequestMapping("/hook")

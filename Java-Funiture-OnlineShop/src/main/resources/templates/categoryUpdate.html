@@ -6,7 +6,7 @@
     <script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
 </head>
 <body>
-<header> <h2>카테고리 수정 / 삭제</h2> </header>
+<header> <h1>카테고리 수정 / 삭제</h1> </header>
 
 <!-- 카테고리 목록 콤보 박스 -->
 <label for="selectedCategory1">대분류 카테고리 선택:</label>
@@ -30,6 +30,11 @@
 <label>이름 수정 : </label><input type="text" id="selectedValueInput" required>
 <button onclick="updateCategory()">수정</button>
 <button onclick="deleteCategory()">삭제</button>
+
+<footer>
+    <p class="footword">&copy; 2023 My Website. All rights reserved.</p>
+</footer>
+
 <script th:inline="javascript">
     function setInputValue(tag) {
         const selectElement = document.getElementById(tag);

@@ -8,6 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CommentFileDto {
+    private Long id;
     // 파일 경로
     private String filePath;
     // 파일 명
@@ -18,11 +19,10 @@ public class CommentFileDto {
     private String uuid;
     // 파일 크기
     private Long fileSize;
-    // 상품 후기(ProductComment) id
-    private Long commentId;
 
     public CommentFile toEntity(){
         return CommentFile.builder()
+                .id(id)
                 .filePath(filePath)
                 .fileName(fileName)
                 .uuid(uuid)
@@ -33,11 +33,11 @@ public class CommentFileDto {
 
     public static CommentFileDto toFileDto(CommentFile commentFile){
         return new CommentFileDto(
+                commentFile.getId(),
                 commentFile.getFilePath(),
                 commentFile.getFileName(),
                 commentFile.getFileType(),
                 commentFile.getUuid(),
-                commentFile.getFileSize(),
-                commentFile.getProductComment().getId());
+                commentFile.getFileSize());
     }
 }

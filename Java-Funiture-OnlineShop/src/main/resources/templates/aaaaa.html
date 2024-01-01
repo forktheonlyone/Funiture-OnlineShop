@@ -120,71 +120,71 @@
 
 </body>
 <script th:inline="javascript">
-   function getCookie(name) {
-       var cookieName = name + "=";
-       var cookies = document.cookie.split(';');
-       for (var i = 0; i < cookies.length; i++) {
-           var cookie = cookies[i].trim();
-           if (cookie.indexOf(cookieName) === 0) {
-               return cookie.substring(cookieName.length, cookie.length);
-           }
-       }
-       return null;
-   }
-   const listReq = () => {
-       console.log("목록 요청");
-       const page = [[${page}]];
-       location.href = "/board/paging?page="+page;
-   }
+    function getCookie(name) {
+        var cookieName = name + "=";
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            if (cookie.indexOf(cookieName) === 0) {
+                return cookie.substring(cookieName.length, cookie.length);
+            }
+        }
+        return null;
+    }
+    const listReq = () => {
+        console.log("목록 요청");
+        const page = [[${page}]];
+        location.href = "/board/paging?page="+page;
+    }
 
-   const updateReq = () => {
-       console.log("수정 요청");
-       const id = [[${board.id}]];
-       location.href = "/board/update/" + id;
-   }
+    const updateReq = () => {
+        console.log("수정 요청");
+        const id = [[${board.id}]];
+        location.href = "/board/update/" + id;
+    }
 
-   const deleteReq = () => {
-       console.log("삭제 요청");
-       const id = [[${board.id}]];
-       location.href = "/board/delete/" + id;
-   }
+    const deleteReq = () => {
+        console.log("삭제 요청");
+        const id = [[${board.id}]];
+        location.href = "/board/delete/" + id;
+    }
     async function isAdmin() {
-            try {
-                const token = getCookie("token");
-                const response = await fetch('/user/info', {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': token
-                    }
-                });
-                const result = await response.json();
-
-                if (result.success) {
-                    if (result.response.roles[0] === "ROLE_ADMIN") {
-                        showAdmin();
-                    }
+        try {
+            const token = getCookie("token");
+            const response = await fetch('/user/info', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': token
                 }
-            } catch (error) {
-                console.error('Error:', error);
+            });
+            const result = await response.json();
+
+            if (result.success) {
+                if (result.response.roles[0] === "ROLE_ADMIN") {
+                    showAdmin();
+                }
             }
+        } catch (error) {
+            console.error('Error:', error);
         }
-         $(document).ready(function(){
+    }
+    $(document).ready(function(){
         checkButtonVisibility();
-        });
+    });
 
-         const checkButtonVisibility = () => {
-            const logined = getCookie("token");
-            if (logined != null) {
-                // 버튼을 보여주는 로직 호출
+    const checkButtonVisibility = () => {
+        const logined = getCookie("token");
+        if (logined != null) {
+            // 버튼을 보여주는 로직 호출
 
-                isAdmin();
-            }
+            isAdmin();
         }
+    }
 
-        const showAdmin = () => {
-             const buttonsContainer = document.getElementById("adminButton");
-                buttonsContainer.style.display = "block";
-        }
+    const showAdmin = () => {
+        const buttonsContainer = document.getElementById("adminButton");
+        buttonsContainer.style.display = "block";
+    }
 </script>
 </html>

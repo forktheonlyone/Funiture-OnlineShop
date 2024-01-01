@@ -1,10 +1,8 @@
-package com.example.funitureOnlineShop.Board;
+package com.example.funitureOnlineShop.board;
 
-import com.example.funitureOnlineShop.user.User;
 import lombok.*;
+
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 @Setter

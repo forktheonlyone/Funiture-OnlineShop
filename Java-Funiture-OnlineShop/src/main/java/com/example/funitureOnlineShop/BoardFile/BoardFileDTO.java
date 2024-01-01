@@ -1,4 +1,4 @@
-package com.example.funitureOnlineShop.BoardFile;
+package com.example.funitureOnlineShop.boardFile;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

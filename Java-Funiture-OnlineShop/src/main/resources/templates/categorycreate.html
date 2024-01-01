@@ -7,7 +7,7 @@
 </head>
 <body>
 <!-- 카테고리 관리 화면 -->
-<h2>카테고리 관리</h2>
+<header><h1>카테고리 생성</h1></header>
 선택 없을 시 대분류 카테고리 생성<br>
 대분류 선택 시 중분류 카테고리 생성<br>
 중분류 선택 시 소분류 카테고리 생성<br><br>
@@ -29,7 +29,9 @@
 <input type="text" id="categoryName" name="categoryName" required>
 
 <button onclick="createCategory()">카테고리 생성</button>
-
+<footer>
+    <p class="footword">&copy; 2023 My Website. All rights reserved.</p>
+</footer>
 <script th:inline="javascript">
     const option1 = document.getElementById("selectedCategory1");
     const option2 = document.getElementById("selectedCategory2");

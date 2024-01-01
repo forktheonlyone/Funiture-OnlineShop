@@ -1,12 +1,10 @@
-package com.example.funitureOnlineShop.Board;
+package com.example.funitureOnlineShop.board;
 
-import com.example.funitureOnlineShop.BoardFile.BoardFile;
-import com.example.funitureOnlineShop.category.Category;
+import com.example.funitureOnlineShop.boardFile.BoardFile;
 import com.example.funitureOnlineShop.user.User;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -33,20 +31,20 @@ public class Board {
 
     // ** User의 FK
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
     private User user;
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BoardFile> boardFiles;
 
     @Builder
-    public Board(Long id, String title, String contents, LocalDateTime createTime, LocalDateTime updateTime,User user, BoardFile boardFile) {
+    public Board(Long id, String title, String contents, LocalDateTime createTime, LocalDateTime updateTime, User user, List<BoardFile> boardFiles) {
         this.id = id;
         this.title = title;
         this.contents = contents;
         this.createTime = createTime;
         this.updateTime = updateTime;
         this.user = user;
+        this.boardFiles = boardFiles;
     }
 
     public void updateFromDTO(BoardDTO boardDTO) {

@@ -1,4 +1,4 @@
-package com.example.funitureOnlineShop.productComment;
+package com.example.funitureOnlineShop.comment;
 
 import com.example.funitureOnlineShop.commentFile.CommentFile;
 import com.example.funitureOnlineShop.commentFile.CommentFileDto;
@@ -7,15 +7,11 @@ import com.example.funitureOnlineShop.core.error.exception.Exception400;
 import com.example.funitureOnlineShop.core.error.exception.Exception401;
 import com.example.funitureOnlineShop.core.error.exception.Exception404;
 import com.example.funitureOnlineShop.core.error.exception.Exception500;
-import com.example.funitureOnlineShop.fileProduct.FileProduct;
-import com.example.funitureOnlineShop.option.Option;
 import com.example.funitureOnlineShop.option.OptionRepository;
 import com.example.funitureOnlineShop.orderCheck.OrderCheck;
 import com.example.funitureOnlineShop.orderCheck.OrderCheckDto;
 import com.example.funitureOnlineShop.orderCheck.OrderCheckRepository;
-import com.example.funitureOnlineShop.user.User;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,11 +30,11 @@ import java.util.*;
 public class ProductCommentService {
 
     private final ProductCommentRepository productCommentRepository;
-    private final OptionRepository optionRepository;
     private final CommentFileRepository commentFileRepository;
     private final OrderCheckRepository orderCheckRepository;
+
     // 파일 저장 경로
-    private String filePath = "C:/Users/G/Desktop/GitHub/Funiture-OnlineShop/Product Files/";
+    private String filePath = "C:/Users/NT767/OneDrive/바탕 화면/demodata/";
     private final List<String> isImage = new ArrayList<>(Arrays.asList(
             ".tiff", ".jfif", ".bmp", ".gif", ".svg", ".png", ".jpeg",
             ".svgz", ".webp", ".jpg", ".ico", ".xbm", ".dib", ".pjp",
@@ -132,11 +128,14 @@ public class ProductCommentService {
             // 각 옵션의 후기들을 수집
             for (ProductComment comment : comments) {
                 List<CommentFile> commentFile = commentFileRepository.findAllByProductCommentId(comment.getId());
+                if (commentFile.isEmpty())
+                    commentFile.add(new CommentFile());
                 // 상품 후기를 dto로 변환
                 ProductCommentResponse.CommentDto commentDto = ProductCommentResponse.CommentDto.toDto(comment, commentFile);
                 // 상품에 대한 후기일 경우 추가
-                if (commentDto.getProductId().equals(pId))
+                if (commentDto.getProductId().equals(pId)) {
                     commentDtos.add(commentDto);
+                }
             }
 
             // 작성일 기준 최신순으로 정렬
@@ -144,6 +143,7 @@ public class ProductCommentService {
 
             return commentDtos;
         } catch (Exception e) {
+            e.printStackTrace();
             throw new Exception500("상품 후기 탐색 중 오류 발생 : " + pId);
         }
     }
@@ -238,5 +238,17 @@ public class ProductCommentService {
             throw new Exception404("해당 주문 내역을 찾을 수 없습니다.");
 
         return OrderCheckDto.toOrderCheckDto(optionalOrderCheck.get(), null);
+    }
+
+    public CommentFileDto findByIdFile(Long id) {
+
+        Optional<CommentFile> optionalFile = commentFileRepository.findById(id);
+
+        if (optionalFile.isEmpty())
+            throw new Exception404("해당 파일을 찾을 수 없습니다." + id);
+
+        CommentFile file = optionalFile.get();
+
+        return CommentFileDto.toFileDto(file);
     }
 }

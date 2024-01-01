@@ -1,7 +1,7 @@
-package com.example.funitureOnlineShop.Board;
+package com.example.funitureOnlineShop.board;
 
-import com.example.funitureOnlineShop.BoardFile.BoardFile;
-import com.example.funitureOnlineShop.BoardFile.BoardFileRepository;
+import com.example.funitureOnlineShop.boardFile.BoardFile;
+import com.example.funitureOnlineShop.boardFile.BoardFileRepository;
 import com.example.funitureOnlineShop.core.error.exception.Exception403;
 import com.example.funitureOnlineShop.core.error.exception.Exception500;
 import com.example.funitureOnlineShop.user.User;

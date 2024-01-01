@@ -1,6 +1,6 @@
-package com.example.funitureOnlineShop.BoardFile;
+package com.example.funitureOnlineShop.boardFile;
 
-import com.example.funitureOnlineShop.Board.Board;
+import com.example.funitureOnlineShop.board.Board;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

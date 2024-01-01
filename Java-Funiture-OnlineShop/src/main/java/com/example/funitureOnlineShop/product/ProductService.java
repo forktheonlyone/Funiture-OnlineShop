@@ -2,24 +2,20 @@ package com.example.funitureOnlineShop.product;
 
 import com.example.funitureOnlineShop.category.Category;
 import com.example.funitureOnlineShop.category.CategoryRepository;
-import com.example.funitureOnlineShop.commentFile.CommentFile;
 import com.example.funitureOnlineShop.core.error.exception.Exception400;
 import com.example.funitureOnlineShop.core.error.exception.Exception404;
-import com.example.funitureOnlineShop.fileProduct.FileProduct;
-import com.example.funitureOnlineShop.fileProduct.FileProductRepository;
-import com.example.funitureOnlineShop.fileProduct.FileProductResponse;
 import com.example.funitureOnlineShop.option.Option;
 import com.example.funitureOnlineShop.option.OptionRepository;
-import com.example.funitureOnlineShop.productComment.ProductComment;
-import com.example.funitureOnlineShop.productComment.ProductCommentResponse;
-import com.example.funitureOnlineShop.productComment.ProductCommentService;
+import com.example.funitureOnlineShop.productFile.ProductFile;
+import com.example.funitureOnlineShop.productFile.ProductFileRepository;
+import com.example.funitureOnlineShop.productFile.ProductFileResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,6 +23,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -34,9 +31,9 @@ import java.util.*;
 public class ProductService {
     private final ProductRepository productRepository;
     private final OptionRepository optionRepository;
-    private final FileProductRepository fileProductRepository;
+    private final ProductFileRepository productFileRepository;
     private final CategoryRepository categoryRepository;
-    private final ProductCommentService productCommentService;
+
     private final List<String> isImage = new ArrayList<>(Arrays.asList(
             ".tiff", ".jfif", ".bmp", ".gif", ".svg", ".png", ".jpeg",
             ".svgz", ".webp", ".jpg", ".ico", ".xbm", ".dib", ".pjp",
@@ -44,7 +41,7 @@ public class ProductService {
 
     // ------------<파일경로>-------------
     // !!!!!!!!!! 꼭 반드시 테스트시 파일 경로 특히 사용자명 확인할것 !!!!!!!!!!
-    private final String filePath = "C:/Users/G/Desktop/GitHub/Funiture-OnlineShop/Product Files/";
+    private final String filePath = "C:/Users/NT767/OneDrive/바탕 화면/demodata/";
 
     @Transactional
     public Product save(ProductResponse.SaveByIdDTO saveByIdDTO, MultipartFile[] files) throws IOException {
@@ -100,7 +97,7 @@ public class ProductService {
                 // 파일을 물리적으로 저장 (DB에 저장 X)
                 file.transferTo( new File(path) );
 
-                FileProduct fileProduct = FileProduct.builder()
+                ProductFile productFile = ProductFile.builder()
                         .filePath(filePath)
                         .fileName(originalFilename)
                         .uuid(uuid)
@@ -109,31 +106,28 @@ public class ProductService {
                         .product(product)
                         .build();
 
-                fileProductRepository.save(fileProduct);
+                productFileRepository.save(productFile);
             }
         }
     }
 
     // 상품 수정 서비스
     @Transactional
-    public ProductResponse.FindByIdDTO update(ProductResponse.UpdateDTO updateDTO) {
+    public ProductResponse.FindByCategoryDTO update(ProductResponse.UpdateDTO updateDTO, MultipartFile[] files) throws IOException {
         Product product = getProduct(updateDTO.getId());
+        Category category = categoryRepository.findById(updateDTO.getCategoryId()).get();
 
-        product.update(updateDTO);
+        product.update(updateDTO, category);
 
         // 수정된 제품에 해당하는 옵션 리스트를 가져옴
         List<Option> optionList = optionRepository.findByProductId(product.getId());
 
         // 상품 id에 따른 FileProduct를 찾는 코드
-        List<FileProduct> fileProductList = fileProductRepository.findByProductId(updateDTO.getId());
-        for (FileProduct fileProduct : fileProductList) {
-            FileProductResponse fileProductResponse = new FileProductResponse();
-            fileProductResponse.setFilePath(fileProduct.getFilePath());
-            fileProductResponse.setFileName(fileProduct.getFileName());
-        }
+        productFileRepository.deleteAllByProductId(updateDTO.getId());
+        saveFiles(files, product);
 
         // 수정된 제품 정보를 FindByIdDTO 객체로 변환하여 반환
-        return ProductResponse.FindByIdDTO.toDto(product, optionList, fileProductList);
+        return ProductResponse.FindByCategoryDTO.toDto(product, new ProductFile());
     }
 
     // 삭제 서비스
@@ -164,43 +158,44 @@ public class ProductService {
         List<Option> optionList = optionRepository.findByProductId(product.getId());
 
         // 상품 id에 따른 FileProduct들을 찾는 코드
-        List<FileProduct> fileProductList = fileProductRepository.findByProductId(id);
+        List<ProductFile> productFileList = productFileRepository.findByProductId(id);
 
-        return ProductResponse.FindByIdDTO.toDto(product, optionList, fileProductList);
+        if (productFileList.isEmpty())
+            productFileList.add(new ProductFile());
+
+        return ProductResponse.FindByIdDTO.toDto(product, optionList, productFileList);
     }
 
-    public Page<ProductResponse.FindByCategoryForAllDTOS> findByCategoryId(Long categoryId, PageRequest pageRequest) {
-        Page<Product> products = productRepository.findByCategoryId(categoryId, pageRequest);
-
-        Page<ProductResponse.FindByCategoryForAllDTOS> findByCategoryForAllDTOS = products.map(product -> {
-            List<FileProduct> fileProducts = fileProductRepository.findByProductId(product.getId());
-
-            FileProductResponse file = null;
-            if (!fileProducts.isEmpty()) {
-                // 첫 번째 파일 프로덕트만 가져와서 DTO에 설정
-                file = new FileProductResponse(fileProducts.get(0));
-            }
-
-            // DTO 생성자에 파일을 단일 객체로 전달
-            return new ProductResponse.FindByCategoryForAllDTOS(
-                    product.getId(),
-                    product.getProductName(),
-                    product.getPrice(),
-                    file  // 변경된 부분: 리스트 대신 단일 객체
-            );
-        });
-
-        return findByCategoryForAllDTOS;
-    }
-
-    public FileProductResponse findByIdFile(Long id) {
-        Optional<FileProduct> optionalFile = fileProductRepository.findById(id);
+    public ProductFileResponse findByIdFile(Long id) {
+        Optional<ProductFile> optionalFile = productFileRepository.findById(id);
 
         if (optionalFile.isEmpty())
             throw new Exception404("해당 파일을 찾을 수 없습니다." + id);
 
-        FileProduct file = optionalFile.get();
+        ProductFile file = optionalFile.get();
 
-        return FileProductResponse.toDto(file);
+        return ProductFileResponse.toDto(file);
+    }
+
+    public Page<ProductResponse.FindByCategoryDTO> paging(Long categoryId, Pageable pageable) {
+        // ** 페이지 시작 번호
+        int page = pageable.getPageNumber() - 1;
+
+        // ** 페이지에 포함될 게시물 개수
+        int size = 10;
+
+        Page<Product> products = productRepository.findAllByCategoryId(
+                categoryId, PageRequest.of(page, size));
+        return products.map(product -> new ProductResponse.FindByCategoryDTO(
+                product.getId(),
+                product.getProductName(),
+                product.getPrice(),
+                productFileRepository.findByProductId(product.getId())));
+    }
+
+    public List<ProductResponse.FindByCategoryDTO> findByCategoryId(Long categoryId) {
+        List<Product> products = productRepository.findByCategoryId(categoryId);
+
+        return products.stream().map(product -> ProductResponse.FindByCategoryDTO.toDto(product, new ProductFile())).collect(Collectors.toList());
     }
 }

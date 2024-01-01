@@ -140,7 +140,7 @@
         }
     </style>
 </head>
-<header> <h2>상품후기 작성</h2> </header>
+<header> <h1>상품후기 작성</h1> </header>
 <body>
 <form id="commentForm" enctype="multipart/form-data">
     <h3>구매 제품명 : <label th:text="${orderCheck.productName} + ' ' + ${orderCheck.optionName}" style="display: inline;"></label> </h3>
@@ -193,6 +193,10 @@
     </div>
     <button type="button" class="file-upload" onclick="submitForm()">글 작성</button>
 </form>
+
+<footer>
+    <p class="footword">&copy; 2023 My Website. All rights reserved.</p>
+</footer>
 
 <script>
     function updateSelectedFiles(event) {

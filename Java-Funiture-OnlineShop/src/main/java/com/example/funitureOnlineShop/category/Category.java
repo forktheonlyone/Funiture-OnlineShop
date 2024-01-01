@@ -23,7 +23,6 @@ public class Category {
     private String categoryName;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "superCategory_id")
     private Category superCategory;
 
     @OneToMany(mappedBy = "superCategory", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
