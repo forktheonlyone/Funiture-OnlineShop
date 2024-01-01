@@ -4,32 +4,108 @@
     <meta charset="UTF-8">
     <title>카테고리 수정</title>
     <script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        header {
+            background-color:#ccc;
+            color: black;
+            padding: 5px 20px;
+        }
+
+        h1 {
+            margin: 20px 0;
+            font-size: 24px;
+        }
+
+        footer {
+            display: flex;
+            background-color: #f0f0f0;
+            padding: 10px 20px;
+            text-align: center;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footword{
+            margin-bottom: 5px;
+            font-size: 12px;
+            color: #999;
+        }
+
+        /* 추가한 스타일 */
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"] {
+            padding: 5px;
+            width: 200px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            margin-right: 10px;
+            padding: 4px 14px;
+            border-radius: 5px;
+            color: #fff;
+            line-height: 25px;
+            vertical-align: top;
+            background-color: #4CAF50;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
 </head>
 <body>
-<header> <h1>카테고리 수정 / 삭제</h1> </header>
+<!-- 카테고리 수정/삭제 화면 -->
+<header>
+    <h1>카테고리 수정 / 삭제</h1>
+</header>
 
-<!-- 카테고리 목록 콤보 박스 -->
-<label for="selectedCategory1">대분류 카테고리 선택:</label>
-<select id="selectedCategory1" name="superCategory_id" onchange="callSons('selectedCategory1','selectedCategory2')" required>
-    <option value="0">없음</option>
-    <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.categoryName}"></option>
-</select><br>
+<div class="form-container">
+    <!-- 대분류 카테고리 선택 -->
+    <label for="selectedCategory1">대분류 카테고리 선택:
+    <select id="selectedCategory1" name="superCategory_id" onchange="callSons('selectedCategory1','selectedCategory2')" required>
+        <option value="0">없음</option>
+        <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.categoryName}"></option>
+    </select>
+    </label><br>
 
-<!-- 카테고리 목록 콤보 박스 -->
-<label for="selectedCategory2">중분류 카테고리 선택:</label>
-<select id="selectedCategory2" name="superCategory_id" onchange="callSons('selectedCategory2','selectedCategory3')">
-    <option value="0">없음</option>
-</select><br>
+    <!-- 중분류 카테고리 선택 -->
+    <label for="selectedCategory2">중분류 카테고리 선택:
+    <select id="selectedCategory2" name="superCategory_id" onchange="callSons('selectedCategory2','selectedCategory3')">
+        <option value="0">없음</option>
+    </select>
+    </label><br>
 
-<!-- 카테고리 목록 콤보 박스 -->
-<label for="selectedCategory3">소분류 카테고리 선택:</label>
-<select id="selectedCategory3" name="superCategory_id" onchange="setInputValue('selectedCategory3')">
-    <option value="0">없음</option>
-</select><br>
+    <!-- 소분류 카테고리 선택 -->
+    <label for="selectedCategory3">소분류 카테고리 선택:
+    <select id="selectedCategory3" name="superCategory_id" onchange="setInputValue('selectedCategory3')">
+        <option value="0">없음</option>
+    </select>
+    </label><br>
 
-<label>이름 수정 : </label><input type="text" id="selectedValueInput" required>
-<button onclick="updateCategory()">수정</button>
-<button onclick="deleteCategory()">삭제</button>
+    <!-- 이름 수정 입력 -->
+    <label>이름 수정 :
+    <input type="text" id="selectedValueInput" required><br>
+    </label>
+    <!-- 수정 / 삭제 버튼 -->
+    <button onclick="updateCategory()">수정</button>
+    <button onclick="deleteCategory()">삭제</button>
+</div>
 
 <footer>
     <p class="footword">&copy; 2023 My Website. All rights reserved.</p>
@@ -121,7 +197,7 @@
                 success: function (res) {
                     alert("카테고리 수정 완료");
                     console.log(location.href);
-                    location.href = "/category/updateForm";
+                    location.href = "/categoryUpdate";
                 },
                 error: function (err) {
                     alert("카테고리 수정 실패");
@@ -161,7 +237,7 @@
             success: function (res) {
                 alert("카테고리 삭제 완료");
                 console.log(location.href);
-                location.href = "/category/updateForm";
+                location.href = "/categoryUpdate";
             },
             error: function (err) {
                 alert("카테고리 삭제 실패");

@@ -10,9 +10,31 @@
             font-family: Arial, sans-serif;
         }
 
+        header {
+            background-color:#ccc;
+            color: black;
+            padding: 5px 20px;
+        }
+
         h1 {
             margin: 20px 0;
+            font-size: 24px;
+        }
+
+        footer {
+            display: flex;
+            background-color: #f0f0f0;
+            padding: 10px 20px;
             text-align: center;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footword{
+            margin-bottom: 5px;
+            font-size: 12px;
+            color: #999;
         }
 
         .btn {
@@ -20,17 +42,14 @@
             display: inline-block;
             padding: 4px 14px;
             border-radius: 5px;
-            font-size: 13px;
             color: #fff;
             line-height: 25px;
             vertical-align: top;
             background-color: #4CAF50;
-            font-weight: normal;
+            font-weight: bold;
             border: none;
             cursor: pointer;
             transition: background-color 0.3s;
-            margin-top: 5px;
-            margin-right: 5px;
         }
 
         .btn:hover {
@@ -38,11 +57,11 @@
         }
 
         .form-container {
+            margin: 50px auto;
             display: flex;
             flex-direction: column;
             max-width: 400px;
-            height: 380px;
-            margin: 0 auto;
+            height: 100%;
             padding: 20px;
             background-color: #f0f0f0;
             border-radius: 5px;
@@ -50,6 +69,7 @@
             align-content: space-around;
             justify-content: space-between;
             align-items: stretch;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
 
         .form-container label {
@@ -75,22 +95,6 @@
         }
 
         .col p {
-            margin-bottom: 5px;
-            font-size: 12px;
-            color: #999;
-        }
-
-        footer {
-            display: flex;
-            background-color: #f0f0f0;
-            padding: 0px;
-            text-align: center;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .footword{
             margin-bottom: 5px;
             font-size: 12px;
             color: #999;
@@ -137,12 +141,10 @@
     </script>
 </head>
 <body>
-
+<header>
+    <h1>Welcome to My Website</h1>
+</header>
 <div class="form-container">
-    <header>
-        <h1>Welcome to My Website</h1>
-    </header>
-
     <div>
         <form id="loginForm">
             <label for="email">이메일:</label>
@@ -159,10 +161,6 @@
         <p class="footword">&copy; 2023 My Website. All rights reserved.</p>
     </footer>
 </div>
-
-<footer>
-    <p class="footword">&copy; 2023 My Website. All rights reserved.</p>
-</footer>
 
 </body>
 </html>
