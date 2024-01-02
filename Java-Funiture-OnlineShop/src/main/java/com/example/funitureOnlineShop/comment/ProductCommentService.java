@@ -34,7 +34,7 @@ public class ProductCommentService {
     private final OrderCheckRepository orderCheckRepository;
 
     // 파일 저장 경로
-    private String filePath = "C:/Users/NT767/OneDrive/바탕 화면/demodata/";
+    private String filePath = "C:/shoppingFiles/";
     private final List<String> isImage = new ArrayList<>(Arrays.asList(
             ".tiff", ".jfif", ".bmp", ".gif", ".svg", ".png", ".jpeg",
             ".svgz", ".webp", ".jpg", ".ico", ".xbm", ".dib", ".pjp",
@@ -150,7 +150,7 @@ public class ProductCommentService {
 
     // 상품 후기 삭제
     @Transactional
-    public void delete(Long id, Long userId) {
+    public void isDeletable(Long id, Long userId) {
         // 삭제할 상품 후기 탐색
         Optional<ProductComment> optionalProductComment = productCommentRepository.findById(id);
         // 상품 후기 존재 x
@@ -161,6 +161,10 @@ public class ProductCommentService {
         // 상품 후기 삭제 권한 확인 (작성자만 삭제 가능)
         if (!productComment.getOrderCheck().getUser().getId().equals(userId))
             throw new Exception401("해당 상품 후기을 삭제할 권한이 없습니다.");
+    }
+
+    @Transactional
+    public void delete(Long id) {
         try {
             productCommentRepository.deleteById(id);
         } catch (Exception e) {
@@ -218,6 +222,10 @@ public class ProductCommentService {
         OrderCheck.sortByCreateDate(orderCheckList);
 
         List<OrderCheckDto> orderCheckDtos = new ArrayList<>();
+        if (orderCheckList.isEmpty()) {
+            orderCheckDtos.add(new OrderCheckDto());
+            return orderCheckDtos;
+        }
         for (OrderCheck orderCheck : orderCheckList) {
             Optional<ProductComment> optionalComment = productCommentRepository.findByOrderCheckId(orderCheck.getId());
             if (orderCheck.getOrderDate().plusYears(3L).isAfter(LocalDateTime.now())) {

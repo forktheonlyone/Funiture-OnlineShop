@@ -41,7 +41,7 @@ public class ProductService {
 
     // ------------<파일경로>-------------
     // !!!!!!!!!! 꼭 반드시 테스트시 파일 경로 특히 사용자명 확인할것 !!!!!!!!!!
-    private final String filePath = "C:/Users/Ahyun/OneDrive/바탕 화면/카카오 로그인/수정본";
+    private final String filePath = "C:/shoppingFiles/";
 
     @Transactional
     public Product save(ProductResponse.SaveByIdDTO saveByIdDTO, MultipartFile[] files) throws IOException {
