@@ -159,9 +159,22 @@
                     <ul>
                         <li th:each="file : ${files}">
                             <!-- 이미지 표시 -->
-                            <img th:src="@{|/download/${file.uuid}/${file.fileName}|}" alt="첨부 이미지">
+                            <img th:src="@{|/download/${file.uuid}/${file.fileName}|}" alt="첨부 이미지" style="max-width: 150%; max-height: 200px;">
                         </li>
                     </ul>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <th>첨부 파일 다운로드</th>
+                <td>
+                 <div th:if="${files != null}">
+                    <ul>
+                        <li th:each="file : ${files}">
+                               <a class="download-btn" th:href="@{/download/{uuid}/{filename}(uuid=${file.uuid}, filename=${file.fileName})}"
+                               th:text="${file.fileName}">Download</a>
+                        </li>
+                     </ul>
                 </div>
             </td>
         </tr>
