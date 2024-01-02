@@ -159,7 +159,7 @@
                 console.log("요청승인", res);
                 let orders = res.response;
                 let output = "";
-                if (orders.length > 0) {
+                if (orders[0].id != null) {
                     output += "<div>";
                     output += "<table class='table table-striped' id='orderTable'>";
                     output += "<tr>";

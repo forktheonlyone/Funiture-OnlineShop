@@ -217,6 +217,8 @@
         const selectedOption2 = option2.value;
         const selectedOption3 = option3.value;
 
+        const token = getCookie("token");
+
         let categoryId = selectedOption3;
 
         if (selectedOption3 === "0") {
@@ -234,6 +236,9 @@
             // 요청방식: post, 요청주소: /category/delete/{id}
             type: "post",
             url: '/category/delete/' + categoryId,
+            headers: {
+                "Authorization": "Bearer " + token
+            },
             success: function (res) {
                 alert("카테고리 삭제 완료");
                 console.log(location.href);
