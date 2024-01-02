@@ -100,7 +100,7 @@ public class OptionService {
 
         for (OrderCheck orderCheck : orderChecks) {
             Option option = orderCheck.getOption();
-            option.updateStock(orderCheck.getQuantity());
+            option.updateStock(+ orderCheck.getQuantity());
         }
     }
 }

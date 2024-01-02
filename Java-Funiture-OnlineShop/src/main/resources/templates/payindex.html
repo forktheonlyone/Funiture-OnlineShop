@@ -7,10 +7,69 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
   <style>
-    .order-container {
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f2f2f2;
+      margin-bottom: 40px;
+      padding: 0;
+    }
+
+    header {
+      background-color: #333;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+
+    h1 {
+      margin: 0;
+    }
+
+    div {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #fff;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    form {
+      margin-top: 20px;
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      margin-top: 5px;
+    }
+
+    button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    footer {
+      background-color: #333;
+      color: white;
+      text-align: center;
+      padding: 10px;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      z-index: 999; /* 다른 요소 위에 고정 풋터 표시 */
     }
   </style>
 </head>
@@ -77,7 +136,7 @@
     console.log(order);
     for (let i in order.productDTOS) {
       for (let j in order.productDTOS[i].items) {
-        goodsName += "opId=" + order.productDTOS[i].items[j].optionId + " " +
+        goodsName += order.productDTOS[i].items[j].optionName + " " +
                 order.productDTOS[i].items[j].quantity + "개, ";
       }
     }

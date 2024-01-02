@@ -5,11 +5,97 @@
     <title>상품 수정 페이지</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <style>
-        .max-size-image {
-            max-width: 300px; /* 최대 가로 크기 */
-            max-height: 300px; /* 최대 세로 크기 */
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
         }
-    </style>
+
+        header {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 1em;
+        }
+
+        form {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0 20px 0;
+            display: inline-block;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #333;
+            color: #fff;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #555;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .title_area {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .button_upload {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        #selected-files {
+            margin-top: 10px;
+        }
+
+        .max-size-image {
+            max-width: 300px;
+            max-height: 300px;
+        }
+
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 1em;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .footword {
+            margin: 0;
+        }
 </head>
 <body>
 
@@ -87,6 +173,7 @@
     <input type="number" id="stockQuantity" name="stockQuantity" required><br>
 
     <button type="button" id="saveOptionButton" onclick="sendOption()">옵션 수정</button>
+    <button type="button" id="deleteOptionButton" onclick="deleteOption()">옵션 삭제</button>
 </form>
 
 <footer>
@@ -193,6 +280,41 @@
             } else {
                 console.log(result);
                 alert("상품 수정에 실패하였습니다.");
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
+    async function deleteOption() {
+        const form = document.getElementById('optionForm');
+        const formData = new FormData(form);
+        const optionId = formData.get('id');
+
+        const optionData = {
+            id : form.elements['id'].value,
+            productId : form.elements['productId'].value,
+            optionName : form.elements['optionName'].value,
+            price : form.elements['price'].value,
+            stockQuantity : form.elements['stockQuantity'].value
+        };
+        const token = getCookie("token");
+
+        try {
+            const response = await fetch(`/options/delete/${optionId}`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer ' + token
+                },
+                body: formData
+            });
+            const result = await response.json();
+
+            if (result.success) {
+                alert("옵션이 성공적으로 삭제되었습니다.");
+            } else {
+                console.log(result);
+                alert("옵션 삭제에 실패하였습니다.");
             }
         } catch (error) {
             console.error('Error:', error);

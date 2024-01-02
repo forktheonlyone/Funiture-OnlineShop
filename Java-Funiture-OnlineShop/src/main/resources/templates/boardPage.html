@@ -222,7 +222,6 @@
         </div>
     </div>
 </section>
-
 <span id="adminButton" style="display: none;">
     <button class="btn btn-primary" onclick="navigateToCreateBoardPage()">글쓰기</button>
 </span>
@@ -244,6 +243,41 @@
         }
         window.location.href = '/board/create';
     }
+     async function isAdmin() {
+            try {
+                const token = getCookie("token");
+                const response = await fetch('/user/info', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': token
+                    }
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    if (result.response.roles[0] === "ROLE_ADMIN") {
+                        showAdmin();
+                    }
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+         $(document).ready(function(){
+        checkButtonVisibility();
+        });
+
+     const checkButtonVisibility = () => {
+            const logined = getCookie("token");
+            if (logined != null) {
+                isAdmin();
+            }
+        }
+        const showAdmin = () => {
+             const buttonsContainer = document.getElementById("adminButton");
+                buttonsContainer.style.display = "block";
+        }
 </script>
 
 </html>
