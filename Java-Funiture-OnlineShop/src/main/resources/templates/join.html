@@ -10,9 +10,31 @@
             font-family: Arial, sans-serif;
         }
 
+        header {
+            background-color:#ccc;
+            color: black;
+            padding: 5px 20px;
+        }
+
         h1 {
             margin: 20px 0;
+            font-size: 24px;
+        }
+
+        footer {
+            display: flex;
+            background-color: #f0f0f0;
+            padding: 10px 20px;
             text-align: center;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footword{
+            margin-bottom: 5px;
+            font-size: 12px;
+            color: #999;
         }
 
         .btn {
@@ -20,12 +42,11 @@
             display: inline-block;
             padding: 4px 14px;
             border-radius: 5px;
-            font-size: 13px;
             color: #fff;
             line-height: 25px;
             vertical-align: top;
             background-color: #4CAF50;
-            font-weight: normal;
+            font-weight: bold;
             border: none;
             cursor: pointer;
             transition: background-color 0.3s;
@@ -36,13 +57,19 @@
         }
 
         .form-container {
+            margin: 50px auto;
             display: flex;
             flex-direction: column;
-            max-width: 300px;
-            margin: 0 auto;
+            max-width: 400px;
+            height: 100%;
             padding: 20px;
             background-color: #f0f0f0;
             border-radius: 5px;
+            flex-wrap: nowrap;
+            align-content: space-around;
+            justify-content: space-between;
+            align-items: stretch;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
 
         .form-container label {
@@ -68,22 +95,6 @@
         }
 
         .col p {
-            margin-bottom: 5px;
-            font-size: 12px;
-            color: #999;
-        }
-
-        footer {
-            display: flex;
-            background-color: #f0f0f0;
-            padding: 0px;
-            text-align: center;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .footword{
             margin-bottom: 5px;
             font-size: 12px;
             color: #999;
@@ -141,7 +152,7 @@
 </head>
 <body>
 
-<h1>회원가입</h1>
+<header><h1>회원가입</h1></header>
 
 <div class="form-container">
     <div>
@@ -162,22 +173,13 @@
             <input type="text" id="address" name="address" required><br><br>
 
             <input type="submit" class="btn" value="회원가입 하시겠습니까?">
+            <footer>
+                <p class="footword">&copy; 2023 My Website. All rights reserved.</p>
+            </footer>
         </form>
-<!--    <form>-->
-<!--        <div class="col">-->
-<!--            <p>빠른 비밀번호 작성용</p>-->
-<!--            <p>asdf1234!</p>-->
-<!--        </div>-->
-<!--    </form>-->
     </div>
-    <footer>
-        <p class="footword">&copy; 2023 My Website. All rights reserved.</p>
-    </footer>
-</div>
 
-<footer>
-    <p class="footword">&copy; 2023 My Website. All rights reserved.</p>
-</footer>
+</div>
 
 </body>
 </html>

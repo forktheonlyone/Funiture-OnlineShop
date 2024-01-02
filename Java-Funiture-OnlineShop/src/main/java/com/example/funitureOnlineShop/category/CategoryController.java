@@ -61,6 +61,7 @@ public class CategoryController {
     }
 
     // 카테고리 삭제
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/delete/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         categoryService.delete(id);

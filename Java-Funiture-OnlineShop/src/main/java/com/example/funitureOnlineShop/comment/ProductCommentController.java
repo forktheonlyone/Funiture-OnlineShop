@@ -49,7 +49,8 @@ public class ProductCommentController {
     @PostMapping("/delete/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id,
                                     @AuthenticationPrincipal CustomUserDetails customUserDetails){
-        productCommentService.delete(id, customUserDetails.getUser().getId());
+        productCommentService.isDeletable(id, customUserDetails.getUser().getId());
+        productCommentService.delete(id);
 
         return ResponseEntity.ok(ApiUtils.success(null));
     }

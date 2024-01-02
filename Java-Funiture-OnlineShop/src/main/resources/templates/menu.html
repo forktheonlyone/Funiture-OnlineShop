@@ -12,7 +12,7 @@
             font-family: Arial, sans-serif;
         }
 
-        header {
+        .menu-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -30,23 +30,23 @@
             margin-right: 10px;
             padding: 4px 14px;
             display: inline-block;
-            background-color: #f0f0f0;
+            background-color: #333333FF;
             border: none;
             border-radius: 4px;
             font-size: 14px;
-            font-weight: normal;
-            color: #333;
+            color: white;
             cursor: pointer;
             line-height: 25px;
             transition: background-color 0.3s;
             vertical-align: top;
+            font-weight: bold;
         }
 
         .header-buttons button:hover {
-            background-color: #c7c7c7;
+            background-color: gray;
         }
 
-        h1 {
+        .head-title {
             margin: 20px 0;
             text-align: center;
             color: #fff;
@@ -202,8 +202,8 @@
 </head>
 <body>
 <!-- 페이지 헤더 -->
-<header>
-    <h1>가구 쇼핑몰</h1>
+<header class="menu-header">
+    <h1 class="head-title">가구 쇼핑몰</h1>
 
     <div>
         <span class="header-buttons" id="loginButtons" style="display: block;">

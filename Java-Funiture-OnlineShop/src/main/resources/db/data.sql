@@ -52,64 +52,107 @@ INSERT INTO category (id, category_name, super_category_id) VALUES (48, '금속 
 INSERT INTO category (id, category_name, super_category_id) VALUES (49, '유리 액자', 22);
 
 
-insert into product (id, delivery_fee, description, price, product_name, category_id) values (1, 500, '이거슨 레스비 책상이여', 1000, '레쓰비 책상1', 44)
-insert into product (id, delivery_fee, description, price, product_name, category_id) values (2, 500, '이거슨 레스비 책상이여', 1000, '레쓰비 책상2', 44)
-insert into product (id, delivery_fee, description, price, product_name, category_id) values (3, 500, '이거슨 레스비 책상이여', 1000, '레쓰비 책상3', 44)
-insert into product (id, delivery_fee, description, price, product_name, category_id) values (4, 500, '이거슨 레스비 책상이여', 1000, '레쓰비 책상4', 45)
-insert into product (id, delivery_fee, description, price, product_name, category_id) values (5, 500, '이거슨 레스비 책상이여', 1000, '레쓰비 책상5', 45)
-insert into product (id, delivery_fee, description, price, product_name, category_id) values (6, 500, '이거슨 레스비 책상이여', 1000, '레쓰비 책상6', 45)
-insert into product (id, delivery_fee, description, price, product_name, category_id) values (7, 500, '이거슨 레스비 책상이여', 1000, '레쓰비 책상7', 46)
-insert into product (id, delivery_fee, description, price, product_name, category_id) values (8, 500, '이거슨 레스비 책상이여', 1000, '레쓰비 책상8', 46)
-insert into product (id, delivery_fee, description, price, product_name, category_id) values (9, 500, '이거슨 레스비 책상이여', 1000, '레쓰비 책상9', 46)
+insert into product (id, delivery_fee, description, price, product_name, category_id) values (1, 500, '이거슨 레스비 책상이여', 1000, '레쓰비 책상1', 44);
+insert into product (id, delivery_fee, description, price, product_name, category_id) values (2, 500, '이거슨 레스비 책상이여', 1000, '레쓰비 책상2', 44);
+insert into product (id, delivery_fee, description, price, product_name, category_id) values (3, 500, '이거슨 레스비 책상이여', 1000, '레쓰비 책상3', 44);
+insert into product (id, delivery_fee, description, price, product_name, category_id) values (4, 500, '이거슨 레스비 책상이여', 1000, '레쓰비 책상4', 45);
+insert into product (id, delivery_fee, description, price, product_name, category_id) values (5, 500, '이거슨 레스비 책상이여', 1000, '레쓰비 책상5', 45);
+insert into product (id, delivery_fee, description, price, product_name, category_id) values (6, 500, '이거슨 레스비 책상이여', 1000, '레쓰비 책상6', 45);
+insert into product (id, delivery_fee, description, price, product_name, category_id) values (7, 500, '이거슨 레스비 책상이여', 1000, '레쓰비 책상7', 46);
+insert into product (id, delivery_fee, description, price, product_name, category_id) values (8, 500, '이거슨 레스비 책상이여', 1000, '레쓰비 책상8', 46);
+insert into product (id, delivery_fee, description, price, product_name, category_id) values (9, 500, '이거슨 레스비 책상이여', 1000, '레쓰비 책상9', 46);
 
-insert into option_tb (id, option_name, price, stock_quantity, product_id) values (1, '검정 책상', 1000, 60, 1)
-insert into option_tb (id, option_name, price, stock_quantity, product_id) values (2, '하양 책상', 2000, 60, 1)
-insert into option_tb (id, option_name, price, stock_quantity, product_id) values (3, '갈색 책상', 3000, 60, 1)
-insert into option_tb (id, option_name, price, stock_quantity, product_id) values (4, '검정 책상', 1000, 60, 2)
-insert into option_tb (id, option_name, price, stock_quantity, product_id) values (5, '하양 책상', 2000, 60, 2)
-insert into option_tb (id, option_name, price, stock_quantity, product_id) values (6, '갈색 책상', 3000, 60, 2)
-insert into option_tb (id, option_name, price, stock_quantity, product_id) values (7, '검정 책상', 1000, 60, 3)
-insert into option_tb (id, option_name, price, stock_quantity, product_id) values (8, '하양 책상', 2000, 60, 3)
-insert into option_tb (id, option_name, price, stock_quantity, product_id) values (9, '갈색 책상', 3000, 60, 3)
-insert into option_tb (id, option_name, price, stock_quantity, product_id) values (10, '검정 책상', 1000, 60, 4)
-insert into option_tb (id, option_name, price, stock_quantity, product_id) values (11, '하양 책상', 2000, 60, 4)
-insert into option_tb (id, option_name, price, stock_quantity, product_id) values (12, '갈색 책상', 3000, 60, 4)
-insert into option_tb (id, option_name, price, stock_quantity, product_id) values (13, '검정 책상', 1000, 60, 5)
-insert into option_tb (id, option_name, price, stock_quantity, product_id) values (14, '하양 책상', 2000, 60, 5)
-insert into option_tb (id, option_name, price, stock_quantity, product_id) values (15, '갈색 책상', 3000, 60, 5)
-insert into option_tb (id, option_name, price, stock_quantity, product_id) values (16, '검정 책상', 1000, 60, 6)
-insert into option_tb (id, option_name, price, stock_quantity, product_id) values (17, '하양 책상', 2000, 60, 6)
-insert into option_tb (id, option_name, price, stock_quantity, product_id) values (18, '갈색 책상', 3000, 60, 6)
-insert into option_tb (id, option_name, price, stock_quantity, product_id) values (19, '검정 책상', 1000, 60, 7)
-insert into option_tb (id, option_name, price, stock_quantity, product_id) values (20, '하양 책상', 2000, 60, 7)
-insert into option_tb (id, option_name, price, stock_quantity, product_id) values (21, '갈색 책상', 3000, 60, 7)
-insert into option_tb (id, option_name, price, stock_quantity, product_id) values (22, '검정 책상', 1000, 60, 8)
-insert into option_tb (id, option_name, price, stock_quantity, product_id) values (23, '하양 책상', 2000, 60, 8)
-insert into option_tb (id, option_name, price, stock_quantity, product_id) values (24, '갈색 책상', 3000, 60, 8)
-insert into option_tb (id, option_name, price, stock_quantity, product_id) values (25, '검정 책상', 1000, 60, 9)
-insert into option_tb (id, option_name, price, stock_quantity, product_id) values (26, '하양 책상', 2000, 60, 9)
-insert into option_tb (id, option_name, price, stock_quantity, product_id) values (27, '갈색 책상', 3000, 60, 9)
+insert into option_tb (id, option_name, price, stock_quantity, product_id) values (1, '검정 책상', 1000, 60, 1);
+insert into option_tb (id, option_name, price, stock_quantity, product_id) values (2, '하양 책상', 2000, 60, 1);
+insert into option_tb (id, option_name, price, stock_quantity, product_id) values (3, '갈색 책상', 3000, 60, 1);
+insert into option_tb (id, option_name, price, stock_quantity, product_id) values (4, '검정 책상', 1000, 60, 2);
+insert into option_tb (id, option_name, price, stock_quantity, product_id) values (5, '하양 책상', 2000, 60, 2);
+insert into option_tb (id, option_name, price, stock_quantity, product_id) values (6, '갈색 책상', 3000, 60, 2);
+insert into option_tb (id, option_name, price, stock_quantity, product_id) values (7, '검정 책상', 1000, 60, 3);
+insert into option_tb (id, option_name, price, stock_quantity, product_id) values (8, '하양 책상', 2000, 60, 3);
+insert into option_tb (id, option_name, price, stock_quantity, product_id) values (9, '갈색 책상', 3000, 60, 3);
+insert into option_tb (id, option_name, price, stock_quantity, product_id) values (10, '검정 책상', 1000, 60, 4);
+insert into option_tb (id, option_name, price, stock_quantity, product_id) values (11, '하양 책상', 2000, 60, 4);
+insert into option_tb (id, option_name, price, stock_quantity, product_id) values (12, '갈색 책상', 3000, 60, 4);
+insert into option_tb (id, option_name, price, stock_quantity, product_id) values (13, '검정 책상', 1000, 60, 5);
+insert into option_tb (id, option_name, price, stock_quantity, product_id) values (14, '하양 책상', 2000, 60, 5);
+insert into option_tb (id, option_name, price, stock_quantity, product_id) values (15, '갈색 책상', 3000, 60, 5);
+insert into option_tb (id, option_name, price, stock_quantity, product_id) values (16, '검정 책상', 1000, 60, 6);
+insert into option_tb (id, option_name, price, stock_quantity, product_id) values (17, '하양 책상', 2000, 60, 6);
+insert into option_tb (id, option_name, price, stock_quantity, product_id) values (18, '갈색 책상', 3000, 60, 6);
+insert into option_tb (id, option_name, price, stock_quantity, product_id) values (19, '검정 책상', 1000, 60, 7);
+insert into option_tb (id, option_name, price, stock_quantity, product_id) values (20, '하양 책상', 2000, 60, 7);
+insert into option_tb (id, option_name, price, stock_quantity, product_id) values (21, '갈색 책상', 3000, 60, 7);
+insert into option_tb (id, option_name, price, stock_quantity, product_id) values (22, '검정 책상', 1000, 60, 8);
+insert into option_tb (id, option_name, price, stock_quantity, product_id) values (23, '하양 책상', 2000, 60, 8);
+insert into option_tb (id, option_name, price, stock_quantity, product_id) values (24, '갈색 책상', 3000, 60, 8);
+insert into option_tb (id, option_name, price, stock_quantity, product_id) values (25, '검정 책상', 1000, 60, 9);
+insert into option_tb (id, option_name, price, stock_quantity, product_id) values (26, '하양 책상', 2000, 60, 9);
+insert into option_tb (id, option_name, price, stock_quantity, product_id) values (27, '갈색 책상', 3000, 60, 9);
 
 --1번 장바구니는 주문이 있으므로 삭제 불가
-insert into cart_tb (id, price, quantity, option_id, user_id) values (1, 4000, 1, 3, 1)
-insert into cart_tb (id, price, quantity, option_id, user_id) values (2, 8000, 2, 6, 1)
-insert into cart_tb (id, price, quantity, option_id, user_id) values (3, 12000, 3, 9, 1)
-insert into cart_tb (id, price, quantity, option_id, user_id) values (4, 12000, 3, 3, 2)
-insert into cart_tb (id, price, quantity, option_id, user_id) values (5, 8000, 2, 6, 2)
-insert into cart_tb (id, price, quantity, option_id, user_id) values (6, 4000, 1, 9, 2)
+insert into cart_tb (id, price, quantity, option_id, user_id) values (1, 4000,  1, 3, 1);
+insert into cart_tb (id, price, quantity, option_id, user_id) values (2, 8000,  2, 6, 1);
+insert into cart_tb (id, price, quantity, option_id, user_id) values (3, 12000, 3, 9, 1);
+insert into cart_tb (id, price, quantity, option_id, user_id) values (4, 12000, 3, 3, 2);
+insert into cart_tb (id, price, quantity, option_id, user_id) values (5, 8000,  2, 6, 2);
+insert into cart_tb (id, price, quantity, option_id, user_id) values (6, 4000,  1, 9, 2);
 
-insert into product_file (id, file_name, file_path, file_size, file_type, uuid, product_id) values (1, 'pic1.png', 'C:/Users/NT767/OneDrive/바탕 화면/demodata/', 58636, '.png', 'asdf-asdf-asdf', 1)
-insert into product_file (id, file_name, file_path, file_size, file_type, uuid, product_id) values (2, 'pic2.png', 'C:/Users/NT767/OneDrive/바탕 화면/demodata/', 58636, '.png', 'asdf-asdf-asdf', 1)
-insert into product_file (id, file_name, file_path, file_size, file_type, uuid, product_id) values (3, 'pic3.png', 'C:/Users/NT767/OneDrive/바탕 화면/demodata/', 58636, '.png', 'asdf-asdf-asdf', 1)
-insert into product_file (id, file_name, file_path, file_size, file_type, uuid, product_id) values (4, 'pic4.png', 'C:/Users/NT767/OneDrive/바탕 화면/demodata/', 58636, '.png', 'asdf-asdf-asdf', 2)
-insert into product_file (id, file_name, file_path, file_size, file_type, uuid, product_id) values (5, 'pic5.png', 'C:/Users/NT767/OneDrive/바탕 화면/demodata/', 58636, '.png', 'asdf-asdf-asdf', 2)
-insert into product_file (id, file_name, file_path, file_size, file_type, uuid, product_id) values (6, 'pic6.png', 'C:/Users/NT767/OneDrive/바탕 화면/demodata/', 58636, '.png', 'asdf-asdf-asdf', 2)
-insert into product_file (id, file_name, file_path, file_size, file_type, uuid, product_id) values (7, 'pic7.png', 'C:/Users/NT767/OneDrive/바탕 화면/demodata/', 58636, '.png', 'asdf-asdf-asdf', 3)
-insert into product_file (id, file_name, file_path, file_size, file_type, uuid, product_id) values (8, 'pic8.png', 'C:/Users/NT767/OneDrive/바탕 화면/demodata/', 58636, '.png', 'asdf-asdf-asdf', 4)
-insert into product_file (id, file_name, file_path, file_size, file_type, uuid, product_id) values (9, 'pic9.png', 'C:/Users/NT767/OneDrive/바탕 화면/demodata/', 58636, '.png', 'asdf-asdf-asdf', 5)
+insert into product_file (id, file_name, file_path, file_size, file_type, uuid, product_id) values (1, 'pic1.png', 'C:/shoppingFiles/', 58636, '.png', 'asdf-asdf-asdf', 1);
+insert into product_file (id, file_name, file_path, file_size, file_type, uuid, product_id) values (2, 'pic2.png', 'C:/shoppingFiles/', 58636, '.png', 'asdf-asdf-asdf', 1);
+insert into product_file (id, file_name, file_path, file_size, file_type, uuid, product_id) values (3, 'pic3.png', 'C:/shoppingFiles/', 58636, '.png', 'asdf-asdf-asdf', 1);
+insert into product_file (id, file_name, file_path, file_size, file_type, uuid, product_id) values (4, 'pic4.png', 'C:/shoppingFiles/', 58636, '.png', 'asdf-asdf-asdf', 2);
+insert into product_file (id, file_name, file_path, file_size, file_type, uuid, product_id) values (5, 'pic5.png', 'C:/shoppingFiles/', 58636, '.png', 'asdf-asdf-asdf', 2);
+insert into product_file (id, file_name, file_path, file_size, file_type, uuid, product_id) values (6, 'pic6.png', 'C:/shoppingFiles/', 58636, '.png', 'asdf-asdf-asdf', 2);
+insert into product_file (id, file_name, file_path, file_size, file_type, uuid, product_id) values (7, 'pic7.png', 'C:/shoppingFiles/', 58636, '.png', 'asdf-asdf-asdf', 3);
+insert into product_file (id, file_name, file_path, file_size, file_type, uuid, product_id) values (8, 'pic8.png', 'C:/shoppingFiles/', 58636, '.png', 'asdf-asdf-asdf', 4);
+insert into product_file (id, file_name, file_path, file_size, file_type, uuid, product_id) values (9, 'pic9.png', 'C:/shoppingFiles/', 58636, '.png', 'asdf-asdf-asdf', 5);
 
-insert into order_tb (id, order_date, user_id) values (1, '2023-12-27', 1)
+insert into order_tb (id, order_date, user_id) values (1, '2023-12-27', 1);
 
-insert into order_check (id, price, order_date, order_id, quantity, tid, option_id, user_id) values (1, 4000, '2019-8-14 08:43:12', 'asdfasdf', 1, 'asdfasfd', 3, 1)
-insert into order_check (id, price, order_date, order_id, quantity, tid, option_id, user_id) values (2, 8000, '2023-8-14 08:43:12', 'asdfasdf', 2, 'asdfasfd', 6, 1)
-insert into order_check (id, price, order_date, order_id, quantity, tid, option_id, user_id) values (3, 12000,'2023-8-14 08:43:12', 'asdfasdf', 3, 'asdfasfd', 9, 1)
+insert into order_check (id, price, order_date, order_id, quantity, tid, option_id, user_id) values (1,  4000,  '2019-08-11 08:43:12', '7125ba6b-f8fa-4b97-a2e4-f35cc222fe4c:2', 1, 'UT0010033m01011011918398698684', 3, 1);
+insert into order_check (id, price, order_date, order_id, quantity, tid, option_id, user_id) values (2,  8000,  '2023-08-21 08:43:12', '7125ba6b-f8fa-4b97-a2e4-f35cc222fe4c:2', 2, 'UT0010033m01019235923148442464', 6, 1);
+insert into order_check (id, price, order_date, order_id, quantity, tid, option_id, user_id) values (3,  12000, '2023-08-21 08:43:12', '7125ba6b-f8fa-4b97-a2e4-f35cc222fe4c:2', 3, 'UT0010033m01029782978428442464', 9, 1);
+insert into order_check (id, price, order_date, order_id, quantity, tid, option_id, user_id) values (4,  12000, '2023-10-11 08:43:12', '7125ba6b-f8fa-4b97-a2e4-f35cc222fe4c:2', 3, 'UT0010033m01119184428442464464', 8, 1);
+insert into order_check (id, price, order_date, order_id, quantity, tid, option_id, user_id) values (5,  12000, '2023-10-11 08:43:12', '7125ba6b-f8fa-4b97-a2e4-f35cc222fe4c:2', 3, 'UT0010033m01012402495695638073', 9, 1);
+insert into order_check (id, price, order_date, order_id, quantity, tid, option_id, user_id) values (6,  12000, '2023-10-11 08:43:12', '7125ba6b-f8fa-4b97-a2e4-f35cc222fe4c:2', 3, 'UT0010033m01011011918442487826', 7, 1);
+insert into order_check (id, price, order_date, order_id, quantity, tid, option_id, user_id) values (7,  12000, '2023-10-11 08:43:12', '7125ba6b-f8fa-4b97-a2e4-f35cc222fe4c:2', 3, 'UT0010033m01012414963916391664', 8, 1);
+insert into order_check (id, price, order_date, order_id, quantity, tid, option_id, user_id) values (8,  12000, '2023-10-21 08:43:12', '7125ba6b-f8fa-4b97-a2e4-f35cc222fe4c:2', 3, 'UT0010033m01012454119184823792', 9, 1);
+insert into order_check (id, price, order_date, order_id, quantity, tid, option_id, user_id) values (9,  12000, '2023-10-21 08:43:12', '7125ba6b-f8fa-4b97-a2e4-f35cc222fe4c:2', 3, 'UT0010033m01012401011918398664', 7, 1);
+insert into order_check (id, price, order_date, order_id, quantity, tid, option_id, user_id) values (10, 12000, '2023-10-31 08:43:12', '7125ba6b-f8fa-4b97-a2e4-f35cc222fe4c:2', 3, 'UT0010033m01012401011914459464', 9, 1);
+insert into order_check (id, price, order_date, order_id, quantity, tid, option_id, user_id) values (11, 12000, '2023-10-31 08:43:12', '7125ba6b-f8fa-4b97-a2e4-f35cc222fe4c:2', 3, 'UT0010033m01012401049722842664', 8, 1);
+insert into order_check (id, price, order_date, order_id, quantity, tid, option_id, user_id) values (12, 12000, '2023-12-11 08:43:12', '7125ba6b-f8fa-4b97-a2e4-f35cc222fe4c:2', 3, 'UT0010033m01012401011918442484', 9, 1);
+insert into order_check (id, price, order_date, order_id, quantity, tid, option_id, user_id) values (13, 12000, '2023-12-21 08:43:12', '7125ba6b-f8fa-4b97-a2e4-f35cc222fe4c:2', 3, 'UT0010033m01012401011259563807', 7, 1);
+insert into order_check (id, price, order_date, order_id, quantity, tid, option_id, user_id) values (14, 12000, '2023-12-21 08:43:12', '7125ba6b-f8fa-4b97-a2e4-f35cc222fe4c:2', 3, 'UT0010033m01012401011918378526', 8, 1);
+insert into order_check (id, price, order_date, order_id, quantity, tid, option_id, user_id) values (15, 12000, '2023-12-21 08:43:12', '7125ba6b-f8fa-4b97-a2e4-f35cc222fe4c:2', 3, 'UT0010033m01012401019846963916', 9, 1);
+insert into order_check (id, price, order_date, order_id, quantity, tid, option_id, user_id) values (16, 12000, '2023-12-21 08:43:12', '7125ba6b-f8fa-4b97-a2e4-f35cc222fe4c:2', 3, 'UT0010033m01012401024958997923', 7, 1);
+insert into order_check (id, price, order_date, order_id, quantity, tid, option_id, user_id) values (17, 12000, '2023-12-31 08:43:12', '7125ba6b-f8fa-4b97-a2e4-f35cc222fe4c:2', 3, 'UT0010033m01012401011918394986', 8, 1);
+insert into order_check (id, price, order_date, order_id, quantity, tid, option_id, user_id) values (18, 12000, '2023-12-31 08:43:12', '7125ba6b-f8fa-4b97-a2e4-f35cc222fe4c:2', 3, 'UT0010033m01012401238475923164', 9, 1);
+insert into order_check (id, price, order_date, order_id, quantity, tid, option_id, user_id) values (19, 12000, '2023-12-31 08:43:12', '7125ba6b-f8fa-4b97-a2e4-f35cc222fe4c:2', 3, 'UT0010033m01012401011912978426', 7, 1);
+insert into order_check (id, price, order_date, order_id, quantity, tid, option_id, user_id) values (20, 12000, '2024-01-01 08:43:12', '7125ba6b-f8fa-4b97-a2e4-f35cc222fe4c:2', 3, 'UT0010033m01012401011918442464', 9, 1);
+
+insert into product_comment (id, contents, create_time, star, update_time, order_check_id) values (1,  'OC', '2023-10-16 08:43:12', 3, '2023-10-26 08:43:12', 5);
+insert into product_comment (id, contents, create_time, star, update_time, order_check_id) values (2,  'NA', '2023-10-14 08:43:12', 5, '2023-09-09 08:43:12', 6);
+insert into product_comment (id, contents, create_time, star, update_time, order_check_id) values (3,  'AS', '2023-10-15 08:43:12', 5, '2023-10-02 08:43:12', 7);
+insert into product_comment (id, contents, create_time, star, update_time, order_check_id) values (4,  'AF', '2024-01-20 08:43:12', 1, '2023-09-29 08:43:12', 8);
+insert into product_comment (id, contents, create_time, star, update_time, order_check_id) values (5,  'OC', '2024-01-31 08:43:12', 2, '2023-12-10 08:43:12', 9);
+insert into product_comment (id, contents, create_time, star, update_time, order_check_id) values (6,  'NA', '2023-12-29 08:43:12', 5, '2023-12-07 08:43:12', 10);
+insert into product_comment (id, contents, create_time, star, update_time, order_check_id) values (7,  'NA', '2023-09-19 08:43:12', 4, '2024-01-14 08:43:12', 11);
+insert into product_comment (id, contents, create_time, star, update_time, order_check_id) values (8,  'AS', '2023-12-23 08:43:12', 2, '2023-10-09 08:43:12', 12);
+insert into product_comment (id, contents, create_time, star, update_time, order_check_id) values (9,  'NA', '2023-11-03 08:43:12', 5, '2023-10-22 08:43:12', 13);
+insert into product_comment (id, contents, create_time, star, update_time, order_check_id) values (10, 'AS', '2023-10-16 08:43:12', 5, '2024-01-13 08:43:12', 14);
+insert into product_comment (id, contents, create_time, star, update_time, order_check_id) values (11, 'NA', '2023-10-09 08:43:12', 2, '2023-09-03 08:43:12', 15);
+insert into product_comment (id, contents, create_time, star, update_time, order_check_id) values (12, 'NA', '2023-12-06 08:43:12', 4, '2023-11-06 08:43:12', 16);
+insert into product_comment (id, contents, create_time, star, update_time, order_check_id) values (13, 'EU', '2024-01-03 08:43:12', 5, '2023-09-12 08:43:12', 17);
+insert into product_comment (id, contents, create_time, star, update_time, order_check_id) values (14, 'OC', '2023-12-04 08:43:12', 2, '2023-09-11 08:43:12', 18);
+insert into product_comment (id, contents, create_time, star, update_time, order_check_id) values (15, 'NA', '2023-12-04 08:43:12', 1, '2023-10-24 08:43:12', 19);
+
+insert into comment_file (id, file_name, file_path, file_size, file_type, uuid, product_comment_id) values (1, 'pic1.png', 'C:/shoppingFiles/', 58636, '.png', 'asdf-asdf-asdf', 1);
+insert into comment_file (id, file_name, file_path, file_size, file_type, uuid, product_comment_id) values (2, 'pic2.png', 'C:/shoppingFiles/', 58636, '.png', 'asdf-asdf-asdf', 2);
+insert into comment_file (id, file_name, file_path, file_size, file_type, uuid, product_comment_id) values (3, 'pic3.png', 'C:/shoppingFiles/', 58636, '.png', 'asdf-asdf-asdf', 3);
+insert into comment_file (id, file_name, file_path, file_size, file_type, uuid, product_comment_id) values (4, 'pic4.png', 'C:/shoppingFiles/', 58636, '.png', 'asdf-asdf-asdf', 4);
+insert into comment_file (id, file_name, file_path, file_size, file_type, uuid, product_comment_id) values (5, 'pic5.png', 'C:/shoppingFiles/', 58636, '.png', 'asdf-asdf-asdf', 5);
+insert into comment_file (id, file_name, file_path, file_size, file_type, uuid, product_comment_id) values (6, 'pic6.png', 'C:/shoppingFiles/', 58636, '.png', 'asdf-asdf-asdf', 6);
+insert into comment_file (id, file_name, file_path, file_size, file_type, uuid, product_comment_id) values (7, 'pic7.png', 'C:/shoppingFiles/', 58636, '.png', 'asdf-asdf-asdf', 7);
+insert into comment_file (id, file_name, file_path, file_size, file_type, uuid, product_comment_id) values (8, 'pic8.png', 'C:/shoppingFiles/', 58636, '.png', 'asdf-asdf-asdf', 8);
+insert into comment_file (id, file_name, file_path, file_size, file_type, uuid, product_comment_id) values (9, 'pic9.png', 'C:/shoppingFiles/', 58636, '.png', 'asdf-asdf-asdf', 9);
