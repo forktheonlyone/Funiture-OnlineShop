@@ -96,6 +96,7 @@
         .footword {
             margin: 0;
         }
+    </style>
 </head>
 <body>
 
@@ -133,7 +134,7 @@
         <div class="option_area">
             <label class="button_upload">
                 <span class="blind"></span>
-                <input class="blind" type="file" id="files" name="files" accept="image/*" multiple onchange="updateSelectedFiles()">
+                <input class="blind" type="file" id="files" name="files" accept="image/*" multiple onchange="updateSelectedFiles(event)">
             </label>
             <div id="selected-files">
                 <!--사진 나옴-->
@@ -172,8 +173,9 @@
     <label for="stockQuantity">재고 수량:</label><br>
     <input type="number" id="stockQuantity" name="stockQuantity" required><br>
 
-    <button type="button" id="saveOptionButton" onclick="sendOption()">옵션 수정</button>
+    <button type="button" id="updateOptionButton" onclick="updateOption()">옵션 수정</button>
     <button type="button" id="deleteOptionButton" onclick="deleteOption()">옵션 삭제</button>
+
 </form>
 
 <footer>
@@ -253,7 +255,7 @@
         document.getElementById('stockQuantity').value = product.optionList[idx].stockQuantity;
     }
 
-    async function sendOption() {
+    async function updateOption() {
         const form = document.getElementById('optionForm');
         const formData = new FormData(form);
         const optionData = {
@@ -285,6 +287,7 @@
             console.error('Error:', error);
         }
     }
+
 
     async function deleteOption() {
         const form = document.getElementById('optionForm');
