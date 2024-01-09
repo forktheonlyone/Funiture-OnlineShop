@@ -1,7 +1,7 @@
 # 가구 브랜드 온라인 스토어
 > 그린컴퓨터 아카데미 자율 팀 프로젝트
 
-팀장 - 송한올
+팀장 - 송한올<br>
 팀원 - 이아현, 배준혁, 홍주형
 
 ### ERD
@@ -95,3 +95,8 @@ _**해당 내용은 예정이며 순서 상관이 없으며 예고없이 추가,
 
 v1.0 ( 23/12/26 )
 - 가구 브랜딩 온라인 스토어 신규 개설
+
+---
+<br>
+<br>
+### [테스트 영상](https://github.com/forktheonlyone/Funiture-OnlineShop/tree/main/Java-Funiture-OnlineShop)
