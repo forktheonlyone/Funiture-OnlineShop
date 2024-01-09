@@ -212,6 +212,6 @@ v1.0 ( 23/12/26 )
 
   ---
 
-  ### ### 테스트
+  ### 테스트
 
   - [테스트 영상](https://github.com/forktheonlyone/Funiture-OnlineShop/tree/main/Java-Funiture-OnlineShop)
